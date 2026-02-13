@@ -1,5 +1,22 @@
 import React, { useState, useEffect } from 'react';
 
+function Glossary({ title, meaning, children }) {
+  const id = `gloss-${String(title).replace(/\s+/g, '-').toLowerCase()}`;
+  return (
+    <span className="group relative inline-block cursor-help" tabIndex={0} aria-describedby={id}>
+      <span className="underline decoration-dotted underline-offset-2">{children}</span>
+      <span
+        id={id}
+        role="tooltip"
+        className="pointer-events-none absolute z-50 bottom-full mb-2 left-1/2 transform -translate-x-1/2 hidden group-hover:block group-focus:block w-64 bg-stone-900 text-white text-sm p-3 rounded-md shadow-lg text-left"
+      >
+        <strong className="font-semibold block">{title}</strong>
+        <span className="block mt-1">{meaning}</span>
+      </span>
+    </span>
+  );
+}
+
 export default function HorumarinLanding() {
   const [email, setEmail] = useState('');
   const [isVisible, setIsVisible] = useState(false);
@@ -65,14 +82,16 @@ export default function HorumarinLanding() {
                 
                 {/* Subheadline with emphasis */}
                 <p className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-light text-stone-700 leading-tight max-w-xl">
-                  Meesha Aqoonta iyo Khubrada Soomaaliyeed ay ku{' '}
-                  <span className="font-semibold text-amber-800">midoobaan</span>
+                  Meesha Aqoonta iyo <Glossary title="Khubrada / Khubaro" meaning="Khubrad / Khubaro = khabiir/in khubrad leh (expert).">Khubrada</Glossary> Soomaaliyeed ay ku{' '}
+                  <Glossary title="midoobaan" meaning="midoobaan = is dhexgal; ku soo biirid; inay hal meel ku yimaadaan (to unite)">
+                    <span className="font-semibold text-amber-800">midoobaan</span>
+                  </Glossary>
                 </p>
               </div>
               
               {/* Supporting copy */}
               <p className="text-base sm:text-lg lg:text-xl text-stone-600 leading-relaxed max-w-xl">
-                Goob cusub oo aad ka hesho jawaabo la hubo, hagayaal aad aaminto, iyo aqoon ku taraynaysa mustaqbalka.
+                Goob cusub oo aad ka hesho jawaabo la hubo, <Glossary title="Hagayaal" meaning="Hagayaal = dad wax ku hanuuniya / tilmaama / tusaale noqda (mentors, guides)">hagayaal</Glossary> aad aaminto, iyo aqoon ku anfaceeso mustaqbalka.
               </p>
               
               {/* CTA buttons with premium styling */}
@@ -318,7 +337,7 @@ export default function HorumarinLanding() {
                 </svg>
               </div>
               <h3 className="text-xl font-bold text-stone-900 mb-3">
-                Khubaro La Hubo
+                <Glossary title="Khubaro" meaning="Khubaro = experts; dadka leh xirfad iyo aqoon la hubo">Khubaro</Glossary> La Hubo
               </h3>
               <p className="text-stone-700">
                 Kaliya dad khibrad la hubo ayaa jawaabin kara su'aalaha, si loo hubiyo in macluumaadku yahay mid sax ah.
@@ -560,7 +579,7 @@ export default function HorumarinLanding() {
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-2xl font-bold text-stone-900 mb-2">DhiriGalin</h3>
+                  <h3 className="text-2xl font-bold text-stone-900 mb-2"><Glossary title="DhiriGalin" meaning="DhiriGalin = dhiirrigelin; kicinta riyada iyo himilada (encouragement / inspiration)">DhiriGalin</Glossary></h3>
                   <p className="text-lg text-stone-600">Waxay kicisaa riyada iyo himilada.</p>
                 </div>
               </div>
