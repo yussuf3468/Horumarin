@@ -1,20 +1,73 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 function Glossary({ title, meaning, children }) {
   const id = `gloss-${String(title).replace(/\s+/g, "-").toLowerCase()}`;
+  const triggerRef = useRef(null);
+  const tooltipRef = useRef(null);
+  const [visible, setVisible] = useState(false);
+  const [positionStyle, setPositionStyle] = useState({});
+
+  useEffect(() => {
+    function updatePosition() {
+      if (!visible || !triggerRef.current || !tooltipRef.current) return;
+      const trig = triggerRef.current.getBoundingClientRect();
+      const tip = tooltipRef.current.getBoundingClientRect();
+      const gap = 8;
+      const isSmall = window.innerWidth < 640; // tailwind `sm` breakpoint
+
+      if (isSmall) {
+        // center tooltip over trigger but clamp to viewport edges
+        let left = trig.left + trig.width / 2 - tip.width / 2;
+        const minLeft = gap;
+        const maxLeft = window.innerWidth - tip.width - gap;
+        left = Math.max(minLeft, Math.min(left, maxLeft));
+
+        // try placing above; if not enough space, place below
+        let top = trig.top - tip.height - gap;
+        if (top < gap) top = trig.bottom + gap;
+
+        setPositionStyle({
+          position: "fixed",
+          left: `${left}px`,
+          top: `${top}px`,
+          width: "auto",
+        });
+      } else {
+        // let the existing sm:absolute styles handle larger screens
+        setPositionStyle({});
+      }
+    }
+
+    updatePosition();
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
+    return () => {
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+    };
+  }, [visible]);
+
   return (
     <span
+      ref={triggerRef}
       className="group relative inline-block cursor-help"
       tabIndex={0}
       aria-describedby={id}
+      onMouseEnter={() => setVisible(true)}
+      onMouseLeave={() => setVisible(false)}
+      onFocus={() => setVisible(true)}
+      onBlur={() => setVisible(false)}
     >
       <span className="underline decoration-dotted underline-offset-2">
         {children}
       </span>
       <span
         id={id}
+        ref={tooltipRef}
         role="tooltip"
-        className="z-50 fixed sm:absolute sm:bottom-full bottom-20 sm:mb-2 left-4 right-4 sm:left-1/2 sm:transform sm:-translate-x-1/2 hidden group-hover:block group-focus:block sm:w-64 w-[calc(100%-2rem)] bg-stone-900 text-white text-sm p-3 rounded-md shadow-lg text-left pointer-events-auto"
+        aria-hidden={!visible}
+        style={{ display: visible ? "block" : "none", ...positionStyle }}
+        className="z-50 sm:absolute sm:bottom-full sm:mb-2 sm:left-1/2 sm:transform sm:-translate-x-1/2 bg-stone-900 text-white text-sm p-3 rounded-md shadow-lg text-left pointer-events-auto sm:w-64 w-auto"
       >
         <strong className="font-semibold block">{title}</strong>
         <span className="block mt-1">{meaning}</span>
