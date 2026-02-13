@@ -106,15 +106,7 @@ export default function HorumarinLanding() {
                   >
                     Khubrada
                   </Glossary>{" "}
-                  Soomaaliyeed ay ku{" "}
-                  <Glossary
-                    title="midoobaan"
-                    meaning="midoobaan = is dhexgal; ku soo biirid; inay hal meel ku yimaadaan (to unite)"
-                  >
-                    <span className="font-semibold text-amber-800">
-                      midoobaan
-                    </span>
-                  </Glossary>
+                  Soomaaliyeed ay ku midoobaan
                 </p>
               </div>
 
@@ -988,7 +980,7 @@ export default function HorumarinLanding() {
             </p>
 
             <div className="inline-flex items-center gap-2 text-stone-400 text-sm">
-              <span>Developed by</span>
+              <span>Made with ❤️ by</span>
               <a
                 href="https://lenzro.com"
                 target="_blank"
@@ -1004,6 +996,24 @@ export default function HorumarinLanding() {
             <p className="text-stone-400 text-sm">
               © 2026 Horumarin — Xuquuqda Loo Haystay
             </p>
+            <div className="mt-4 text-stone-400 text-sm space-y-1">
+              <p className="font-medium">Contact</p>
+              <p>
+                <a
+                  href="tel:+254722261776"
+                  className="text-amber-400 hover:text-amber-300 font-medium"
+                >
+                  +254 722 261 776
+                </a>
+                <span className="mx-2">•</span>
+                <a
+                  href="mailto:yussufh080@gmail.com"
+                  className="text-amber-400 hover:text-amber-300 font-medium"
+                >
+                  team@lenzro.com
+                </a>
+              </p>
+            </div>
           </div>
         </div>
       </footer>
