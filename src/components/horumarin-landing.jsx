@@ -20,43 +20,199 @@ export default function HorumarinLanding() {
       <title>Horumarin - Aqoonta Soomaaliyeed Hal Meel</title>
       
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-amber-100/30 via-orange-100/20 to-stone-100/30" />
-        <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(180, 83, 9, 0.06) 1px, transparent 0)`,
-          backgroundSize: '40px 40px'
+      <section className="relative min-h-screen flex items-center px-4 sm:px-6 lg:px-8 overflow-hidden">
+        {/* Sophisticated layered background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-stone-50 to-orange-50" />
+        
+        {/* Ambient light effect - top left */}
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-amber-400/20 rounded-full blur-3xl" 
+             style={{ animation: 'pulse 8s ease-in-out infinite' }} />
+        
+        {/* Ambient light effect - bottom right */}
+        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-orange-400/15 rounded-full blur-3xl" 
+             style={{ animation: 'pulse 10s ease-in-out infinite 2s' }} />
+        
+        {/* Subtle grid overlay */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{
+          backgroundImage: `
+            linear-gradient(rgba(120, 53, 15, 0.3) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(120, 53, 15, 0.3) 1px, transparent 1px)
+          `,
+          backgroundSize: '64px 64px'
         }} />
         
-        <div className={`relative max-w-5xl mx-auto text-center transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-          <div className="inline-block px-4 py-2 bg-amber-100/70 backdrop-blur-sm rounded-full text-amber-900 font-medium text-sm mb-6 border border-amber-200/60">
-            Dhawaan Ayaan Furayno
-          </div>
-          
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-stone-900 mb-6 leading-tight">
-            Horumarin
-          </h1>
-          
-          <p className="text-xl sm:text-2xl lg:text-3xl text-stone-700 mb-8 leading-relaxed max-w-3xl mx-auto font-light">
-            Meesha Aqoonta iyo Khibradaha Soomaaliyeed ay ku midoobaan
-          </p>
-          
-          <p className="text-lg sm:text-xl text-stone-600 mb-12 max-w-2xl mx-auto">
-            Goob cusub oo aad ka hesho jawaabo la hubo, hagayaal aad aaminto, iyo aqoon ku taraynaysa mustaqbalka.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <button 
-              onClick={() => document.getElementById('notify-section').scrollIntoView({ behavior: 'smooth' })}
-              className="px-8 py-4 bg-amber-700 text-white rounded-xl font-semibold text-lg hover:bg-amber-800 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
-            >
-              Nala Soco
-            </button>
-            <button 
-              onClick={() => document.getElementById('vision-section').scrollIntoView({ behavior: 'smooth' })}
-              className="px-8 py-4 bg-white/80 backdrop-blur-sm text-stone-700 rounded-xl font-semibold text-lg hover:bg-white transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg border border-stone-200"
-            >
-              Baro Aragtida
-            </button>
+        {/* Main content container */}
+        <div className="relative max-w-7xl mx-auto w-full">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            
+            {/* Left column - Content */}
+            <div className={`space-y-6 sm:space-y-8 transition-all duration-1000 delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+              
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-amber-500/10 to-orange-500/10 backdrop-blur-sm rounded-full border border-amber-500/20">
+                <div className="w-2 h-2 bg-amber-600 rounded-full animate-pulse" />
+                <span className="text-xs sm:text-sm font-medium text-amber-900">Dhawaan Ayaan Furaynaa</span>
+              </div>
+              
+              {/* Main headline with visual hierarchy */}
+              <div className="space-y-3 sm:space-y-4">
+                <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight">
+                  <span className="block text-stone-900 leading-[0.9]">Horumarin</span>
+                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-700 via-orange-600 to-amber-800 leading-[0.9] mt-1 sm:mt-2">
+                    .
+                  </span>
+                </h1>
+                
+                {/* Subheadline with emphasis */}
+                <p className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-light text-stone-700 leading-tight max-w-xl">
+                  Meesha Aqoonta iyo Khubrada Soomaaliyeed ay ku{' '}
+                  <span className="font-semibold text-amber-800">midoobaan</span>
+                </p>
+              </div>
+              
+              {/* Supporting copy */}
+              <p className="text-base sm:text-lg lg:text-xl text-stone-600 leading-relaxed max-w-xl">
+                Goob cusub oo aad ka hesho jawaabo la hubo, hagayaal aad aaminto, iyo aqoon ku taraynaysa mustaqbalka.
+              </p>
+              
+              {/* CTA buttons with premium styling */}
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 sm:pt-4">
+                <button 
+                  onClick={() => document.getElementById('notify-section').scrollIntoView({ behavior: 'smooth' })}
+                  className="group relative px-6 py-3.5 sm:px-8 sm:py-4 bg-gradient-to-r from-amber-700 to-amber-800 text-white rounded-2xl font-semibold text-base sm:text-lg overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-amber-600 to-orange-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <span className="relative flex items-center justify-center gap-2">
+                    Nala Soco
+                    <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </span>
+                </button>
+                
+                <button 
+                  onClick={() => document.getElementById('vision-section').scrollIntoView({ behavior: 'smooth' })}
+                  className="group px-6 py-3.5 sm:px-8 sm:py-4 bg-white/60 backdrop-blur-md text-stone-800 rounded-2xl font-semibold text-base sm:text-lg border-2 border-stone-200 hover:border-amber-300 hover:bg-white transition-all duration-300 shadow-lg hover:shadow-xl"
+                >
+                  <span className="flex items-center justify-center gap-2">
+                    Baro Aragtida
+                    <svg className="w-5 h-5 group-hover:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </span>
+                </button>
+              </div>
+              
+              {/* Trust indicators */}
+              <div className={`flex flex-wrap items-center gap-4 sm:gap-6 pt-6 sm:pt-8 border-t border-stone-200/50 transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+                <div className="flex items-center gap-2">
+                  <div className="flex -space-x-2">
+                    {[1, 2, 3, 4].map((i) => (
+                      <div key={i} className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 border-2 border-white" />
+                    ))}
+                  </div>
+                  <span className="text-xs sm:text-sm text-stone-600 font-medium">Ku biir bulshada</span>
+                </div>
+                
+                <div className="flex items-center gap-2 text-stone-600">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                  <span className="text-xs sm:text-sm font-medium">Tayo sare</span>
+                </div>
+                
+                <div className="flex items-center gap-2 text-stone-600">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                  <span className="text-xs sm:text-sm font-medium">Aqoon la hubo</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Right column - Visual element */}
+            <div className={`relative hidden lg:block transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'}`}>
+              <div className="relative">
+                {/* Decorative card stack representing knowledge base */}
+                <div className="relative h-[600px]">
+                  
+                  {/* Card 1 - Background */}
+                  <div className="absolute top-12 right-12 w-80 h-96 bg-gradient-to-br from-stone-100 to-stone-200 rounded-3xl shadow-xl transform rotate-6 opacity-50" />
+                  
+                  {/* Card 2 - Middle */}
+                  <div className="absolute top-6 right-6 w-80 h-96 bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl shadow-2xl transform rotate-3 border border-amber-200/30">
+                    <div className="p-8 space-y-6">
+                      <div className="w-12 h-12 bg-amber-600 rounded-xl flex items-center justify-center">
+                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="h-3 bg-stone-300/50 rounded-full w-3/4" />
+                        <div className="h-3 bg-stone-300/30 rounded-full w-full" />
+                        <div className="h-3 bg-stone-300/30 rounded-full w-5/6" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Card 3 - Front (featured card) */}
+                  <div className="absolute top-0 right-0 w-80 h-96 bg-white rounded-3xl shadow-2xl border border-stone-200/50 backdrop-blur-sm hover:scale-105 transition-transform duration-500">
+                    <div className="p-8 space-y-6">
+                      {/* Header */}
+                      <div className="flex items-center justify-between">
+                        <div className="w-12 h-12 bg-gradient-to-br from-amber-600 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </div>
+                        <div className="px-3 py-1 bg-green-100 rounded-full">
+                          <span className="text-xs font-semibold text-green-700">La Hubo</span>
+                        </div>
+                      </div>
+                      
+                      {/* Question simulation */}
+                      <div className="space-y-3">
+                        <div className="h-4 bg-gradient-to-r from-stone-900 to-stone-700 rounded-full w-full" />
+                        <div className="h-4 bg-gradient-to-r from-stone-900 to-stone-700 rounded-full w-4/5" />
+                        <div className="h-4 bg-gradient-to-r from-stone-900 to-stone-700 rounded-full w-3/5" />
+                      </div>
+                      
+                      {/* Answer preview */}
+                      <div className="pt-4 space-y-2 border-t border-stone-200">
+                        <div className="h-2 bg-stone-300 rounded-full w-full" />
+                        <div className="h-2 bg-stone-300 rounded-full w-5/6" />
+                        <div className="h-2 bg-stone-300 rounded-full w-4/6" />
+                        <div className="h-2 bg-stone-300 rounded-full w-full" />
+                        <div className="h-2 bg-stone-300 rounded-full w-3/4" />
+                      </div>
+                      
+                      {/* Meta info */}
+                      <div className="flex items-center justify-between pt-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full" />
+                          <div className="space-y-1">
+                            <div className="h-2 bg-stone-300 rounded w-16" />
+                            <div className="h-1.5 bg-stone-200 rounded w-12" />
+                          </div>
+                        </div>
+                        
+                        <div className="flex gap-1">
+                          {[1, 2, 3, 4, 5].map((i) => (
+                            <svg key={i} className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                            </svg>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Floating accent elements */}
+                  <div className="absolute -top-6 left-12 w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl shadow-lg opacity-80 animate-bounce" style={{ animationDuration: '3s' }} />
+                  <div className="absolute bottom-12 -left-6 w-12 h-12 bg-gradient-to-br from-teal-400 to-teal-600 rounded-xl shadow-lg opacity-60" style={{ animation: 'pulse 4s ease-in-out infinite' }} />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
