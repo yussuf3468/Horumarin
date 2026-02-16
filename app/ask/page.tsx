@@ -31,7 +31,7 @@ export default function AskQuestionPage() {
   const [submitting, setSubmitting] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [postType, setPostType] = useState<
-    "question" | "discussion" | "media" | "resource"
+    "question" | "discussion" | "resource"
   >("question");
   const [formData, setFormData] = useState({
     title: "",
@@ -39,27 +39,14 @@ export default function AskQuestionPage() {
     category: "general",
   });
   const [linkUrl, setLinkUrl] = useState("");
-  const [tags, setTags] = useState<string[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
 
   const postTypeLabels = {
     question: "Su'aal",
     discussion: "Dood",
-    media: "Sawir",
     resource: "Link",
   } as const;
-
-  const tagOptions = [
-    "Beginner",
-    "Advanced",
-    "Roadmap",
-    "Best Practices",
-    "Advice",
-    "Jobs",
-    "Scholarship",
-    "Research",
-  ];
 
   const previewHtml = useMemo(() => {
     const escapeHtml = (value: string) =>
@@ -146,7 +133,7 @@ export default function AskQuestionPage() {
       title: formData.title,
       content: formData.content,
       category: formData.category,
-      postType: postType === "media" && imageUrl ? "media" : postType,
+      postType,
       imageVideoUrl: imageUrl,
       linkUrl: linkUrl || null,
     });
@@ -190,37 +177,39 @@ export default function AskQuestionPage() {
           animate={{ opacity: 1, y: 0 }}
         >
           <div className="mb-8">
-            <h1 className="text-4xl font-bold mb-2">Qor Qoraal</h1>
-            <p className="text-foreground-muted text-lg">
-              La wadaag aqoontaada, dood, ama link muhiim ah.
+            <h1 className="text-3xl sm:text-4xl font-bold mb-2">Qor Qoraal</h1>
+            <p className="text-foreground-muted text-base sm:text-lg">
+              Fudud: qor cinwaan, sharaxaad, dooro qaybta, kadib dir.
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-6">
-            <Card className="p-8">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Tabs */}
-                <div className="flex flex-wrap gap-2">
-                  {(
-                    ["question", "discussion", "media", "resource"] as const
-                  ).map((type) => (
-                    <Button
-                      key={type}
-                      type="button"
-                      size="sm"
-                      variant={postType === type ? "primary" : "outline"}
-                      onClick={() => setPostType(type)}
-                    >
-                      {postTypeLabels[type]}
-                    </Button>
-                  ))}
+            <Card className="p-5 sm:p-8">
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-3">
+                    Nooca Qoraalka
+                  </label>
+                  <select
+                    value={postType}
+                    onChange={(e) =>
+                      setPostType(
+                        e.target.value as "question" | "discussion" | "resource",
+                      )
+                    }
+                    className="w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  >
+                    <option value="question">{postTypeLabels.question}</option>
+                    <option value="discussion">{postTypeLabels.discussion}</option>
+                    <option value="resource">{postTypeLabels.resource}</option>
+                  </select>
                 </div>
 
                 {/* Title */}
                 <div>
                   <Input
                     label="Cinwaanka Qoraalka"
-                    placeholder="U samee cinwaan gaaban oo cad..."
+                    placeholder="Tusaale: Sidee loo barto React bilow ahaan?"
                     value={formData.title}
                     onChange={(e) =>
                       setFormData({ ...formData, title: e.target.value })
@@ -232,112 +221,67 @@ export default function AskQuestionPage() {
                   </p>
                 </div>
 
-                {postType === "resource" && (
-                  <div>
-                    <Input
-                      label="Link"
-                      placeholder="https://..."
-                      value={linkUrl}
-                      onChange={(e) => setLinkUrl(e.target.value)}
-                      required
-                    />
-                    <p className="mt-1 text-sm text-foreground-subtle">
-                      Ku dar link-ka muhiimka ah ee aad wadaagayso
-                    </p>
-                  </div>
-                )}
+                <div>
+                  <Input
+                    label="Link (Ikhtiyaari)"
+                    placeholder="https://..."
+                    value={linkUrl}
+                    onChange={(e) => setLinkUrl(e.target.value)}
+                    required={postType === "resource"}
+                  />
+                  <p className="mt-1 text-sm text-foreground-subtle">
+                    Hadii aad doorato Resource, link-gu waa qasab. Noocyada kale
+                    waa ikhtiyaari.
+                  </p>
+                </div>
 
-                {postType === "media" && (
-                  <div>
-                    <ImageUpload
-                      label="Sawir"
-                      value={imageFile}
-                      previewUrl={imagePreviewUrl}
-                      onChange={(file, previewUrl) => {
-                        setImageFile(file);
-                        setImagePreviewUrl(previewUrl);
-                      }}
-                      isUploading={uploadingImage}
-                      disabled={submitting || uploadingImage}
-                    />
-                    <p className="mt-1 text-sm text-foreground-subtle">
-                      Sawirka waxa la cadaadiyaa ka hor inta aan la gelin.
-                    </p>
-                  </div>
-                )}
+                <div>
+                  <ImageUpload
+                    label="Sawir (Ikhtiyaari)"
+                    value={imageFile}
+                    previewUrl={imagePreviewUrl}
+                    onChange={(file, previewUrl) => {
+                      setImageFile(file);
+                      setImagePreviewUrl(previewUrl);
+                    }}
+                    isUploading={uploadingImage}
+                    disabled={submitting || uploadingImage}
+                  />
+                  <p className="mt-1 text-sm text-foreground-subtle">
+                    Sawir ma aha qasab. Waad diri kartaa adigoon sawir ku darin.
+                  </p>
+                </div>
 
                 {/* Category */}
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-3">
                     Qaybta
                   </label>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <select
+                    value={formData.category}
+                    onChange={(e) =>
+                      setFormData({ ...formData, category: e.target.value })
+                    }
+                    className="w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  >
                     {categories.map((category) => (
-                      <motion.button
-                        key={category.id}
-                        type="button"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() =>
-                          setFormData({ ...formData, category: category.id })
-                        }
-                        className={`p-4 rounded-lg border-2 transition-all ${
-                          formData.category === category.id
-                            ? `border-primary-500 bg-primary-900/20`
-                            : "border-border hover:border-border-strong"
-                        }`}
-                      >
-                        <div className="text-3xl mb-2">{category.icon}</div>
-                        <div className="font-semibold text-sm">
-                          {category.name}
-                        </div>
-                      </motion.button>
+                      <option key={category.id} value={category.id}>
+                        {category.icon} {category.name}
+                      </option>
                     ))}
-                  </div>
-                </div>
-
-                {/* Tags */}
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-3">
-                    Tags
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {tagOptions.map((tag) => {
-                      const isActive = tags.includes(tag);
-                      return (
-                        <button
-                          key={tag}
-                          type="button"
-                          onClick={() =>
-                            setTags((prev) =>
-                              isActive
-                                ? prev.filter((t) => t !== tag)
-                                : [...prev, tag],
-                            )
-                          }
-                          className={`px-3 py-1 rounded-full text-xs border transition-colors ${
-                            isActive
-                              ? "border-primary-500 bg-primary-900/20 text-foreground"
-                              : "border-border bg-surface-muted text-foreground-muted hover:text-foreground"
-                          }`}
-                        >
-                          {tag}
-                        </button>
-                      );
-                    })}
-                  </div>
+                  </select>
                 </div>
 
                 {/* Content */}
                 <div>
                   <Textarea
                     label="Qoraalka"
-                    placeholder="Qor faahfaahinta qoraalkaaga... (Markdown waa la taageeraa)"
+                    placeholder="Sharax su'aashaada ama fikraddaada si fudud oo cad..."
                     value={formData.content}
                     onChange={(e) =>
                       setFormData({ ...formData, content: e.target.value })
                     }
-                    rows={10}
+                    rows={8}
                     required
                   />
                   <p className="mt-1 text-sm text-foreground-subtle">
@@ -352,20 +296,20 @@ export default function AskQuestionPage() {
                     💡 Tilmaamo
                   </h4>
                   <ul className="text-sm text-foreground-muted space-y-1">
-                    <li>• Dooro nooca qoraalka saxda ah</li>
-                    <li>• Ka dhig cinwaanka mid kooban oo soo jiidasho leh</li>
-                    <li>• Ku dar tags si si fudud loo helo</li>
-                    <li>• Ha iloobin inaad sharaxaad fiican bixiso</li>
+                    <li>• Hal mawduuc ku koob qoraalkaaga</li>
+                    <li>• Cinwaan kooban + sharaxaad cad</li>
+                    <li>• Sawirku waa ikhtiyaari (optional)</li>
+                    <li>• Dhammaan fields waa muuqdaan, ma jiraan tabs qarsoon</li>
                   </ul>
                 </div>
 
                 {/* Submit Buttons */}
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <Button
                     type="submit"
                     size="lg"
                     isLoading={submitting || uploadingImage}
-                    className="flex-1"
+                    className="flex-1 w-full"
                   >
                     {postType === "question"
                       ? "Soo Dir Su'aasha"
@@ -377,6 +321,7 @@ export default function AskQuestionPage() {
                     size="lg"
                     onClick={() => router.back()}
                     disabled={submitting || uploadingImage}
+                    className="w-full sm:w-auto"
                   >
                     Ka Noqo
                   </Button>
@@ -422,7 +367,7 @@ export default function AskQuestionPage() {
                   </p>
                 )}
 
-                {postType === "resource" && linkUrl && (
+                {linkUrl && (
                   <div className="mt-4 rounded-xl border border-border bg-surface-muted p-3">
                     <div className="text-xs text-foreground-subtle mb-1">
                       Link
@@ -438,7 +383,7 @@ export default function AskQuestionPage() {
                   </div>
                 )}
 
-                {imagePreviewUrl && postType === "media" && (
+                {imagePreviewUrl && (
                   <div className="mt-4">
                     <LightboxImage
                       src={imagePreviewUrl}
@@ -446,19 +391,6 @@ export default function AskQuestionPage() {
                       className="border border-border"
                       aspectRatio="16 / 9"
                     />
-                  </div>
-                )}
-
-                {tags.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    {tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2 py-1 rounded-full text-xs border border-border bg-surface-muted text-foreground-muted"
-                      >
-                        {tag}
-                      </span>
-                    ))}
                   </div>
                 )}
 
