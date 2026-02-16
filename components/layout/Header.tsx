@@ -22,9 +22,11 @@ import { useState } from "react";
 export default function Header() {
   const { user } = useAuth();
   const router = useRouter();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
     await logout();
+    setMobileMenuOpen(false);
     router.push("/");
   };
 
@@ -115,8 +117,14 @@ export default function Header() {
             )}
           </nav>
 
-          {/* Mobile Menu Button (Placeholder for future) */}
-          <button className="md:hidden p-2 rounded-lg hover:bg-surface-muted transition-colors">
+          {/* Mobile Menu Button */}
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen((prev) => !prev)}
+            className="md:hidden p-2 rounded-lg hover:bg-surface-muted transition-colors"
+            aria-label="Toggle mobile menu"
+            aria-expanded={mobileMenuOpen}
+          >
             <svg
               className="w-6 h-6 text-foreground"
               fill="none"
@@ -127,11 +135,68 @@ export default function Header() {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
+                d={
+                  mobileMenuOpen
+                    ? "M6 18L18 6M6 6l12 12"
+                    : "M4 6h16M4 12h16M4 18h16"
+                }
               />
             </svg>
           </button>
         </div>
+
+        {/* Mobile Navigation */}
+        {mobileMenuOpen && (
+          <div className="md:hidden pb-4 border-t border-border pt-3">
+            <nav className="flex flex-col gap-2">
+              {user ? (
+                <>
+                  <Link href="/questions" onClick={() => setMobileMenuOpen(false)}>
+                    <Button variant="ghost" size="sm" className="w-full justify-start">
+                      Su'aalaha
+                    </Button>
+                  </Link>
+                  <Link href="/ask" onClick={() => setMobileMenuOpen(false)}>
+                    <Button size="sm" className="w-full justify-start">
+                      Weydii
+                    </Button>
+                  </Link>
+                  <Link href="/profile" onClick={() => setMobileMenuOpen(false)}>
+                    <Button variant="ghost" size="sm" className="w-full justify-start">
+                      Profile
+                    </Button>
+                  </Link>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={handleSignOut}
+                    className="w-full justify-start"
+                  >
+                    Kabax
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link href="/questions" onClick={() => setMobileMenuOpen(false)}>
+                    <Button variant="ghost" size="sm" className="w-full justify-start">
+                      Browse
+                    </Button>
+                  </Link>
+                  <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)}>
+                    <Button variant="outline" size="sm" className="w-full justify-start">
+                      Log In
+                    </Button>
+                  </Link>
+                  <Link href="/auth/signup" onClick={() => setMobileMenuOpen(false)}>
+                    <Button size="sm" className="w-full justify-start">
+                      Sign Up
+                    </Button>
+                  </Link>
+                </>
+              )}
+            </nav>
+          </div>
+        )}
       </div>
     </header>
   );

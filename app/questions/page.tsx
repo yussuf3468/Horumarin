@@ -194,111 +194,135 @@ export default function QuestionsPage() {
   };
 
   return (
-    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 bg-background">
+    <div className="min-h-screen py-4 sm:py-8 px-3 sm:px-6 lg:px-8 bg-background">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-4 sm:mb-8"
         >
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div>
-              <h1 className="text-4xl font-bold mb-2">Su'aalaha</h1>
-              <p className="text-foreground-muted">
+              <h1 className="text-2xl sm:text-4xl font-bold mb-1 sm:mb-2">Su'aalaha</h1>
+              <p className="text-sm sm:text-base text-foreground-muted">
                 Helka jawaabo su'aalahaada
               </p>
             </div>
             {user && (
-              <Link href="/ask">
+              <Link href="/ask" className="hidden sm:block">
                 <Button size="lg">Weydii Su'aal</Button>
               </Link>
             )}
           </div>
 
-          {/* Category Filter */}
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            <Button
-              variant={selectedCategory === "all" ? "primary" : "outline"}
-              size="sm"
-              onClick={() => setSelectedCategory("all")}
-            >
-              Dhammaan
-            </Button>
-            {categories.map((category) => (
+          <div className="sticky top-14 z-30 -mx-3 px-3 sm:mx-0 sm:px-0 py-2 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-y border-border/60 sm:border-y-0">
+            {/* Category Filter */}
+            <div className="flex gap-2 overflow-x-auto pb-1 snap-x snap-mandatory no-scrollbar">
               <Button
-                key={category.id}
-                variant={
-                  selectedCategory === category.id ? "primary" : "outline"
-                }
+                variant={selectedCategory === "all" ? "primary" : "outline"}
                 size="sm"
-                onClick={() => setSelectedCategory(category.id)}
+                onClick={() => setSelectedCategory("all")}
+                className="whitespace-nowrap rounded-full snap-start"
               >
-                {category.icon} {category.name}
+                Dhammaan
               </Button>
-            ))}
+              {categories.map((category) => (
+                <Button
+                  key={category.id}
+                  variant={
+                    selectedCategory === category.id ? "primary" : "outline"
+                  }
+                  size="sm"
+                  onClick={() => setSelectedCategory(category.id)}
+                  className="whitespace-nowrap rounded-full snap-start"
+                >
+                  {category.icon} {category.name}
+                </Button>
+              ))}
+            </div>
+
+            {/* Sorting */}
+            <div className="flex flex-wrap items-center gap-2 mt-3">
+              <Button
+                size="sm"
+                variant={sortBy === "hot" ? "primary" : "outline"}
+                onClick={() => setSortBy("hot")}
+                className="rounded-full"
+              >
+                Hot
+              </Button>
+              <Button
+                size="sm"
+                variant={sortBy === "new" ? "primary" : "outline"}
+                onClick={() => setSortBy("new")}
+                className="rounded-full"
+              >
+                New
+              </Button>
+              <Button
+                size="sm"
+                variant={sortBy === "top" ? "primary" : "outline"}
+                onClick={() => setSortBy("top")}
+                className="rounded-full"
+              >
+                Top
+              </Button>
+
+              {sortBy === "top" && (
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    variant={topRange === "24h" ? "primary" : "outline"}
+                    onClick={() => setTopRange("24h")}
+                    className="rounded-full"
+                  >
+                    24h
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={topRange === "7d" ? "primary" : "outline"}
+                    onClick={() => setTopRange("7d")}
+                    className="rounded-full"
+                  >
+                    7d
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={topRange === "all" ? "primary" : "outline"}
+                    onClick={() => setTopRange("all")}
+                    className="rounded-full"
+                  >
+                    All
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Sorting */}
-          <div className="flex flex-wrap items-center gap-2 mt-4">
-            <Button
-              size="sm"
-              variant={sortBy === "hot" ? "primary" : "outline"}
-              onClick={() => setSortBy("hot")}
-            >
-              Hot
-            </Button>
-            <Button
-              size="sm"
-              variant={sortBy === "new" ? "primary" : "outline"}
-              onClick={() => setSortBy("new")}
-            >
-              New
-            </Button>
-            <Button
-              size="sm"
-              variant={sortBy === "top" ? "primary" : "outline"}
-              onClick={() => setSortBy("top")}
-            >
-              Top
-            </Button>
-
-            {sortBy === "top" && (
-              <div className="flex items-center gap-2">
-                <Button
-                  size="sm"
-                  variant={topRange === "24h" ? "primary" : "outline"}
-                  onClick={() => setTopRange("24h")}
+          <div className="lg:hidden mt-4">
+            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+              {trendingTopics.map((topic) => (
+                <Link
+                  key={topic.id}
+                  href={`/topics/${topic.id}`}
+                  className="shrink-0 px-3 py-2 rounded-full border border-border bg-surface-muted text-xs text-foreground-muted"
                 >
-                  24h
-                </Button>
-                <Button
-                  size="sm"
-                  variant={topRange === "7d" ? "primary" : "outline"}
-                  onClick={() => setTopRange("7d")}
-                >
-                  7d
-                </Button>
-                <Button
-                  size="sm"
-                  variant={topRange === "all" ? "primary" : "outline"}
-                  onClick={() => setTopRange("all")}
-                >
-                  All
-                </Button>
-              </div>
-            )}
+                  {topic.icon} {topic.name} ({topic.count ?? 0})
+                </Link>
+              ))}
+            </div>
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-4 sm:gap-6">
           {/* Main Feed */}
           <div>
             {loading ? (
               <LoadingSkeleton />
             ) : (
               <AnimatePresence>
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {sortedQuestions.length > 0 ? (
                     sortedQuestions.map((question, index) => (
                       <motion.div
@@ -308,14 +332,11 @@ export default function QuestionsPage() {
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ delay: index * 0.05 }}
                       >
-                        <Card
-                          hover
-                          className="overflow-hidden transition-all hover:-translate-y-1 hover:bg-surface"
-                        >
-                          <div className="p-6">
+                        <Card hover className="overflow-hidden transition-all hover:-translate-y-0.5 hover:bg-surface">
+                          <div className="p-4 sm:p-6">
                             {/* Post Content */}
                             <div className="flex-1">
-                              <div className="flex flex-wrap items-center gap-2 text-xs text-foreground-subtle mb-3">
+                              <div className="flex flex-wrap items-center gap-2 text-[11px] sm:text-xs text-foreground-subtle mb-2.5 sm:mb-3">
                                 <span className="px-2 py-1 rounded-full bg-surface-muted border border-border text-foreground-muted">
                                   {postTypeLabels[
                                     question.post_type || "question"
@@ -334,12 +355,12 @@ export default function QuestionsPage() {
                               </div>
 
                               <Link href={`/questions/${question.id}`}>
-                                <h3 className="font-bold text-xl mb-3 hover:text-primary transition-colors">
+                                <h3 className="font-bold text-lg sm:text-xl mb-2.5 sm:mb-3 hover:text-primary transition-colors leading-tight">
                                   {question.title}
                                 </h3>
                               </Link>
 
-                              <p className="text-foreground-muted mb-4 line-clamp-3">
+                              <p className="text-sm sm:text-base text-foreground-muted mb-3 sm:mb-4 line-clamp-2 sm:line-clamp-3">
                                 {truncateText(question.content, 240)}
                               </p>
 
@@ -354,9 +375,9 @@ export default function QuestionsPage() {
                                 </div>
                               )}
 
-                              <div className="flex flex-wrap items-center gap-4 text-sm text-foreground-subtle mt-4 pt-4 border-t border-border">
+                              <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-foreground-subtle mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-border">
                                 <span
-                                  className={`px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${
+                                  className={`px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-medium bg-gradient-to-r ${
                                     categories.find(
                                       (c) => c.id === question.category,
                                     )?.gradient ||
@@ -371,10 +392,10 @@ export default function QuestionsPage() {
                                   whileHover={{ scale: 1.05 }}
                                   whileTap={{ scale: 0.95 }}
                                   onClick={() => handleVote(question.id, 1)}
-                                  className={`flex items-center gap-1.5 transition-all ${
+                                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border transition-all ${
                                     voteMap[question.id] === 1
-                                      ? "text-danger"
-                                      : "text-foreground-subtle hover:text-danger"
+                                      ? "text-danger border-danger/30 bg-danger/10"
+                                      : "text-foreground-subtle border-border hover:text-danger hover:border-danger/30"
                                   }`}
                                   aria-pressed={voteMap[question.id] === 1}
                                   title={user ? "Like" : "Login to like"}
@@ -415,7 +436,7 @@ export default function QuestionsPage() {
                                 </motion.button>
                                 <Link
                                   href={`/questions/${question.id}`}
-                                  className="flex items-center gap-1.5 text-foreground-subtle hover:text-primary transition-colors"
+                                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border border-border text-foreground-subtle hover:text-primary hover:border-primary/30 transition-colors"
                                 >
                                   <svg
                                     className="w-5 h-5"
@@ -436,7 +457,7 @@ export default function QuestionsPage() {
                                       0}
                                   </span>
                                 </Link>
-                                <span className="flex items-center gap-1.5">
+                                <span className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border border-border">
                                   <svg
                                     className="w-5 h-5"
                                     fill="none"
@@ -458,7 +479,7 @@ export default function QuestionsPage() {
                                   </svg>
                                   <span>{question.view_count}</span>
                                 </span>
-                                <div className="ml-auto flex items-center gap-3">
+                                <div className="ml-auto hidden sm:flex items-center gap-3">
                                   <button
                                     type="button"
                                     className="text-xs text-foreground-subtle hover:text-foreground transition-colors"
@@ -479,7 +500,7 @@ export default function QuestionsPage() {
                       </motion.div>
                     ))
                   ) : (
-                    <Card className="p-12 text-center">
+                    <Card className="p-8 sm:p-12 text-center">
                       <div className="text-6xl mb-4">🤔</div>
                       <h3 className="text-xl font-bold mb-2">
                         Suaalo lama helin
@@ -502,7 +523,7 @@ export default function QuestionsPage() {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="hidden lg:block space-y-6">
             <Card className="p-5">
               <h3 className="text-sm font-semibold uppercase tracking-widest text-foreground-muted mb-4">
                 Mawduucyada Kulul
@@ -579,6 +600,18 @@ export default function QuestionsPage() {
             </Card>
           </div>
         </div>
+
+        {user && (
+          <Link
+            href="/ask"
+            className="sm:hidden fixed bottom-5 right-4 z-40"
+            aria-label="Weydii Su'aal"
+          >
+            <Button size="lg" className="rounded-full shadow-lg px-5">
+              + Weydii
+            </Button>
+          </Link>
+        )}
       </div>
     </div>
   );

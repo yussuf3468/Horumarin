@@ -87,130 +87,115 @@ export default function HomePage() {
   return (
     <div className="relative min-h-screen">
       {/* ================================================ */}
-      {/* HERO - PROFESSIONAL & CONTENT-FOCUSED */}
+      {/* HERO - FEATURED POSTS LAYOUT */}
       {/* ================================================ */}
       <section className="dark relative bg-surface border-b border-border">
-        <div className="max-w-5xl mx-auto px-4 py-16 text-center">
-          {/* Main heading */}
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 text-foreground">
-            Bulshada Aqoonta
-          </h1>
-
-          {/* Subheading */}
-          <p className="text-xl text-foreground-muted max-w-2xl mx-auto mb-10">
-            Ka qayb qaado bulshada Soomaaliyeed ee ugu weyn ee aqoonta wadaagta,
-            su'aalo weydiiso, oo jawaabo ka hel dadka khibradda leh.
-          </p>
-
-          {/* CTA */}
-          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
-            <Link href="/auth/signup">
-              <Button size="lg" className="min-w-[180px]">
-                Bilow Hadda
-              </Button>
-            </Link>
-            <Link href="/questions">
-              <Button size="lg" variant="outline" className="min-w-[180px]">
-                Daawasho Su'aalaha
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ================================================ */}
-      {/* LATEST POSTS - REDDIT-STYLE PREVIEW */}
-      {/* ================================================ */}
-      <section className="py-14 px-4 bg-background">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-6">
+        <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-                Qoraalada Ugu Dambeeyay
-              </h2>
-              <p className="text-foreground-muted">
-                Ku bilow adigoo akhrinaya qoraalada cusub
+              <p className="inline-flex items-center px-3 py-1 rounded-full text-xs bg-surface-muted border border-border text-foreground-muted mb-3">
+                Qoraalada ugu kulul maanta
               </p>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground leading-tight">
+                Akhri, falanqee, oo ka qayb qaado doodaha ugu muhiimsan
+              </h1>
             </div>
-            <Link href="/questions">
-              <Button variant="ghost">Eeg Dhammaan →</Button>
+            <Link href="/questions" className="sm:self-start">
+              <Button variant="outline" size="sm" className="rounded-full">
+                Eeg feed-ka oo dhan
+              </Button>
             </Link>
           </div>
 
           {loadingPosts ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {Array.from({ length: 4 }).map((_, index) => (
-                <Skeleton key={index} className="h-40 w-full" />
-              ))}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4">
+              <Skeleton className="h-56 sm:h-72 md:h-[420px] md:col-span-7 rounded-xl" />
+              <div className="md:col-span-5 grid grid-cols-1 gap-3 sm:gap-4">
+                <Skeleton className="h-40 sm:h-48 rounded-xl" />
+                <Skeleton className="h-40 sm:h-48 rounded-xl" />
+              </div>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {latestPosts.map((post) => {
-                const category = categories.find((c) => c.id === post.category);
-
-                return (
-                  <Card key={post.id} hover className="p-4">
-                    <div className="flex gap-4">
-                      {post.image_video_url ? (
-                        <div className="w-28 h-20 rounded-lg overflow-hidden border border-border shrink-0">
-                          <img
-                            src={post.image_video_url}
-                            alt={post.title}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
+          ) : latestPosts.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4">
+              {latestPosts[0] && (
+                <Link href={`/questions/${latestPosts[0].id}`} className="md:col-span-7">
+                  <Card hover className="h-full overflow-hidden group">
+                    <div className="relative h-56 sm:h-72 md:h-[420px]">
+                      {latestPosts[0].image_video_url ? (
+                        <img
+                          src={latestPosts[0].image_video_url}
+                          alt={latestPosts[0].title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
                       ) : (
-                        <div className="w-28 h-20 rounded-lg border border-border bg-surface-muted shrink-0" />
+                        <div className="w-full h-full bg-gradient-to-br from-primary-700/30 to-accent-700/30" />
                       )}
-                      <div className="flex-1 min-w-0">
-                        <Link href={`/questions/${post.id}`}>
-                          <h3 className="font-semibold text-foreground mb-2 line-clamp-2 hover:text-primary transition-colors">
-                            {post.title}
-                          </h3>
-                        </Link>
-                        <p className="text-sm text-foreground-muted line-clamp-2 mb-3">
-                          {truncateText(post.content, 140)}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
+                        <span className="inline-flex px-2.5 py-1 rounded-full text-[11px] font-medium bg-primary-600/90 text-primary-fg mb-2">
+                          {categories.find((c) => c.id === latestPosts[0].category)?.name ||
+                            latestPosts[0].category}
+                        </span>
+                        <h2 className="text-lg sm:text-2xl font-bold text-white line-clamp-2 mb-2">
+                          {latestPosts[0].title}
+                        </h2>
+                        <p className="text-xs sm:text-sm text-white/85 line-clamp-2 sm:line-clamp-3">
+                          {truncateText(latestPosts[0].content, 180)}
                         </p>
-                        <div className="flex items-center flex-wrap gap-2 text-xs text-foreground-subtle">
-                          {category && (
-                            <Badge size="sm" variant="primary">
-                              {category.icon} {category.name}
-                            </Badge>
-                          )}
-                          <span>•</span>
-                          <span>{post.author?.fullName || "Xubin"}</span>
-                          <span>•</span>
-                          <span>{formatDate(post.created_at)}</span>
-                        </div>
                       </div>
                     </div>
                   </Card>
-                );
-              })}
+                </Link>
+              )}
+
+              <div className="md:col-span-5 grid grid-cols-1 gap-3 sm:gap-4">
+                {latestPosts.slice(1, 4).map((post) => (
+                  <Link key={post.id} href={`/questions/${post.id}`}>
+                    <Card hover className="p-3.5 sm:p-4 h-full">
+                      <div className="flex gap-3">
+                        {post.image_video_url ? (
+                          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg overflow-hidden border border-border shrink-0">
+                            <img
+                              src={post.image_video_url}
+                              alt={post.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg border border-border bg-surface-muted shrink-0" />
+                        )}
+                        <div className="min-w-0 flex-1">
+                          <div className="text-[11px] text-foreground-subtle mb-1">
+                            {formatDate(post.created_at)}
+                          </div>
+                          <h3 className="font-semibold text-sm sm:text-base text-foreground line-clamp-2 mb-1.5">
+                            {post.title}
+                          </h3>
+                          <p className="text-xs sm:text-sm text-foreground-muted line-clamp-2">
+                            {truncateText(post.content, 90)}
+                          </p>
+                        </div>
+                      </div>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
             </div>
+          ) : (
+            <Card className="p-10 text-center">
+              <p className="text-foreground-muted mb-4">Weli qoraalo lama helin.</p>
+              <Link href="/ask">
+                <Button>Weydii su'aashii ugu horreysay</Button>
+              </Link>
+            </Card>
           )}
         </div>
       </section>
 
-      {/* Wave divider - smooth transition */}
-      <div className="relative h-24 bg-gradient-to-b from-slate-800 dark:from-slate-900 to-background">
-        <svg
-          className="absolute bottom-0 w-full h-24"
-          preserveAspectRatio="none"
-          viewBox="0 0 1440 48"
-          fill="none"
-        >
-          <path
-            d="M0 48H1440V24C1440 24 1080 0 720 0C360 0 0 24 0 24V48Z"
-            className="fill-background"
-          />
-        </svg>
-      </div>
-
       {/* ================================================ */}
       {/* GLASS-MORPHISM CATEGORY CARDS */}
       {/* ================================================ */}
-      <section className="py-20 px-4 bg-surface relative">
+      <section className="py-12 sm:py-16 md:py-20 px-4 bg-surface relative">
         {/* Subtle background pattern */}
         <div
           className="absolute inset-0 opacity-5"
@@ -226,12 +211,12 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-10 sm:mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-foreground">
               Qaybaha Aqooneed
             </h2>
-            <p className="text-lg text-foreground-muted max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base md:text-lg text-foreground-muted max-w-2xl mx-auto">
               Dooro qaybta aad rabto oo la xiriir dadka khibradda leh
             </p>
           </motion.div>
@@ -246,7 +231,7 @@ export default function HomePage() {
                 transition={{ delay: index * 0.05, duration: 0.5 }}
               >
                 <Link href={`/topics/${category.id}`}>
-                  <div className="group relative overflow-hidden p-8 h-full cursor-pointer bg-surface border border-border hover:border-primary-400 transition-all duration-300 rounded-xl shadow-sm hover:shadow-md">
+                  <div className="group relative overflow-hidden p-5 sm:p-8 h-full cursor-pointer bg-surface border border-border hover:border-primary-400 transition-all duration-300 rounded-xl shadow-sm hover:shadow-md">
                     {/* Subtle gradient background on hover */}
                     <div
                       className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"
@@ -257,12 +242,12 @@ export default function HomePage() {
 
                     <div className="relative z-10">
                       {/* Icon */}
-                      <div className="text-5xl mb-6 transform group-hover:scale-105 transition-transform duration-300">
+                      <div className="text-4xl sm:text-5xl mb-4 sm:mb-6 transform group-hover:scale-105 transition-transform duration-300">
                         {category.icon}
                       </div>
 
                       {/* Title */}
-                      <h3 className="text-2xl font-bold mb-3 text-foreground group-hover:text-primary-700 transition-colors">
+                      <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 text-foreground group-hover:text-primary-700 transition-colors">
                         {category.name}
                       </h3>
 
@@ -300,13 +285,13 @@ export default function HomePage() {
       {/* Gradient transition section */}
       <div className="h-32 bg-gradient-to-b from-surface via-surface-muted to-slate-900" />
       {/* ================================================ */}
-      <section className="py-16 px-4">
+      <section className="py-12 sm:py-16 px-4">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-foreground">
               Sida Ay U Shaqeyso
             </h2>
-            <p className="text-lg text-foreground-muted max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base md:text-lg text-foreground-muted max-w-2xl mx-auto">
               Saddex tallaabo oo fudud oo ku gaadsiinaya jawaabaha aad u baahan
               tahay
             </p>
@@ -340,11 +325,11 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card hover className="p-6 h-full">
+                <Card hover className="p-5 sm:p-6 h-full">
                   <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-100 dark:bg-primary-900/20 rounded-lg text-2xl mb-4">
                     {feature.icon}
                   </div>
-                  <h3 className="text-xl font-semibold mb-3 text-foreground">
+                  <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-foreground">
                     {feature.title}
                   </h3>
                   <p className="text-foreground-muted leading-relaxed">
@@ -360,14 +345,14 @@ export default function HomePage() {
       {/* ================================================ */}
       {/* TRENDING QUESTIONS - COMMUNITY ENERGY */}
       {/* ================================================ */}
-      <section className="py-16 px-4 bg-surface-muted">
+      <section className="py-12 sm:py-16 px-4 bg-surface-muted">
         <div className="max-w-6xl mx-auto">
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6 sm:mb-8">
             <div>
-              <h2 className="text-display font-bold mb-2 text-foreground">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 text-foreground">
                 Su'aalaha Ugu Firfircoon
               </h2>
-              <p className="text-foreground-muted">
+              <p className="text-sm sm:text-base text-foreground-muted">
                 Waxa maanta dadka badan ka hadlayaan
               </p>
             </div>
@@ -476,13 +461,13 @@ export default function HomePage() {
       {/* ================================================ */}
       {/* LIVE COMMUNITY ACTIVITY FEED */}
       {/* ================================================ */}
-      <section className="py-16 px-4 bg-surface">
+      <section className="py-12 sm:py-16 px-4 bg-surface">
         <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
             {/* Left side - Live Activity */}
             <div>
               <div className="mb-8">
-                <h2 className="text-3xl font-bold mb-2 text-foreground">
+                <h2 className="text-2xl sm:text-3xl font-bold mb-2 text-foreground">
                   Firfircoonida Bulshada
                 </h2>
                 <p className="text-foreground-muted">
@@ -495,7 +480,7 @@ export default function HomePage() {
             {/* Right side - Active Users Preview */}
             <div>
               <div className="mb-8">
-                <h3 className="text-2xl font-bold mb-2 text-foreground">
+                <h3 className="text-xl sm:text-2xl font-bold mb-2 text-foreground">
                   Xubnaha Firfircoon Maanta
                 </h3>
                 <p className="text-foreground-muted text-sm">
@@ -581,18 +566,18 @@ export default function HomePage() {
       {/* ================================================ */}
       {/* KNOWLEDGE AREAS - CATEGORIES GRID */}
       {/* ================================================ */}
-      <section className="py-16 px-4 bg-surface-muted">
+      <section className="py-12 sm:py-16 px-4 bg-surface-muted">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="text-display font-bold mb-3 text-foreground">
+          <div className="text-center mb-8 sm:mb-10">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 text-foreground">
               Qaybaha Aqoon
             </h2>
-            <p className="text-lg text-foreground-muted">
+            <p className="text-sm sm:text-base md:text-lg text-foreground-muted">
               Dooro qaybta ku habboon oo hel dadka khibradda leh
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
             {categories.map((category, index) => (
               <motion.div
                 key={category.id}
@@ -604,9 +589,9 @@ export default function HomePage() {
                 <Link href={`/topics/${category.id}`}>
                   <Card
                     hover
-                    className={`p-5 bg-gradient-to-br ${category.gradient} text-primary-fg cursor-pointer group`}
+                    className={`p-4 sm:p-5 bg-gradient-to-br ${category.gradient} text-primary-fg cursor-pointer group`}
                   >
-                    <div className="text-3xl mb-3">{category.icon}</div>
+                    <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">{category.icon}</div>
                     <h3 className="font-bold text-base mb-1 group-hover:scale-105 transition-transform">
                       {category.name}
                     </h3>
@@ -622,18 +607,18 @@ export default function HomePage() {
       {/* ================================================ */}
       {/* ACTIVE COMMUNITY MEMBERS */}
       {/* ================================================ */}
-      <section className="py-16 px-4 bg-surface">
+      <section className="py-12 sm:py-16 px-4 bg-surface">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="text-display font-bold mb-3 text-foreground">
+          <div className="text-center mb-8 sm:mb-10">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 text-foreground">
               Xubnaha Firfircoon
             </h2>
-            <p className="text-lg text-foreground-muted">
+            <p className="text-sm sm:text-base md:text-lg text-foreground-muted">
               Dadka ka caawiya horumarinta bulshada
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             {[
               {
                 name: "Ahmed M.",
@@ -699,22 +684,22 @@ export default function HomePage() {
       {/* ================================================ */}
       {/* EMAIL NEWSLETTER - GRADIENT BANNER */}
       {/* ================================================ */}
-      <section className="py-20 px-4">
+      <section className="py-12 sm:py-20 px-4">
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="relative overflow-hidden rounded-2xl bg-gradient-hero p-10 md:p-12 text-primary-foreground shadow-elevated"
+            className="relative overflow-hidden rounded-2xl bg-gradient-hero p-6 sm:p-10 md:p-12 text-primary-foreground shadow-elevated"
           >
             {/* Decorative orb */}
             <div className="absolute -right-20 -top-20 w-64 h-64 bg-surface/10 rounded-full blur-3xl" />
 
             <div className="relative z-10 text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
                 Hel Ogeysiisyada Cusub
               </h2>
-              <p className="text-lg mb-8 opacity-95 max-w-2xl mx-auto">
+              <p className="text-sm sm:text-base md:text-lg mb-6 sm:mb-8 opacity-95 max-w-2xl mx-auto">
                 Su'aalaha cusub, jawaabaha muhiimka ah, iyo wararka bulshada.
                 Wixii cusub oo dhan emailkaaga ayey ku imaadaan.
               </p>
@@ -748,7 +733,7 @@ export default function HomePage() {
                     variant="secondary"
                     size="lg"
                     isLoading={loading}
-                    className="whitespace-nowrap shadow-button"
+                    className="whitespace-nowrap shadow-button w-full sm:w-auto"
                   >
                     Ku Biir Hadda
                   </Button>
@@ -762,48 +747,55 @@ export default function HomePage() {
       {/* ================================================ */}
       {/* FINAL CTA - STRONG CLOSE */}
       {/* ================================================ */}
-      <section className="py-20 px-4 bg-surface">
+      <section className="py-12 sm:py-20 px-4 bg-surface">
         <div className="max-w-3xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-5">
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-5">
               Diyaar Ma U Tahay Inaad{" "}
               <span className="bg-gradient-hero bg-clip-text text-transparent">
                 Bilaabto?
               </span>
             </h2>
-            <p className="text-xl text-foreground-muted mb-8 leading-relaxed">
+            <p className="text-base sm:text-xl text-foreground-muted mb-6 sm:mb-8 leading-relaxed">
               Ku biir kumanaanka xubnood ee horumarinaya aqoonta bulshada
               Soomaaliyeed. Bilow maanta - waa bilaash!
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/auth/signup">
-                <Button size="lg" className="min-w-[200px] shadow-button">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center max-w-md sm:max-w-none mx-auto">
+              <Link href="/auth/signup" className="w-full sm:w-auto">
+                <Button
+                  size="lg"
+                  className="w-full sm:min-w-[200px] shadow-button"
+                >
                   Samee Akoon Bilaash
                 </Button>
               </Link>
-              <Link href="/questions">
-                <Button size="lg" variant="outline" className="min-w-[200px]">
+              <Link href="/questions" className="w-full sm:w-auto">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full sm:min-w-[200px]"
+                >
                   Daawasho Kaliya
                 </Button>
               </Link>
             </div>
 
             {/* Trust indicators */}
-            <div className="mt-12 pt-8 border-t border-border">
+            <div className="mt-10 sm:mt-12 pt-6 sm:pt-8 border-t border-border">
               <p className="text-sm text-foreground-muted mb-4">
                 La kalsoonaan tahay kumanaanka xubnood
               </p>
-              <div className="flex justify-center items-center gap-8 opacity-50">
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 opacity-50">
                 <div className="flex -space-x-2">
                   {["🧑‍💻", "👩‍🏫", "👨‍💼", "👩‍🔬", "🧑‍🎓"].map((avatar, i) => (
                     <div
                       key={i}
-                      className="w-10 h-10 rounded-full bg-surface-elevated border-2 border-border flex items-center justify-center text-xl"
+                      className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-surface-elevated border-2 border-border flex items-center justify-center text-lg sm:text-xl"
                     >
                       {avatar}
                     </div>
