@@ -1,0 +1,172 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* ========================================
+     HORUMARIN SEMANTIC COLOR SYSTEM
+     ======================================== */
+
+  :root {
+    /* Background colors - High contrast light mode */
+    --color-background: 248 250 252; /* slate-50 - main page background */
+    --color-surface: 255 255 255; /* white - card/panel backgrounds */
+    --color-surface-elevated: 241 245 249; /* slate-100 - elevated cards */
+    --color-surface-muted: 226 232 240; /* slate-200 - subtle backgrounds */
+
+    /* Text colors - High contrast */
+    --color-foreground: 15 23 42; /* slate-900 - primary text (WCAG AAA) */
+    --color-foreground-muted: 71 85 105; /* slate-600 - secondary text */
+    --color-foreground-subtle: 100 116 139; /* slate-500 - tertiary text */
+
+    /* Brand colors */
+    --color-primary: 37 99 235; /* blue-600 - main brand color */
+    --color-primary-foreground: 255 255 255; /* white - text on primary */
+    --color-primary-hover: 29 78 216; /* blue-700 */
+
+    --color-accent: 20 184 166; /* teal-500 - accent brand color */
+    --color-accent-foreground: 255 255 255; /* white - text on accent */
+    --color-accent-hover: 13 148 136; /* teal-600 */
+
+    /* Danger colors */
+    --color-danger: 220 38 38; /* red-600 */
+    --color-danger-foreground: 254 226 226; /* red-100 */
+    --color-danger-muted: 127 29 29; /* red-900 */
+    --color-danger-border: 239 68 68; /* red-500 */
+
+    --color-cta: 234 179 8; /* yellow-500 - call to action */
+    --color-cta-foreground: 15 23 42; /* slate-900 - dark text on CTA */
+    --color-cta-hover: 202 138 4; /* yellow-600 */
+
+    /* Border colors */
+    --color-border: 226 232 240; /* slate-200 */
+    --color-border-subtle: 241 245 249; /* slate-100 */
+    --color-border-strong: 203 213 225; /* slate-300 */
+
+    /* State colors */
+    --color-muted: 241 245 249; /* slate-100 - muted backgrounds */
+    --color-muted-foreground: 71 85 105; /* slate-600 - muted text */
+
+    /* Glass-morphism colors */
+    --color-glass-bg: 255 255 255; /* white base for glass */
+    --color-glass-border: 226 232 240; /* slate-200 border for glass */
+  }
+
+  .dark {
+    /* Background colors - High contrast dark mode */
+    --color-background: 15 23 42; /* slate-900 - deep navy */
+    --color-surface: 17 24 39; /* gray-900 - tinted surface */
+    --color-surface-elevated: 31 41 55; /* gray-800 - elevated cards */
+    --color-surface-muted: 51 65 85; /* slate-700 - subtle backgrounds */
+
+    /* Text colors - High contrast dark mode */
+    --color-foreground: 248 250 252; /* slate-50 - primary text (WCAG AAA) */
+    --color-foreground-muted: 203 213 225; /* slate-300 - secondary text */
+    --color-foreground-subtle: 148 163 184; /* slate-400 - tertiary text */
+
+    /* Brand colors - Adjusted for dark mode */
+    --color-primary: 59 130 246; /* blue-500 - brighter in dark */
+    --color-primary-foreground: 255 255 255; /* white */
+    --color-primary-hover: 96 165 250; /* blue-400 */
+
+    --color-accent: 20 184 166; /* teal-500 - vibrant in dark */
+    --color-accent-foreground: 255 255 255; /* white */
+    --color-accent-hover: 45 212 191; /* teal-400 */
+
+    /* Danger colors */
+    --color-danger: 248 113 113; /* red-400 */
+    --color-danger-foreground: 254 242 242; /* red-50 */
+    --color-danger-muted: 127 29 29; /* red-900 */
+    --color-danger-border: 185 28 28; /* red-700 */
+
+    --color-cta: 250 204 21; /* yellow-400 - bright in dark */
+    --color-cta-foreground: 15 23 42; /* slate-900 - dark text on bright CTA */
+    --color-cta-hover: 253 224 71; /* yellow-300 */
+
+    /* Border colors - Tinted dark borders */
+    --color-border: 51 65 85; /* slate-700 */
+    --color-border-subtle: 31 41 55; /* gray-800 */
+    --color-border-strong: 71 85 105; /* slate-600 */
+
+    /* State colors - Dark mode */
+    --color-muted: 31 41 55; /* gray-800 */
+    --color-muted-foreground: 203 213 225; /* slate-300 */
+
+    /* Glass-morphism colors - Dark mode */
+    --color-glass-bg: 255 255 255; /* white base (used with low opacity) */
+    --color-glass-border: 51 65 85; /* slate-700 border for glass */
+  }
+
+  html {
+    @apply scroll-smooth;
+    transition:
+      background-color 300ms ease,
+      color 300ms ease;
+  }
+
+  body {
+    background-color: rgb(var(--color-background));
+    color: rgb(var(--color-foreground));
+    transition:
+      background-color 300ms ease,
+      color 300ms ease;
+  }
+
+  /* Smooth theme transitions for all elements */
+  * {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+  }
+
+  /* Preserve transform/opacity transitions */
+  *[class*="transition-transform"],
+  *[class*="transition-opacity"],
+  *[class*="transition-all"] {
+    transition-property:
+      background-color, border-color, color, fill, stroke, transform, opacity;
+  }
+
+  /* Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    html,
+    body {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent;
+  }
+
+  .shadow-glow {
+    box-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
+  }
+
+  .shadow-glow-accent {
+    box-shadow: 0 0 20px rgba(20, 184, 166, 0.3);
+  }
+
+  /* Shimmer animation for skeleton loaders */
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  /* Contrast debug mode - add .contrast-debug to body */
+  .contrast-debug * {
+    outline: 1px solid rgba(255, 0, 0, 0.2) !important;
+  }
+
+  .contrast-debug [class*="text-white"]:not([class*="bg-"]) {
+    outline: 3px solid red !important;
+  }
+}

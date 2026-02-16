@@ -1,8 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-  <rect width="100%" height="100%" rx="32" fill="#f59e0b" />
-  <g transform="translate(48,48)">
-    <circle cx="80" cy="40" r="36" fill="#ffffff" opacity="0.12" />
-    <text x="80" y="70" font-family="Inter,Segoe UI,Roboto,Helvetica,Arial,sans-serif" font-size="72" font-weight="700" fill="#ffffff" text-anchor="middle">H</text>
-  </g>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Book base -->
+  <path d="M4 18 C4 18, 4 24, 4 26 C4 28, 6 30, 8 30 L24 30 C26 30, 28 28, 28 26 L28 18 Z" fill="url(#bookGrad)"/>
+  
+  <!-- Center ray of light -->
+  <path d="M16 4 L16 14" stroke="url(#rayGrad)" stroke-width="2.5" stroke-linecap="round"/>
+  
+  <!-- Star of knowledge -->
+  <circle cx="16" cy="15" r="4" fill="url(#starGrad)"/>
+  <path d="M16 12 L16.8 14.5 L19 14.5 L17.2 16 L18 18.5 L16 17 L14 18.5 L14.8 16 L13 14.5 L15.2 14.5 Z" fill="white" opacity="0.9"/>
+  
+  <defs>
+    <linearGradient id="bookGrad" x1="4" y1="18" x2="28" y2="30">
+      <stop offset="0%" stop-color="#1d4ed8"/>
+      <stop offset="100%" stop-color="#0d9488"/>
+    </linearGradient>
+    <linearGradient id="rayGrad" x1="16" y1="4" x2="16" y2="14">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <linearGradient id="starGrad" x1="12" y1="11" x2="20" y2="19">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#2dd4bf"/>
+    </linearGradient>
+  </defs>
 </svg>
