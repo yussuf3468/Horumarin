@@ -54,19 +54,39 @@ export default function Header() {
                   </Button>
                 </Link>
                 <Link href="/ask">
-                  <Button
-                    size="sm"
-                    className="bg-primary hover:bg-primary-700"
-                  >
+                  <Button size="sm" className="bg-primary hover:bg-primary-700">
                     Weydii
                   </Button>
                 </Link>
+                <Link href="/profile">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-foreground-muted hover:text-foreground hover:bg-surface-muted"
+                  >
+                    Profile
+                  </Button>
+                </Link>
+                <div className="h-6 w-px bg-border mx-1"></div>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={handleSignOut}
-                  className="text-foreground-muted hover:text-foreground hover:bg-surface-muted"
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
                 >
+                  <svg
+                    className="w-4 h-4 mr-1.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    />
+                  </svg>
                   Kabax
                 </Button>
               </>
@@ -82,19 +102,12 @@ export default function Header() {
                   </Button>
                 </Link>
                 <Link href="/auth/login">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="border-border"
-                  >
+                  <Button variant="outline" size="sm" className="border-border">
                     Log In
                   </Button>
                 </Link>
                 <Link href="/auth/signup">
-                  <Button
-                    size="sm"
-                    className="bg-primary hover:bg-primary-700"
-                  >
+                  <Button size="sm" className="bg-primary hover:bg-primary-700">
                     Sign Up
                   </Button>
                 </Link>

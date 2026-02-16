@@ -3,19 +3,24 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Textarea from "@/components/ui/Textarea";
 import LightboxImage from "@/components/ui/LightboxImage";
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import PostDetailSkeleton from "@/components/ui/PostDetailSkeleton";
 import {
   castVote,
   getVoteCountsForItems,
   getUserVotesForItems,
   removeVote,
 } from "@/services/vote.service";
+import {
+  getRelatedQuestions,
+  type QuestionWithAuthor,
+} from "@/services/question.service";
 import { supabase } from "@/lib/supabase/client";
 import { cn, formatDate } from "@/utils/helpers";
 import { categories } from "@/utils/constants";
@@ -72,6 +77,7 @@ export default function QuestionDetailPage() {
   const [answerVoteMap, setAnswerVoteMap] = useState<Record<string, number>>(
     {},
   );
+  const [relatedPosts, setRelatedPosts] = useState<QuestionWithAuthor[]>([]);
 
   useEffect(() => {
     if (params.id) {
@@ -81,16 +87,32 @@ export default function QuestionDetailPage() {
     }
   }, [params.id, user?.id]);
 
+  useEffect(() => {
+    if (question?.category) {
+      fetchRelatedPosts();
+    }
+  }, [question?.category]);
+
+  const fetchRelatedPosts = async () => {
+    if (!question) return;
+    const related = await getRelatedQuestions(
+      question.id,
+      question.category,
+      5,
+    );
+    setRelatedPosts(related);
+  };
+
   const fetchQuestion = async () => {
     try {
       const { data, error } = await supabase
         .from("questions")
         .select("*, profiles (*)")
         .eq("id", params.id)
-        .single();
+        .single<QuestionWithProfile>();
 
       if (!error && data) {
-        setQuestion(data as QuestionWithProfile);
+        setQuestion(data);
         setVoteCount(data.vote_count || 0);
       }
     } catch (error) {
@@ -132,7 +154,9 @@ export default function QuestionDetailPage() {
   };
 
   const incrementViewCount = async () => {
-    await supabase.rpc("increment_view_count", { question_id: params.id });
+    const questionId = Array.isArray(params.id) ? params.id[0] : params.id;
+    // @ts-ignore - RPC type not generated
+    await supabase.rpc("increment_view_count", { question_id: questionId });
   };
 
   const loadUserVote = async (questionId: string) => {
@@ -159,6 +183,7 @@ export default function QuestionDetailPage() {
     const loadingToast = toast.loading("Jawaabta waa la diyaarinayaa...");
 
     try {
+      // @ts-ignore - Supabase types not generated
       const { error } = await supabase.from("answers").insert([
         {
           question_id: params.id as string,
@@ -195,6 +220,7 @@ export default function QuestionDetailPage() {
     const loadingToast = toast.loading("Jawaabta waa la diyaarinayaa...");
 
     try {
+      // @ts-ignore - Supabase types not generated
       const { error } = await supabase.from("answers").insert([
         {
           question_id: params.id as string,
@@ -314,11 +340,7 @@ export default function QuestionDetailPage() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner />
-      </div>
-    );
+    return <PostDetailSkeleton />;
   }
 
   if (!question) {
@@ -336,6 +358,10 @@ export default function QuestionDetailPage() {
   }
 
   const category = categories.find((c) => c.id === question.category);
+  const authorName =
+    question.profiles?.full_name || question.profiles?.email || "Xubin";
+  const authorBio = question.profiles?.bio || "Qoraa cusub";
+  const authorInitial = authorName[0] || "X";
 
   const answerTree = buildAnswerTree(answers);
 
@@ -507,70 +533,122 @@ export default function QuestionDetailPage() {
 
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 bg-background">
-      <div className="max-w-4xl mx-auto">
-        {/* Question Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <Card className="mb-6">
-            <div className="p-8">
-              <div className="flex-1">
-                {category && (
-                  <span
-                    className={`inline-block px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${category.gradient} text-primary-foreground mb-4`}
-                  >
-                    {category.icon} {category.name}
-                  </span>
-                )}
-
-                <h1 className="text-3xl font-bold mb-4">{question.title}</h1>
-
-                <div className="prose max-w-none mb-6">
-                  <p className="text-foreground whitespace-pre-wrap">
-                    {question.content}
-                  </p>
-                </div>
-
-                {question.image_video_url && (
-                  <div className="mb-6">
-                    <LightboxImage
-                      src={question.image_video_url}
-                      alt={question.title}
-                      className="border border-border"
-                      aspectRatio="16 / 9"
-                    />
+      <div className="max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6">
+          {/* Main Column */}
+          <div>
+            {/* Question Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <Card className="mb-6 overflow-hidden">
+                <div className="p-6 sm:p-8">
+                  <div className="flex items-center gap-2 text-xs text-foreground-subtle mb-4">
+                    <span className="uppercase tracking-wide">Qoraal</span>
+                    <span>•</span>
+                    <span>{formatDate(question.created_at)}</span>
                   </div>
-                )}
 
-                <div className="flex flex-wrap items-center gap-4 mt-6 pt-4 border-t border-border">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => handleVote(1)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all ${
-                      voteValue === 1
-                        ? "bg-danger/10 text-danger"
-                        : "bg-surface-muted text-foreground-subtle hover:bg-surface-muted/60 hover:text-danger"
-                    }`}
-                    aria-pressed={voteValue === 1}
-                    title={user ? "Like" : "Login to like"}
-                  >
-                    {voteValue === 1 ? (
+                  {category && (
+                    <span
+                      className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${category.gradient} text-primary-foreground mb-4`}
+                    >
+                      <span>{category.icon}</span>
+                      <span>{category.name}</span>
+                    </span>
+                  )}
+
+                  <h1 className="text-3xl font-bold mb-4 text-foreground">
+                    {question.title}
+                  </h1>
+
+                  <div className="flex items-center gap-3 text-sm text-foreground-subtle mb-6">
+                    <Link
+                      href={`/profile/${question.user_id}`}
+                      className="flex items-center gap-2 hover:text-foreground transition-colors"
+                    >
+                      <div className="w-7 h-7 rounded-full bg-surface-muted border border-border flex items-center justify-center text-xs overflow-hidden">
+                        {question.profiles?.avatar_url ? (
+                          <img
+                            src={question.profiles.avatar_url}
+                            alt={authorName}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span>{authorInitial}</span>
+                        )}
+                      </div>
+                      <span>{authorName}</span>
+                    </Link>
+                    <span>•</span>
+                    <span>{answers.length} jawaab</span>
+                    <span>•</span>
+                    <span>{question.view_count} daawasho</span>
+                  </div>
+
+                  <div className="prose max-w-none mb-6">
+                    <p className="text-foreground whitespace-pre-wrap">
+                      {question.content}
+                    </p>
+                  </div>
+
+                  {question.image_video_url && (
+                    <div className="mb-6">
+                      <LightboxImage
+                        src={question.image_video_url}
+                        alt={question.title}
+                        className="border border-border"
+                        aspectRatio="16 / 9"
+                      />
+                    </div>
+                  )}
+
+                  <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-border">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleVote(1)}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all ${
+                        voteValue === 1
+                          ? "bg-danger/10 text-danger"
+                          : "bg-surface-muted text-foreground-subtle hover:bg-surface-muted/60 hover:text-danger"
+                      }`}
+                      aria-pressed={voteValue === 1}
+                      title={user ? "Like" : "Login to like"}
+                    >
+                      {voteValue === 1 ? (
+                        <svg
+                          className="w-5 h-5"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      ) : (
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                          />
+                        </svg>
+                      )}
+                      <span className="font-semibold">{voteCount}</span>
+                    </motion.button>
+                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-muted text-foreground-subtle">
                       <svg
-                        className="w-6 h-6"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        className="w-6 h-6"
+                        className="w-4 h-4"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -579,138 +657,227 @@ export default function QuestionDetailPage() {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                         />
                       </svg>
-                    )}
-                    <span className="font-semibold text-base">{voteCount}</span>
-                  </motion.button>
-                  <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-muted text-foreground-subtle">
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                      <span className="font-medium">{answers.length}</span>
+                    </div>
+                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-muted text-foreground-subtle">
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                        />
+                      </svg>
+                      <span className="font-medium">{question.view_count}</span>
+                    </div>
+                    <button
+                      type="button"
+                      className="px-4 py-2 rounded-full bg-surface-muted text-foreground-subtle hover:text-foreground transition-colors"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                      />
-                    </svg>
-                    <span className="font-medium">{answers.length}</span>
-                  </div>
-                  <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-muted text-foreground-subtle">
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                      />
-                    </svg>
-                    <span className="font-medium">{question.view_count}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-foreground-subtle text-sm ml-auto">
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                      />
-                    </svg>
-                    <span>{question.profiles?.full_name || "Xubin"}</span>
-                    <span className="ml-2">
-                      • {formatDate(question.created_at)}
-                    </span>
+                      Share
+                    </button>
                   </div>
                 </div>
+              </Card>
+            </motion.div>
+
+            {/* Answers Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="mb-6"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-bold">
+                  {answers.length} Jawaab{answers.length !== 1 ? "ood" : ""}
+                </h2>
+                <div className="text-sm text-foreground-subtle">
+                  Ugu dambeeyay
+                </div>
               </div>
-            </div>
-          </Card>
-        </motion.div>
 
-        {/* Answers Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="mb-6"
-        >
-          <h2 className="text-2xl font-bold mb-4">
-            {answers.length} Jawaab{answers.length !== 1 ? "ood" : ""}
-          </h2>
+              <div className="space-y-4">
+                {answerTree.length > 0 ? (
+                  answerTree.map((answer, index) => (
+                    <motion.div
+                      key={answer.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 + index * 0.05 }}
+                    >
+                      {renderAnswer(answer)}
+                    </motion.div>
+                  ))
+                ) : (
+                  <Card className="p-6 text-center">
+                    <p className="text-foreground-muted">
+                      Jawaab wali lama helin.
+                    </p>
+                  </Card>
+                )}
+              </div>
+            </motion.div>
 
-          <div className="space-y-4">
-            {answerTree.length > 0 ? (
-              answerTree.map((answer, index) => (
-                <motion.div
-                  key={answer.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 + index * 0.05 }}
-                >
-                  {renderAnswer(answer)}
-                </motion.div>
-              ))
+            {/* Answer Form */}
+            {user ? (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <Card className="p-6">
+                  <h3 className="text-xl font-bold mb-4">Jawaabta Bixi</h3>
+                  <form onSubmit={handleSubmitAnswer}>
+                    <Textarea
+                      value={newAnswer}
+                      onChange={(e) => setNewAnswer(e.target.value)}
+                      placeholder="Halkan ku qor jawaabta..."
+                      rows={6}
+                      className="mb-4"
+                      required
+                    />
+                    <Button type="submit" isLoading={submitting}>
+                      Soo Dir Jawaabta
+                    </Button>
+                  </form>
+                </Card>
+              </motion.div>
             ) : (
               <Card className="p-6 text-center">
-                <p className="text-foreground-muted">Jawaab wali lama helin.</p>
+                <p className="text-foreground-muted mb-4">
+                  Waa inaad gashaa si aad jawaab u bixiso
+                </p>
+                <Button onClick={() => router.push("/auth/login")}>Gal</Button>
               </Card>
             )}
           </div>
-        </motion.div>
 
-        {/* Answer Form */}
-        {user ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <Card className="p-6">
-              <h3 className="text-xl font-bold mb-4">Jawaabta Bixi</h3>
-              <form onSubmit={handleSubmitAnswer}>
-                <Textarea
-                  value={newAnswer}
-                  onChange={(e) => setNewAnswer(e.target.value)}
-                  placeholder="Halkan ku qor jawaabta..."
-                  rows={6}
-                  className="mb-4"
-                  required
-                />
-                <Button type="submit" isLoading={submitting}>
-                  Soo Dir Jawaabta
-                </Button>
-              </form>
+          {/* Sidebar */}
+          <div className="space-y-4">
+            <Card className="p-5">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-lg font-semibold">Qoraa</h3>
+                <Link
+                  href={`/profile/${question.user_id}`}
+                  className="text-xs text-foreground-subtle hover:text-foreground"
+                >
+                  Profile →
+                </Link>
+              </div>
+              <Link
+                href={`/profile/${question.user_id}`}
+                className="flex items-center gap-3"
+              >
+                <div className="w-12 h-12 rounded-full bg-surface-muted border border-border flex items-center justify-center text-lg overflow-hidden">
+                  {question.profiles?.avatar_url ? (
+                    <img
+                      src={question.profiles.avatar_url}
+                      alt={authorName}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span>👤</span>
+                  )}
+                </div>
+                <div>
+                  <div className="font-semibold text-foreground">
+                    {authorName}
+                  </div>
+                  <div className="text-xs text-foreground-subtle">
+                    {authorBio}
+                  </div>
+                </div>
+              </Link>
             </Card>
-          </motion.div>
-        ) : (
-          <Card className="p-6 text-center">
-            <p className="text-foreground-muted mb-4">
-              Waa inaad gashaa si aad jawaab u bixiso
-            </p>
-            <Button onClick={() => router.push("/auth/login")}>Gal</Button>
-          </Card>
-        )}
+
+            <Card className="p-5">
+              <h3 className="text-lg font-semibold mb-3">Qoraalka</h3>
+              <div className="space-y-2 text-sm text-foreground-subtle">
+                <div className="flex items-center justify-between">
+                  <span>Qoraal</span>
+                  <span>{question.post_type}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Jawaabo</span>
+                  <span>{answers.length}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Daawasho</span>
+                  <span>{question.view_count}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>La qoray</span>
+                  <span>{formatDate(question.created_at)}</span>
+                </div>
+              </div>
+            </Card>
+
+            {category && (
+              <Card className="p-5">
+                <h3 className="text-lg font-semibold mb-3">Qaybta</h3>
+                <div
+                  className={`rounded-lg p-4 text-primary-foreground bg-gradient-to-r ${category.gradient}`}
+                >
+                  <div className="text-2xl mb-2">{category.icon}</div>
+                  <div className="font-semibold text-lg">{category.name}</div>
+                  <div className="text-xs uppercase tracking-wide opacity-80">
+                    {category.nameEn}
+                  </div>
+                </div>
+              </Card>
+            )}
+
+            {relatedPosts.length > 0 && (
+              <Card className="p-5">
+                <h3 className="text-lg font-semibold mb-3">
+                  Qoraalada La Xidhiidha
+                </h3>
+                <div className="space-y-3">
+                  {relatedPosts.map((post) => (
+                    <Link
+                      key={post.id}
+                      href={`/questions/${post.id}`}
+                      className="block group"
+                    >
+                      <div className="text-sm font-medium text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                        {post.title}
+                      </div>
+                      <div className="flex items-center gap-3 mt-1 text-xs text-foreground-subtle">
+                        <span>{post.voteSum} votes</span>
+                        <span>•</span>
+                        <span>{post.answerCount} answers</span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </Card>
+            )}
+
+            <Card className="p-5">
+              <h3 className="text-lg font-semibold mb-3">Tilmaamo</h3>
+              <ul className="text-sm text-foreground-subtle space-y-2">
+                <li>• Ku qor jawaab wax tar leh</li>
+                <li>• Ixtiraam dhammaan xubnaha</li>
+                <li>• Ka fogow spam iyo xayeysiis</li>
+              </ul>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

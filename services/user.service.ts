@@ -35,7 +35,7 @@ export async function getUserProfile(
   userId: string,
 ): Promise<UserProfile | null> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("profiles")
       .select("*")
       .eq("id", userId)
@@ -74,7 +74,7 @@ export async function updateUserProfile(
     if (data.bio !== undefined) updateData.bio = data.bio;
     if (data.avatarUrl !== undefined) updateData.avatar_url = data.avatarUrl;
 
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from("profiles")
       .update(updateData)
       .eq("id", userId);
@@ -100,19 +100,19 @@ export async function getUserStats(userId: string): Promise<{
 }> {
   try {
     // Fetch questions count
-    const { count: questionsCount } = await supabase
+    const { count: questionsCount } = await (supabase as any)
       .from("questions")
       .select("*", { count: "exact", head: true })
       .eq("user_id", userId);
 
     // Fetch answers count
-    const { count: answersCount } = await supabase
+    const { count: answersCount } = await (supabase as any)
       .from("answers")
       .select("*", { count: "exact", head: true })
       .eq("user_id", userId);
 
     // Fetch votes received (this would be aggregated in Django)
-    const { count: votesCount } = await supabase
+    const { count: votesCount } = await (supabase as any)
       .from("votes")
       .select("*", { count: "exact", head: true })
       .eq("user_id", userId);
@@ -137,39 +137,45 @@ export async function getUserStats(userId: string): Promise<{
  */
 export async function getUserReputation(userId: string): Promise<number> {
   try {
-    const { data: questionIds } = await supabase
+    const { data: questionIds } = await (supabase as any)
       .from("questions")
       .select("id")
       .eq("user_id", userId);
 
-    const { data: answerIds } = await supabase
+    const { data: answerIds } = await (supabase as any)
       .from("answers")
       .select("id")
       .eq("user_id", userId);
 
-    const questionIdList = (questionIds || []).map((row) => row.id);
-    const answerIdList = (answerIds || []).map((row) => row.id);
+    const questionIdList = (questionIds || []).map((row: any) => row.id);
+    const answerIdList = (answerIds || []).map((row: any) => row.id);
 
     let total = 0;
 
     if (questionIdList.length > 0) {
-      const { data: questionVotes } = await supabase
+      const { data: questionVotes } = await (supabase as any)
         .from("votes")
         .select("value")
         .eq("votable_type", "question")
         .in("votable_id", questionIdList);
 
-      total += (questionVotes || []).reduce((sum, vote) => sum + vote.value, 0);
+      total += (questionVotes || []).reduce(
+        (sum: number, vote: any) => sum + vote.value,
+        0,
+      );
     }
 
     if (answerIdList.length > 0) {
-      const { data: answerVotes } = await supabase
+      const { data: answerVotes } = await (supabase as any)
         .from("votes")
         .select("value")
         .eq("votable_type", "answer")
         .in("votable_id", answerIdList);
 
-      total += (answerVotes || []).reduce((sum, vote) => sum + vote.value, 0);
+      total += (answerVotes || []).reduce(
+        (sum: number, vote: any) => sum + vote.value,
+        0,
+      );
     }
 
     return total;

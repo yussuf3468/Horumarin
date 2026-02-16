@@ -22,7 +22,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Card from "@/components/ui/Card";
@@ -35,7 +35,12 @@ import { HorumarinLogo, LogoIcon } from "@/components/brand/HorumarinLogo";
 import AnimatedCounter from "@/components/ui/AnimatedCounter";
 import LiveActivityFeed from "@/components/ui/LiveActivityFeed";
 import { subscribeEmail } from "@/services/email.service";
+import {
+  getQuestions,
+  type QuestionWithAuthor,
+} from "@/services/question.service";
 import { categories } from "@/utils/constants";
+import { formatDate, truncateText } from "@/utils/helpers";
 
 export default function HomePage() {
   const [email, setEmail] = useState("");
@@ -44,6 +49,8 @@ export default function HomePage() {
   const [liveUsers, setLiveUsers] = useState(847);
   const [showAlert, setShowAlert] = useState(true);
   const [loadingContent, setLoadingContent] = useState(false);
+  const [latestPosts, setLatestPosts] = useState<QuestionWithAuthor[]>([]);
+  const [loadingPosts, setLoadingPosts] = useState(true);
 
   // Simulate live user count changes
   useEffect(() => {
@@ -51,6 +58,16 @@ export default function HomePage() {
       setLiveUsers((prev) => prev + Math.floor(Math.random() * 3) - 1);
     }, 5000);
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const loadLatestPosts = async () => {
+      const data = await getQuestions();
+      setLatestPosts(data.slice(0, 6));
+      setLoadingPosts(false);
+    };
+
+    loadLatestPosts();
   }, []);
 
   const handleSubscribe = async (e: React.FormEvent) => {
@@ -81,7 +98,7 @@ export default function HomePage() {
 
           {/* Subheading */}
           <p className="text-xl text-foreground-muted max-w-2xl mx-auto mb-10">
-            Ka qayb qaado bulshada Soomaaliyeed ee ugu weyn ee aqoonta wadaagta, 
+            Ka qayb qaado bulshada Soomaaliyeed ee ugu weyn ee aqoonta wadaagta,
             su'aalo weydiiso, oo jawaabo ka hel dadka khibradda leh.
           </p>
 
@@ -98,6 +115,80 @@ export default function HomePage() {
               </Button>
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* ================================================ */}
+      {/* LATEST POSTS - REDDIT-STYLE PREVIEW */}
+      {/* ================================================ */}
+      <section className="py-14 px-4 bg-background">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+                Qoraalada Ugu Dambeeyay
+              </h2>
+              <p className="text-foreground-muted">
+                Ku bilow adigoo akhrinaya qoraalada cusub
+              </p>
+            </div>
+            <Link href="/questions">
+              <Button variant="ghost">Eeg Dhammaan →</Button>
+            </Link>
+          </div>
+
+          {loadingPosts ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <Skeleton key={index} className="h-40 w-full" />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {latestPosts.map((post) => {
+                const category = categories.find((c) => c.id === post.category);
+
+                return (
+                  <Card key={post.id} hover className="p-4">
+                    <div className="flex gap-4">
+                      {post.image_video_url ? (
+                        <div className="w-28 h-20 rounded-lg overflow-hidden border border-border shrink-0">
+                          <img
+                            src={post.image_video_url}
+                            alt={post.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-28 h-20 rounded-lg border border-border bg-surface-muted shrink-0" />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <Link href={`/questions/${post.id}`}>
+                          <h3 className="font-semibold text-foreground mb-2 line-clamp-2 hover:text-primary transition-colors">
+                            {post.title}
+                          </h3>
+                        </Link>
+                        <p className="text-sm text-foreground-muted line-clamp-2 mb-3">
+                          {truncateText(post.content, 140)}
+                        </p>
+                        <div className="flex items-center flex-wrap gap-2 text-xs text-foreground-subtle">
+                          {category && (
+                            <Badge size="sm" variant="primary">
+                              {category.icon} {category.name}
+                            </Badge>
+                          )}
+                          <span>•</span>
+                          <span>{post.author?.fullName || "Xubin"}</span>
+                          <span>•</span>
+                          <span>{formatDate(post.created_at)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 

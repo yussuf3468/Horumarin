@@ -13,6 +13,7 @@ import { getUserProfile, type UserProfile } from "@/services/user.service";
 export function useProfile(userId: string | undefined) {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refetchTrigger, setRefetchTrigger] = useState(0);
 
   useEffect(() => {
     if (!userId) {
@@ -21,13 +22,18 @@ export function useProfile(userId: string | undefined) {
     }
 
     async function fetchProfile() {
+      setLoading(true);
       const userProfile = await getUserProfile(userId!);
       setProfile(userProfile);
       setLoading(false);
     }
 
     fetchProfile();
-  }, [userId]);
+  }, [userId, refetchTrigger]);
 
-  return { profile, loading };
+  const refetch = () => {
+    setRefetchTrigger((prev) => prev + 1);
+  };
+
+  return { profile, loading, refetch };
 }

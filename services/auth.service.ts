@@ -36,12 +36,20 @@ export interface AuthResponse {
 /**
  * Sign up a new user
  * Migration note: Replace with POST /api/auth/signup
+ *
+ * Note: Profile is automatically created by database trigger (handle_new_user)
+ * The trigger reads full_name from raw_user_meta_data
  */
 export async function signUp(data: SignUpData): Promise<AuthResponse> {
   try {
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
+      options: {
+        data: {
+          full_name: data.fullName, // Passed to trigger via raw_user_meta_data
+        },
+      },
     });
 
     if (authError) {
@@ -52,18 +60,8 @@ export async function signUp(data: SignUpData): Promise<AuthResponse> {
       return { user: null, error: "User creation failed" };
     }
 
-    // Create profile (this will move to Django user model)
-    const { error: profileError } = await supabase.from("profiles").insert([
-      {
-        id: authData.user.id,
-        email: data.email,
-        full_name: data.fullName,
-      },
-    ]);
-
-    if (profileError) {
-      return { user: null, error: profileError.message };
-    }
+    // Profile is automatically created by database trigger (see database/migrations/fix_profile_rls.sql)
+    // No manual insert needed - this fixes RLS policy violations during signup
 
     return {
       user: {

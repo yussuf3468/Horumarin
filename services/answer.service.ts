@@ -36,7 +36,7 @@ export async function createAnswer(
   data: AnswerData,
 ): Promise<{ answer: Answer | null; error: string | null }> {
   try {
-    const { data: answer, error } = await supabase
+    const { data: answer, error } = await (supabase as any)
       .from("answers")
       .insert([
         {
@@ -67,7 +67,7 @@ export async function getAnswersByQuestionId(
   questionId: string,
 ): Promise<AnswerWithAuthor[]> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("answers")
       .select(
         `
@@ -108,7 +108,7 @@ export async function getAnswersByUserId(
   userId: string,
 ): Promise<AnswerWithAuthor[]> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("answers")
       .select(
         `
@@ -148,7 +148,7 @@ export async function updateAnswer(
   content: string,
 ): Promise<{ success: boolean; error: string | null }> {
   try {
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from("answers")
       .update({
         content,
@@ -174,7 +174,10 @@ export async function deleteAnswer(
   id: string,
 ): Promise<{ success: boolean; error: string | null }> {
   try {
-    const { error } = await supabase.from("answers").delete().eq("id", id);
+    const { error } = await (supabase as any)
+      .from("answers")
+      .delete()
+      .eq("id", id);
 
     if (error) {
       return { success: false, error: error.message };
@@ -194,7 +197,7 @@ export async function acceptAnswer(
   answerId: string,
 ): Promise<{ success: boolean; error: string | null }> {
   try {
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from("answers")
       .update({ is_accepted: true })
       .eq("id", answerId);

@@ -47,7 +47,7 @@ export async function createQuestion(
   data: QuestionData,
 ): Promise<{ question: Question | null; error: string | null }> {
   try {
-    const { data: question, error } = await supabase
+    const { data: question, error } = await (supabase as any)
       .from("questions")
       .insert([
         {
@@ -81,7 +81,7 @@ export async function getQuestions(
   filters?: QuestionFilters,
 ): Promise<QuestionWithAuthor[]> {
   try {
-    let query = supabase
+    let query = (supabase as any)
       .from("questions")
       .select(
         `
@@ -132,7 +132,7 @@ export async function getQuestionById(
   id: string,
 ): Promise<QuestionWithAuthor | null> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("questions")
       .select(
         `
@@ -185,7 +185,7 @@ export async function updateQuestion(
       updateData.image_video_url = data.imageVideoUrl;
     if (data.linkUrl !== undefined) updateData.link_url = data.linkUrl;
 
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from("questions")
       .update(updateData)
       .eq("id", id);
@@ -208,7 +208,10 @@ export async function deleteQuestion(
   id: string,
 ): Promise<{ success: boolean; error: string | null }> {
   try {
-    const { error } = await supabase.from("questions").delete().eq("id", id);
+    const { error } = await (supabase as any)
+      .from("questions")
+      .delete()
+      .eq("id", id);
 
     if (error) {
       return { success: false, error: error.message };
@@ -227,8 +230,52 @@ export async function deleteQuestion(
 export async function incrementViewCount(id: string): Promise<void> {
   try {
     // In Django, this would be handled server-side
-    await supabase.rpc("increment_view_count", { question_id: id });
+    await (supabase as any).rpc("increment_view_count", { question_id: id });
   } catch (error) {
     console.error("Error incrementing view count:", error);
+  }
+}
+
+/**
+ * Get related questions based on category
+ * Migration note: Replace with GET /api/questions/:id/related
+ */
+export async function getRelatedQuestions(
+  questionId: string,
+  category: string,
+  limit: number = 5,
+): Promise<QuestionWithAuthor[]> {
+  try {
+    const { data, error } = await (supabase as any)
+      .from("questions")
+      .select(
+        `
+        *,
+        profiles:user_id (
+          id,
+          full_name,
+          email
+        )
+      `,
+      )
+      .eq("category", category)
+      .neq("id", questionId)
+      .order("created_at", { ascending: false })
+      .limit(limit);
+
+    if (error || !data) return [];
+
+    return data.map((q: any) => ({
+      ...q,
+      author: {
+        id: q.profiles?.id || "",
+        fullName: q.profiles?.full_name || null,
+        email: q.profiles?.email || "",
+      },
+      answerCount: q.comment_count || 0,
+      voteSum: q.vote_count || 0,
+    }));
+  } catch (error) {
+    return [];
   }
 }

@@ -16,7 +16,7 @@ export async function subscribeEmail(
   email: string,
 ): Promise<{ success: boolean; error: string | null }> {
   try {
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from("email_subscribers")
       .insert([{ email }]);
 
@@ -42,7 +42,7 @@ export async function unsubscribeEmail(
   email: string,
 ): Promise<{ success: boolean; error: string | null }> {
   try {
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from("email_subscribers")
       .update({ is_active: false })
       .eq("email", email);

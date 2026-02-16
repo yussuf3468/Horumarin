@@ -1,10 +1,16 @@
 "use client";
 
-import { HTMLAttributes, ReactNode, useState } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { ReactNode } from "react";
+import {
+  motion,
+  type HTMLMotionProps,
+  useMotionValue,
+  useSpring,
+  useTransform,
+} from "framer-motion";
 import { cn } from "@/utils/helpers";
 
-interface CardProps extends HTMLAttributes<HTMLDivElement> {
+interface CardProps extends Omit<HTMLMotionProps<"div">, "children"> {
   children: ReactNode;
   hover?: boolean;
   elevated?: boolean;

@@ -15,7 +15,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import DashboardSkeleton from "@/components/ui/DashboardSkeleton";
 import FloatingShapes from "@/components/layout/FloatingShapes";
 import { categories } from "@/utils/constants";
 import { getUserStats } from "@/services/user.service";
@@ -70,11 +70,7 @@ export default function DashboardPage() {
   };
 
   if (authLoading || profileLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner />
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   if (!user || !profile) {

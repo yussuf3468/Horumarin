@@ -57,7 +57,7 @@ export default function QuestionsPage() {
 
   const trendingTopics = categoryStats.some((c) => c.count > 0)
     ? categoryStats.filter((c) => c.count > 0).slice(0, 4)
-    : categories.slice(0, 4);
+    : categoryStats.slice(0, 4); // Changed from categories to categoryStats
 
   const activeUsers = Array.from(
     new Map(

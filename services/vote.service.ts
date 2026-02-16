@@ -29,7 +29,7 @@ export async function castVote(
 ): Promise<{ success: boolean; error: string | null }> {
   try {
     // Check if user already voted
-    const { data: existingVote } = await supabase
+    const { data: existingVote } = await (supabase as any)
       .from("votes")
       .select("*")
       .eq("user_id", data.userId)
@@ -39,7 +39,7 @@ export async function castVote(
 
     if (existingVote) {
       // Update existing vote
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("votes")
         .update({ value: data.value })
         .eq("id", existingVote.id);
@@ -49,7 +49,7 @@ export async function castVote(
       }
     } else {
       // Create new vote
-      const { error } = await supabase.from("votes").insert([
+      const { error } = await (supabase as any).from("votes").insert([
         {
           user_id: data.userId,
           votable_id: data.votableId,
@@ -79,7 +79,7 @@ export async function removeVote(
   votableType: VotableType,
 ): Promise<{ success: boolean; error: string | null }> {
   try {
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from("votes")
       .delete()
       .eq("user_id", userId)
@@ -106,7 +106,7 @@ export async function getVoteCount(
   votableType: VotableType,
 ): Promise<number> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("votes")
       .select("value")
       .eq("votable_id", votableId)
@@ -114,7 +114,7 @@ export async function getVoteCount(
 
     if (error || !data) return 0;
 
-    return data.reduce((sum, vote) => sum + vote.value, 0);
+    return data.reduce((sum: number, vote: any) => sum + vote.value, 0);
   } catch (error) {
     return 0;
   }
@@ -131,7 +131,7 @@ export async function getVoteCountsForItems(
   if (votableIds.length === 0) return {};
 
   try {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("votes")
       .select("votable_id, value")
       .eq("votable_type", votableType)
@@ -139,7 +139,7 @@ export async function getVoteCountsForItems(
 
     if (error || !data) return {};
 
-    return data.reduce<Record<string, number>>((acc, vote) => {
+    return data.reduce((acc: Record<string, number>, vote: any) => {
       acc[vote.votable_id] = (acc[vote.votable_id] || 0) + vote.value;
       return acc;
     }, {});
@@ -158,7 +158,7 @@ export async function getUserVote(
   votableType: VotableType,
 ): Promise<number | null> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("votes")
       .select("value")
       .eq("user_id", userId)
@@ -186,7 +186,7 @@ export async function getUserVotesForItems(
   if (votableIds.length === 0) return {};
 
   try {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("votes")
       .select("votable_id, value")
       .eq("user_id", userId)
@@ -195,7 +195,7 @@ export async function getUserVotesForItems(
 
     if (error || !data) return {};
 
-    return data.reduce<Record<string, number>>((acc, vote) => {
+    return data.reduce((acc: Record<string, number>, vote: any) => {
       acc[vote.votable_id] = vote.value;
       return acc;
     }, {});

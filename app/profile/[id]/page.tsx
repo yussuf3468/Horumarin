@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import ProfileSkeleton from "@/components/ui/ProfileSkeleton";
 import { categories } from "@/utils/constants";
 import { formatDate, truncateText } from "@/utils/helpers";
 import { useAuth } from "@/hooks/useAuth";
@@ -131,11 +131,7 @@ export default function ProfilePage() {
   }, [reputation, stats.answersGiven, stats.questionsAsked]);
 
   if (profileLoading || loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner />
-      </div>
-    );
+    return <ProfileSkeleton />;
   }
 
   if (!profile) {
@@ -306,9 +302,11 @@ export default function ProfilePage() {
                 </div>
               </div>
               {isOwner && (
-                <Button className="mt-5 w-full" variant="outline">
-                  Cusboonaysii Profile
-                </Button>
+                <Link href="/settings/profile">
+                  <Button className="mt-5 w-full" variant="outline">
+                    Cusboonaysii Profile
+                  </Button>
+                </Link>
               )}
             </Card>
 
