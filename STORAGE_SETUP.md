@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide will help you set up Supabase Storage buckets for handling image uploads in Horumarin.
+This guide will help you set up Supabase Storage buckets for handling image uploads in MIDEEYE.
 
 ## Required Buckets
 

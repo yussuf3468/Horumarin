@@ -1,8 +1,8 @@
-# HORUMARIN - CINEMATIC VISUAL TRANSFORMATION
+# MIDEEYE - CINEMATIC VISUAL TRANSFORMATION
 
 ## 🎯 Executive Summary
 
-Horumarin has been completely transformed from a flat, template-like UI into a **cinematic, emotionally powerful, premium web experience** that represents:
+MIDEEYE has been completely transformed from a flat, template-like UI into a **cinematic, emotionally powerful, premium web experience** that represents:
 
 - **A national Somali innovation movement**
 - **A serious knowledge ecosystem**
@@ -16,19 +16,19 @@ This transformation focuses on **visual power, depth, and brand identity** BEFOR
 
 ### 1. **Redesigned Rising Sun Logo**
 
-**File:** `components/brand/HorumarinLogo.tsx`, `public/favicon.svg`
+**File:** `components/brand/MIDEEYELogo.tsx`, `public/favicon.svg`
 
 **Symbolism:**
 
 - 🌅 **Rising Sun Rays** forming top of "H" → Dawn of knowledge, enlightenment, progress
-- ⬆️ **Upward Arrow** integrated into H structure → Growth, horumarin (development)
+- ⬆️ **Upward Arrow** integrated into H structure → Growth, MIDEEYE (development)
 - ⭐ **Star Detail** → Excellence, Somali identity, guidance
 - 🎨 **Gradient (Blue → Gold → Teal)** → Knowledge to enlightenment journey
 
 **Variants:**
 
 - `LogoIcon` - Icon-only (32-64px)
-- `HorumarinLogo` - Full logo with wordmark "Aqoonta Bulshada"
+- `MIDEEYELogo` - Full logo with wordmark "Aqoonta Bulshada"
 - Light and dark variants for different backgrounds
 - `FaviconSVG` export for browser icon
 
@@ -313,7 +313,7 @@ This transformation focuses on **visual power, depth, and brand identity** BEFOR
 
 ### Created:
 
-1. `components/brand/HorumarinLogo.tsx` - Premium logo system
+1. `components/brand/MIDEEYELogo.tsx` - Premium logo system
 2. `components/ui/FloatingShapes.tsx` - Cinematic background elements
 3. `public/favicon.svg` - Browser icon (planned update)
 
@@ -472,7 +472,7 @@ className = "bg-white/10 backdrop-blur-md border border-white/20";
 
 ## ✨ Conclusion
 
-Horumarin is now a **cinematic, emotionally powerful, premium web experience** that:
+MIDEEYE is now a **cinematic, emotionally powerful, premium web experience** that:
 
 - Feels like a **national innovation movement**
 - Presents as a **serious knowledge ecosystem**
@@ -487,4 +487,4 @@ Ready for **Phase 2 - Animation & Micro-interactions** when approved.
 ---
 
 _"Waxaan dhisaynaa mustaqbal cusub."_  
-— Horumarin
+— MIDEEYE

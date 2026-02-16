@@ -22,7 +22,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 
-const STORAGE_KEY = "horumarin-joined-topics";
+const STORAGE_KEY = "MIDEEYE-joined-topics";
 
 type JoinedState = Record<string, boolean>;
 

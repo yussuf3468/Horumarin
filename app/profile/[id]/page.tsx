@@ -19,7 +19,7 @@ import { getAnswersByUserId } from "@/services/answer.service";
 import { getUserReputation, getUserStats } from "@/services/user.service";
 import type { Answer } from "@/types";
 
-const STORAGE_KEY = "horumarin-joined-topics";
+const STORAGE_KEY = "MIDEEYE-joined-topics";
 
 type JoinedState = Record<string, boolean>;
 

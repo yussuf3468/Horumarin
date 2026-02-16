@@ -171,38 +171,68 @@ export default function AskQuestionPage() {
     <div className="relative min-h-screen py-8 px-4 sm:px-6 lg:px-8">
       <FloatingShapes />
 
-      <div className="relative z-10 max-w-6xl mx-auto">
+      <div className="relative z-10 max-w-[1400px] mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="mb-8">
+          <div className="mb-8 lg:mb-10">
             <h1 className="text-3xl sm:text-4xl font-bold mb-2">Qor Qoraal</h1>
             <p className="text-foreground-muted text-base sm:text-lg">
               Fudud: qor cinwaan, sharaxaad, dooro qaybta, kadib dir.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-6">
-            <Card className="p-5 sm:p-8">
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-3">
-                    Nooca Qoraalka
-                  </label>
-                  <select
-                    value={postType}
-                    onChange={(e) =>
-                      setPostType(
-                        e.target.value as "question" | "discussion" | "resource",
-                      )
-                    }
-                    className="w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  >
-                    <option value="question">{postTypeLabels.question}</option>
-                    <option value="discussion">{postTypeLabels.discussion}</option>
-                    <option value="resource">{postTypeLabels.resource}</option>
-                  </select>
+          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_420px] 2xl:grid-cols-[minmax(0,1fr)_480px] gap-6 lg:gap-8">
+            <Card className="p-5 sm:p-8 lg:p-10">
+              <form onSubmit={handleSubmit} className="space-y-5 lg:space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-3">
+                      Nooca Qoraalka
+                    </label>
+                    <select
+                      value={postType}
+                      onChange={(e) =>
+                        setPostType(
+                          e.target.value as
+                            | "question"
+                            | "discussion"
+                            | "resource",
+                        )
+                      }
+                      className="w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    >
+                      <option value="question">
+                        {postTypeLabels.question}
+                      </option>
+                      <option value="discussion">
+                        {postTypeLabels.discussion}
+                      </option>
+                      <option value="resource">
+                        {postTypeLabels.resource}
+                      </option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-3">
+                      Qaybta
+                    </label>
+                    <select
+                      value={formData.category}
+                      onChange={(e) =>
+                        setFormData({ ...formData, category: e.target.value })
+                      }
+                      className="w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    >
+                      {categories.map((category) => (
+                        <option key={category.id} value={category.id}>
+                          {category.icon} {category.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 {/* Title */}
@@ -252,26 +282,6 @@ export default function AskQuestionPage() {
                   </p>
                 </div>
 
-                {/* Category */}
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-3">
-                    Qaybta
-                  </label>
-                  <select
-                    value={formData.category}
-                    onChange={(e) =>
-                      setFormData({ ...formData, category: e.target.value })
-                    }
-                    className="w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  >
-                    {categories.map((category) => (
-                      <option key={category.id} value={category.id}>
-                        {category.icon} {category.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
                 {/* Content */}
                 <div>
                   <Textarea
@@ -281,7 +291,7 @@ export default function AskQuestionPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, content: e.target.value })
                     }
-                    rows={8}
+                    rows={10}
                     required
                   />
                   <p className="mt-1 text-sm text-foreground-subtle">
@@ -299,7 +309,9 @@ export default function AskQuestionPage() {
                     <li>• Hal mawduuc ku koob qoraalkaaga</li>
                     <li>• Cinwaan kooban + sharaxaad cad</li>
                     <li>• Sawirku waa ikhtiyaari (optional)</li>
-                    <li>• Dhammaan fields waa muuqdaan, ma jiraan tabs qarsoon</li>
+                    <li>
+                      • Dhammaan fields waa muuqdaan, ma jiraan tabs qarsoon
+                    </li>
                   </ul>
                 </div>
 
@@ -333,7 +345,7 @@ export default function AskQuestionPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="space-y-4"
+              className="space-y-4 lg:sticky lg:top-24 self-start"
             >
               <div className="text-sm font-semibold text-foreground-muted uppercase tracking-widest">
                 Hordhac

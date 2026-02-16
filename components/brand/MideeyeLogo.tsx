@@ -1,9 +1,9 @@
 /**
- * HORUMARIN LOGO - RISING SUN CONCEPT
+ * MIDEEYE LOGO - RISING SUN CONCEPT
  *
  * Symbolism:
  * - Rising sun rays forming top of "H" = Dawn of knowledge, enlightenment
- * - Upward arrow integrated into H = Progress, growth, horumarin (development)
+ * - Upward arrow integrated into H = Progress, growth, MIDEEYE (development)
  * - Star detail = Excellence, Somali identity, guidance
  * - Gradient (deep blue → gold) = Knowledge to enlightenment journey
  *
@@ -15,7 +15,7 @@ import React from "react";
 // ========================================
 // PRIMARY LOGO - ICON + WORDMARK
 // ========================================
-export const HorumarinLogo: React.FC<{
+export const MideeyeLogo: React.FC<{
   className?: string;
   size?: "sm" | "md" | "lg";
   variant?: "light" | "dark";
@@ -46,7 +46,7 @@ export const HorumarinLogo: React.FC<{
             letterSpacing: "-0.03em",
           }}
         >
-          HORUMARIN
+          MIDEEYE
         </span>
         {size !== "sm" && (
           <span
@@ -219,4 +219,4 @@ export const FaviconSVG = `<svg width="64" height="64" viewBox="0 0 64 64" fill=
   </defs>
 </svg>`;
 
-export default HorumarinLogo;
+export default MideeyeLogo;

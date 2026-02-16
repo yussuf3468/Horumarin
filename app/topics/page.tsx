@@ -6,7 +6,7 @@ import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import { categories } from "@/utils/constants";
 
-const STORAGE_KEY = "horumarin-joined-topics";
+const STORAGE_KEY = "MIDEEYE-joined-topics";
 
 type JoinedState = Record<string, boolean>;
 

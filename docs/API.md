@@ -1,4 +1,4 @@
-# Horumarin API Specification
+# MIDEEYE API Specification
 
 This document defines the API contract that must be maintained when migrating from Supabase to Django REST Framework.
 
@@ -10,7 +10,7 @@ This document defines the API contract that must be maintained when migrating fr
 ## Base URL
 
 - **Development:** `http://localhost:3000`
-- **Production:** `https://api.horumarin.com`
+- **Production:** `https://api.MIDEEYE.com`
 
 ---
 
@@ -522,7 +522,7 @@ Authorization: Bearer <access_token>
 
 ### Questions Feed
 
-**URL:** `ws://api.horumarin.com/ws/questions/`
+**URL:** `ws://api.MIDEEYE.com/ws/questions/`
 
 **Messages:**
 
@@ -543,7 +543,7 @@ Authorization: Bearer <access_token>
 
 ### Answers Feed
 
-**URL:** `ws://api.horumarin.com/ws/questions/:id/answers/`
+**URL:** `ws://api.MIDEEYE.com/ws/questions/:id/answers/`
 
 **Messages:**
 
@@ -668,7 +668,7 @@ All endpoints should be tested with:
 
 ```bash
 # Example with curl
-curl -X POST https://api.horumarin.com/api/auth/login \
+curl -X POST https://api.MIDEEYE.com/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email": "test@example.com", "password": "password"}'
 ```

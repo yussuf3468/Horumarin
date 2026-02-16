@@ -1,5 +1,5 @@
 /**
- * HORUMARIN HOMEPAGE - CINEMATIC TRANSFORMATION
+ * MIDEEYE HOMEPAGE - CINEMATIC TRANSFORMATION
  *
  * A national Somali innovation movement.
  * A serious knowledge ecosystem.
@@ -31,7 +31,7 @@ import Avatar from "@/components/ui/Avatar";
 import Tooltip from "@/components/ui/Tooltip";
 import Skeleton from "@/components/ui/Skeleton";
 import Alert from "@/components/ui/Alert";
-import { HorumarinLogo, LogoIcon } from "@/components/brand/HorumarinLogo";
+import { MideeyeLogo, LogoIcon } from "@/components/brand/MideeyeLogo";
 import AnimatedCounter from "@/components/ui/AnimatedCounter";
 import LiveActivityFeed from "@/components/ui/LiveActivityFeed";
 import { subscribeEmail } from "@/services/email.service";
@@ -118,7 +118,10 @@ export default function HomePage() {
           ) : latestPosts.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4">
               {latestPosts[0] && (
-                <Link href={`/questions/${latestPosts[0].id}`} className="md:col-span-7">
+                <Link
+                  href={`/questions/${latestPosts[0].id}`}
+                  className="md:col-span-7"
+                >
                   <Card hover className="h-full overflow-hidden group">
                     <div className="relative h-56 sm:h-72 md:h-[420px]">
                       {latestPosts[0].image_video_url ? (
@@ -133,8 +136,9 @@ export default function HomePage() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
                       <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
                         <span className="inline-flex px-2.5 py-1 rounded-full text-[11px] font-medium bg-primary-600/90 text-primary-fg mb-2">
-                          {categories.find((c) => c.id === latestPosts[0].category)?.name ||
-                            latestPosts[0].category}
+                          {categories.find(
+                            (c) => c.id === latestPosts[0].category,
+                          )?.name || latestPosts[0].category}
                         </span>
                         <h2 className="text-lg sm:text-2xl font-bold text-white line-clamp-2 mb-2">
                           {latestPosts[0].title}
@@ -183,7 +187,9 @@ export default function HomePage() {
             </div>
           ) : (
             <Card className="p-10 text-center">
-              <p className="text-foreground-muted mb-4">Weli qoraalo lama helin.</p>
+              <p className="text-foreground-muted mb-4">
+                Weli qoraalo lama helin.
+              </p>
               <Link href="/ask">
                 <Button>Weydii su'aashii ugu horreysay</Button>
               </Link>
@@ -484,7 +490,7 @@ export default function HomePage() {
                   Xubnaha Firfircoon Maanta
                 </h3>
                 <p className="text-foreground-muted text-sm">
-                  Dadka ka caawiya horumarinta bulshada
+                  Dadka ka caawiya MIDEEYEta bulshada
                 </p>
               </div>
 
@@ -591,7 +597,9 @@ export default function HomePage() {
                     hover
                     className={`p-4 sm:p-5 bg-gradient-to-br ${category.gradient} text-primary-fg cursor-pointer group`}
                   >
-                    <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">{category.icon}</div>
+                    <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">
+                      {category.icon}
+                    </div>
                     <h3 className="font-bold text-base mb-1 group-hover:scale-105 transition-transform">
                       {category.name}
                     </h3>
@@ -614,7 +622,7 @@ export default function HomePage() {
               Xubnaha Firfircoon
             </h2>
             <p className="text-sm sm:text-base md:text-lg text-foreground-muted">
-              Dadka ka caawiya horumarinta bulshada
+              Dadka ka caawiya MIDEEYEta bulshada
             </p>
           </div>
 
@@ -761,7 +769,7 @@ export default function HomePage() {
               </span>
             </h2>
             <p className="text-base sm:text-xl text-foreground-muted mb-6 sm:mb-8 leading-relaxed">
-              Ku biir kumanaanka xubnood ee horumarinaya aqoonta bulshada
+              Ku biir kumanaanka xubnood ee MIDEEYEaya aqoonta bulshada
               Soomaaliyeed. Bilow maanta - waa bilaash!
             </p>
 

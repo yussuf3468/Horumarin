@@ -1,4 +1,4 @@
--- Database Schema for Horumarin
+-- Database Schema for MIDEEYE
 -- PostgreSQL (Supabase)
 -- 
 -- This schema is designed to be portable to Django.

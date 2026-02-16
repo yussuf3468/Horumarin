@@ -22,7 +22,7 @@ export interface RealtimeSubscription {
 /**
  * Subscribe to question changes
  * Migration note: Replace with WebSocket connection to Django Channels
- * Example: ws://api.horumarin.com/ws/questions/
+ * Example: ws://api.MIDEEYE.com/ws/questions/
  */
 export function subscribeToQuestions(
   callback: (event: RealtimeEvent, data: any) => void,
@@ -52,7 +52,7 @@ export function subscribeToQuestions(
 /**
  * Subscribe to answers for a specific question
  * Migration note: Replace with WebSocket to Django
- * Example: ws://api.horumarin.com/ws/questions/:id/answers/
+ * Example: ws://api.MIDEEYE.com/ws/questions/:id/answers/
  */
 export function subscribeToAnswers(
   questionId: string,

@@ -1,6 +1,6 @@
 # UI Components Library
 
-Comprehensive UI component library for Horumarin built with React, TypeScript, Framer Motion, and Tailwind CSS.
+Comprehensive UI component library for MIDEEYE built with React, TypeScript, Framer Motion, and Tailwind CSS.
 
 ## Available Components
 

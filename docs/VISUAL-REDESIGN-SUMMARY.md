@@ -1,4 +1,4 @@
-# HORUMARIN VISUAL REDESIGN — COMPLETE IMPLEMENTATION
+# MIDEEYE VISUAL REDESIGN — COMPLETE IMPLEMENTATION
 
 ## Part 1: Layout, Branding, Spacing, Hierarchy & Visual System
 
@@ -6,7 +6,7 @@
 
 ## 📋 EXECUTIVE SUMMARY
 
-Successfully rebuilt Horumarin's visual foundation from the ground up. The platform now has:
+Successfully rebuilt MIDEEYE's visual foundation from the ground up. The platform now has:
 
 - **Strong brand identity** with custom logo system
 - **Powerful hero section** with gradient backgrounds
@@ -348,7 +348,7 @@ app/questions/page.tsx               (Fixed apostrophe)
 
 ### Brand Presence:
 
-- ❌ Before: Text-only "Horumarin" wordmark
+- ❌ Before: Text-only "MIDEEYE" wordmark
 - ✅ After: Full logo system with symbolism
 
 - ❌ Before: Generic blue gradients
@@ -519,7 +519,7 @@ Refer to `docs/VISUAL-DESIGN-SYSTEM.md` for:
 
 **Before:**
 
-- Text-only "Horumarin" wordmark
+- Text-only "MIDEEYE" wordmark
 - Generic blue gradient
 - No symbolism
 - No favicon
@@ -553,7 +553,7 @@ Refer to `docs/VISUAL-DESIGN-SYSTEM.md` for:
 ## 📁 FILE STRUCTURE
 
 ```
-Horumarin/
+MIDEEYE/
 ├── lib/
 │   └── design-system.ts          ← Design tokens
 ├── components/

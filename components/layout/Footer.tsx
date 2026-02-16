@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { HorumarinLogo } from "@/components/brand/HorumarinLogo";
+import { MideeyeLogo } from "@/components/brand/MideeyeLogo";
 
 /**
- * HORUMARIN FOOTER - PREMIUM REDESIGN
+ * MIDEEYE FOOTER - PREMIUM REDESIGN
  *
  * Features:
  * - Dark gradient background with depth
@@ -31,9 +31,9 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 mb-16">
           {/* Brand section - takes more space */}
           <div className="lg:col-span-5">
-            <HorumarinLogo size="lg" variant="dark" className="mb-6" />
+            <MideeyeLogo size="lg" variant="dark" className="mb-6" />
             <p className="text-foreground/80 text-lg leading-relaxed mb-6 max-w-md">
-              <span className="text-foreground font-semibold">Horumarin</span>{" "}
+              <span className="text-foreground font-semibold">MIDEEYE</span>{" "}
               waa goobta aqoonta ee ugu weyn ee dadka Soomaaliyeed. Waanu isku
               keenaynaa dadka su'aalo qaba iyo kuwa aqoon u haysta.
             </p>
@@ -156,7 +156,7 @@ export default function Footer() {
             {/* Social links - more prominent */}
             <div className="flex items-center gap-3 mb-6">
               <a
-                href="https://twitter.com/horumarin"
+                href="https://twitter.com/MIDEEYE"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-surface/10 hover:bg-surface/20 flex items-center justify-center transition-all hover:scale-110"
@@ -172,7 +172,7 @@ export default function Footer() {
               </a>
 
               <a
-                href="https://facebook.com/horumarin"
+                href="https://facebook.com/MIDEEYE"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-surface/10 hover:bg-surface/20 flex items-center justify-center transition-all hover:scale-110"
@@ -188,7 +188,7 @@ export default function Footer() {
               </a>
 
               <a
-                href="https://instagram.com/horumarin"
+                href="https://instagram.com/MIDEEYE"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-surface/10 hover:bg-surface/20 flex items-center justify-center transition-all hover:scale-110"
@@ -216,7 +216,7 @@ export default function Footer() {
         {/* Bottom section */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-foreground-subtle text-sm">
-            © {currentYear} Horumarin. Dhammaan xuquuqda way dhawran yihiin.
+            © {currentYear} MIDEEYE. Dhammaan xuquuqda way dhawran yihiin.
           </p>
 
           <div className="flex items-center gap-6 text-foreground-subtle text-xs">

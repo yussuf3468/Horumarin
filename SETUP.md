@@ -1,4 +1,4 @@
-# Horumarin Setup Guide
+# MIDEEYE Setup Guide
 
 ## Quick Start
 
@@ -40,7 +40,7 @@ Visit: http://localhost:3000
 ## Project Structure
 
 ```
-Horumarin/
+MIDEEYE/
 ├── app/                     # Next.js 14 App Router pages
 │   ├── page.tsx            # Landing page
 │   ├── auth/               # Authentication pages

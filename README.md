@@ -1,4 +1,4 @@
-# Horumarin - Somali Community Q&A Platform
+# MIDEEYE - Somali Community Q&A Platform
 
 **Weydii. Wadaag. Horumar.** (Ask. Share. Progress.)
 
@@ -8,7 +8,7 @@ A modern, scalable question and answer platform for the Somali community, built 
 
 ## 🎯 Project Vision
 
-Horumarin is designed as a **long-term, production-ready platform**. While we start with Supabase for MVP speed, the architecture is built to scale into a Django-powered enterprise application.
+MIDEEYE is designed as a **long-term, production-ready platform**. While we start with Supabase for MVP speed, the architecture is built to scale into a Django-powered enterprise application.
 
 ---
 
@@ -63,7 +63,7 @@ Backend (Supabase → Django)
 ## 📁 Folder Structure
 
 ```
-horumarin/
+MIDEEYE/
 ├── app/                      # Next.js pages (App Router)
 │   ├── page.tsx             # Landing page
 │   ├── auth/                # Authentication pages
@@ -117,7 +117,7 @@ horumarin/
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd horumarin
+cd MIDEEYE
 
 # Install dependencies
 npm install
@@ -249,8 +249,8 @@ NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
 # Django Configuration (Future)
-# NEXT_PUBLIC_API_URL=https://api.horumarin.com
-# NEXT_PUBLIC_WS_URL=wss://api.horumarin.com
+# NEXT_PUBLIC_API_URL=https://api.MIDEEYE.com
+# NEXT_PUBLIC_WS_URL=wss://api.MIDEEYE.com
 ```
 
 ---
@@ -415,7 +415,7 @@ This project is proprietary. All rights reserved.
 
 For questions or issues:
 
-- Email: support@horumarin.com
+- Email: support@MIDEEYE.com
 - Docs: See `MIGRATION.md` and code comments
 - Architecture: Review `/services` folder
 

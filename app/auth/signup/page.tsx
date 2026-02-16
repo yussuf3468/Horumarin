@@ -63,7 +63,7 @@ export default function SignUpPage() {
       >
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gradient mb-2">
-            Ku Biir Horumarin
+            Ku Biir MIDEEYE
           </h2>
           <p className="text-foreground-muted">
             Samee akoon cusub si aad ugu biirto bulshada

@@ -204,7 +204,9 @@ export default function QuestionsPage() {
         >
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div>
-              <h1 className="text-2xl sm:text-4xl font-bold mb-1 sm:mb-2">Su'aalaha</h1>
+              <h1 className="text-2xl sm:text-4xl font-bold mb-1 sm:mb-2">
+                Su'aalaha
+              </h1>
               <p className="text-sm sm:text-base text-foreground-muted">
                 Helka jawaabo su'aalahaada
               </p>
@@ -332,7 +334,10 @@ export default function QuestionsPage() {
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ delay: index * 0.05 }}
                       >
-                        <Card hover className="overflow-hidden transition-all hover:-translate-y-0.5 hover:bg-surface">
+                        <Card
+                          hover
+                          className="overflow-hidden transition-all hover:-translate-y-0.5 hover:bg-surface"
+                        >
                           <div className="p-4 sm:p-6">
                             {/* Post Content */}
                             <div className="flex-1">

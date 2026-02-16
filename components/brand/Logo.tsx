@@ -1,10 +1,10 @@
 /**
- * HORUMARIN LOGO SYSTEM
+ * MIDEEYE LOGO SYSTEM
  *
  * Symbolism:
  * - Rising sun rays = Progress, enlightenment, dawn of knowledge
  * - Book base = Knowledge, learning, wisdom
- * - Upward movement = Growth (horumarin means "progress/development")
+ * - Upward movement = Growth (MIDEEYE means "progress/development")
  * - Teal + Deep Blue = Modern, trustworthy, innovative
  * - Star element = Somali cultural identity, excellence
  *
@@ -173,7 +173,7 @@ export const LogoWordmark: React.FC<{ className?: string }> = ({
       fill="url(#wordmarkGradient)"
       letterSpacing="-0.02em"
     >
-      Horumarin
+      MIDEEYE
     </text>
 
     <defs>
@@ -228,7 +228,7 @@ export const Logo: React.FC<{
               backgroundClip: "text",
             }}
           >
-            Horumarin
+            MIDEEYE
           </span>
           {size !== "sm" && (
             <span className="text-xs text-foreground-muted -mt-1">
@@ -277,14 +277,14 @@ export const FaviconSVG = `
 // USAGE GUIDELINES
 // ========================================
 export const LogoUsageGuidelines = `
-HORUMARIN LOGO USAGE GUIDELINES
+MIDEEYE LOGO USAGE GUIDELINES
 ================================
 
 SYMBOLISM:
 - Rising sun rays: Enlightenment, progress, new dawn of knowledge
 - Book base: Foundation of learning, wisdom, structured knowledge
 - Central star: Excellence, Somali cultural identity, guidance
-- Upward movement: Growth and development (horumarin)
+- Upward movement: Growth and development (MIDEEYE)
 - Gradient (blue to teal): Trust, innovation, modernity
 
 COLOR VARIATIONS:

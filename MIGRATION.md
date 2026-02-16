@@ -1,4 +1,4 @@
-# Horumarin Migration Guide: Supabase to Django REST Framework
+# MIDEEYE Migration Guide: Supabase to Django REST Framework
 
 ## Overview
 
@@ -59,8 +59,8 @@ All services return clean TypeScript interfaces that are backend-agnostic:
 
 ```bash
 # Create Django project
-django-admin startproject horumarin_backend
-cd horumarin_backend
+django-admin startproject MIDEEYE_backend
+cd MIDEEYE_backend
 
 # Create apps
 python manage.py startapp accounts
@@ -290,8 +290,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJxxx...
 **.env.local (After):**
 
 ```bash
-NEXT_PUBLIC_API_URL=https://api.horumarin.com
-NEXT_PUBLIC_WS_URL=wss://api.horumarin.com
+NEXT_PUBLIC_API_URL=https://api.MIDEEYE.com
+NEXT_PUBLIC_WS_URL=wss://api.MIDEEYE.com
 ```
 
 ---
@@ -347,7 +347,7 @@ Keep Supabase running while testing Django:
 
 ```bash
 # Load test Django endpoints
-ab -n 1000 -c 10 https://api.horumarin.com/api/questions
+ab -n 1000 -c 10 https://api.MIDEEYE.com/api/questions
 ```
 
 ---

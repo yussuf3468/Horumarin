@@ -143,7 +143,7 @@ Joogitaankaaga maaha caqabad.
       post_type: "resource",
     },
     {
-      title: "Talooyin Ku Saabsan Horumarinta Caafimaadka Maskaxda",
+      title: "Talooyin Ku Saabsan MIDEEYEta Caafimaadka Maskaxda",
       content: `
 Caafimaadka maskaxdu waa muhiim:
 
@@ -239,7 +239,7 @@ Maaha inaad noqoto programmer si aad u yeelato website.
     },
 
     {
-      title: "5 Buug Oo Qof Kasta Horumarinaya Noloshiisa U Baahan Yahay",
+      title: "5 Buug Oo Qof Kasta MIDEEYEaya Noloshiisa U Baahan Yahay",
       content: `
 Buugaag lagula talinayo:
 
@@ -257,7 +257,7 @@ Akhri si aad maskaxdaada u kobciso.
 
     // Community & Culture
     {
-      title: "Sidee Bulshadeena Soomaaliyeed U Horumarin Kartaa?",
+      title: "Sidee Bulshadeena Soomaaliyeed U MIDEEYE Kartaa?",
       content: `
 Horumarka bulshada wuxuu ku bilaabmaa:
 
@@ -402,7 +402,7 @@ Xiriir wanaagsan = fursado badan.
     },
 
     {
-      title: "Horumarinta Nolosha: 10 Tallaabo Oo Fudud",
+      title: "MIDEEYEta Nolosha: 10 Tallaabo Oo Fudud",
       content: `
 1. Qorshee yoolal cad.
 2. Akhri maalin kasta.
@@ -443,7 +443,7 @@ Horumarku waa safar, maaha meel la gaaro.
     content: post.content,
     category: post.category,
     post_type: normalizePostType(post.post_type),
-    image_video_url: `https://picsum.photos/seed/horumarin-real-${index}/1200/675`,
+    image_video_url: `https://picsum.photos/seed/MIDEEYE-real-${index}/1200/675`,
     link_url: null,
   }));
 

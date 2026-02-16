@@ -1,4 +1,4 @@
-# HORUMARIN VISUAL DESIGN SYSTEM
+# MIDEEYE VISUAL DESIGN SYSTEM
 
 ## Complete Implementation Guide
 
@@ -6,7 +6,7 @@
 
 ## 🎨 DESIGN PHILOSOPHY
 
-Horumarin represents **progress, knowledge, and Somali cultural identity**. The visual system reflects:
+MIDEEYE represents **progress, knowledge, and Somali cultural identity**. The visual system reflects:
 
 - **Authority**: Deep blues convey trust and expertise
 - **Innovation**: Teal accents suggest modernity and forward-thinking
@@ -272,7 +272,7 @@ Categories: 4 columns (LG), 2 columns (mobile)
 
 ## 🌟 LOGO USAGE
 
-### Horumarin Logo
+### MIDEEYE Logo
 
 **Symbolism:**
 

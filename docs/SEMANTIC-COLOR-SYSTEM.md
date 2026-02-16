@@ -1,8 +1,8 @@
-# HORUMARIN SEMANTIC COLOR SYSTEM
+# MIDEEYE SEMANTIC COLOR SYSTEM
 
 ## Overview
 
-This document outlines the semantic color system implemented to ensure proper contrast ratios and maintainability across the Horumarin platform.
+This document outlines the semantic color system implemented to ensure proper contrast ratios and maintainability across the MIDEEYE platform.
 
 **Key Principle**: No hardcoded colors in components. Use semantic tokens instead.
 

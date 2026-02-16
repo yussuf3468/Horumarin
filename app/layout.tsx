@@ -9,8 +9,8 @@ import { Toaster } from "react-hot-toast";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Horumarin - Weydii. Wadaag. Horumar.",
-  description: "Bulshada Soomaaliyeed ee Isu Kaashanaysa Horumarinta Aqoonta",
+  title: "MIDEEYE - Weydii. Wadaag. Horumar.",
+  description: "Bulshada Soomaaliyeed ee Isu Kaashanaysa mideynta Aqoonta",
 };
 
 export default function RootLayout({

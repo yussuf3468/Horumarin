@@ -1,5 +1,5 @@
 /**
- * HORUMARIN HEADER - PROFESSIONAL DESIGN
+ * MIDEEYE HEADER - PROFESSIONAL DESIGN
  *
  * Clean, minimal navbar like Reddit/Stack Overflow
  * - Solid background, no blur effects
@@ -15,7 +15,7 @@ import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { logout } from "@/services/auth.service";
 import Button from "@/components/ui/Button";
-import { HorumarinLogo } from "@/components/brand/HorumarinLogo";
+import { MideeyeLogo } from "@/components/brand/MideeyeLogo";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -39,7 +39,7 @@ export default function Header() {
             href={user ? "/dashboard" : "/"}
             className="flex items-center hover:opacity-90 transition-opacity"
           >
-            <HorumarinLogo size="md" variant="light" />
+            <MideeyeLogo size="md" variant="light" />
           </Link>
 
           {/* Navigation */}
@@ -151,8 +151,15 @@ export default function Header() {
             <nav className="flex flex-col gap-2">
               {user ? (
                 <>
-                  <Link href="/questions" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="ghost" size="sm" className="w-full justify-start">
+                  <Link
+                    href="/questions"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start"
+                    >
                       Su'aalaha
                     </Button>
                   </Link>
@@ -161,8 +168,15 @@ export default function Header() {
                       Weydii
                     </Button>
                   </Link>
-                  <Link href="/profile" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="ghost" size="sm" className="w-full justify-start">
+                  <Link
+                    href="/profile"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start"
+                    >
                       Profile
                     </Button>
                   </Link>
@@ -177,17 +191,34 @@ export default function Header() {
                 </>
               ) : (
                 <>
-                  <Link href="/questions" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="ghost" size="sm" className="w-full justify-start">
+                  <Link
+                    href="/questions"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start"
+                    >
                       Browse
                     </Button>
                   </Link>
-                  <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="outline" size="sm" className="w-full justify-start">
+                  <Link
+                    href="/auth/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full justify-start"
+                    >
                       Log In
                     </Button>
                   </Link>
-                  <Link href="/auth/signup" onClick={() => setMobileMenuOpen(false)}>
+                  <Link
+                    href="/auth/signup"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
                     <Button size="sm" className="w-full justify-start">
                       Sign Up
                     </Button>

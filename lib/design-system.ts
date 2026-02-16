@@ -1,5 +1,5 @@
 /**
- * HORUMARIN DESIGN SYSTEM
+ * MIDEEYE DESIGN SYSTEM
  *
  * Centralized design tokens for consistent visual language
  * Spacing, typography, colors, and effects

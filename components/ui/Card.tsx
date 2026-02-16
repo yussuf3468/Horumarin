@@ -19,7 +19,7 @@ interface CardProps extends Omit<HTMLMotionProps<"div">, "children"> {
 }
 
 /**
- * HORUMARIN CARD COMPONENT - SEMANTIC COLOR SYSTEM
+ * MIDEEYE CARD COMPONENT - SEMANTIC COLOR SYSTEM
  *
  * Design principles:
  * - Uses semantic color tokens for proper contrast

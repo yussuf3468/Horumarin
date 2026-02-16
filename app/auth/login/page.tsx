@@ -63,7 +63,7 @@ export default function LoginPage() {
           <h2 className="text-3xl font-bold text-gradient mb-2">
             Ku Soo Dhawo
           </h2>
-          <p className="text-foreground-muted">Gal akoonkaaga Horumarin</p>
+          <p className="text-foreground-muted">Gal akoonkaaga MIDEEYE</p>
         </div>
 
         {error && (
