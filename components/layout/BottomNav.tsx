@@ -21,13 +21,11 @@ export default function BottomNav() {
       fetchNotificationCount();
 
       // Subscribe to real-time notification updates
-      const channel = subscribeToNotifications(user.id, () => {
+      const unsubscribe = subscribeToNotifications(user.id, () => {
         fetchNotificationCount();
       });
 
-      return () => {
-        channel.unsubscribe();
-      };
+      return unsubscribe;
     }
   }, [user]);
 

@@ -18,6 +18,7 @@ import {
 import { getAnswersByUserId } from "@/services/answer.service";
 import { getUserReputation, getUserStats } from "@/services/user.service";
 import type { Answer } from "@/types";
+import FollowButton from "@/components/ui/FollowButton";
 
 const STORAGE_KEY = "MIDEEYE-joined-topics";
 
@@ -153,26 +154,33 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-background">
       <div className="h-44 bg-gradient-to-r from-primary-600 to-accent-600">
         <div className="max-w-6xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-end pb-8">
-          <div className="flex items-center gap-6">
-            <div className="w-20 h-20 rounded-2xl bg-surface border border-border flex items-center justify-center text-3xl">
-              {profile.avatarUrl ? (
-                <img
-                  src={profile.avatarUrl}
-                  alt={profile.fullName || "User"}
-                  className="w-full h-full rounded-2xl object-cover"
-                />
-              ) : (
-                <span>🧑‍💻</span>
-              )}
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-6">
+              <div className="w-20 h-20 rounded-2xl bg-surface border border-border flex items-center justify-center text-3xl">
+                {profile.avatarUrl ? (
+                  <img
+                    src={profile.avatarUrl}
+                    alt={profile.fullName || "User"}
+                    className="w-full h-full rounded-2xl object-cover"
+                  />
+                ) : (
+                  <span>🧑‍💻</span>
+                )}
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-primary-foreground">
+                  {profile.fullName || "Xubin"}
+                </h1>
+                <p className="text-sm text-primary-foreground/80">
+                  {profile.bio || "Ku soo dhawow bogga sumcaddaada."}
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl font-bold text-primary-foreground">
-                {profile.fullName || "Xubin"}
-              </h1>
-              <p className="text-sm text-primary-foreground/80">
-                {profile.bio || "Ku soo dhawow bogga sumcaddaada."}
-              </p>
-            </div>
+            {!isOwner && (
+              <div className="hidden sm:block">
+                <FollowButton userId={profileId} size="lg" />
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -207,6 +215,14 @@ export default function ProfilePage() {
                     <div className="text-sm text-foreground-muted">Codad</div>
                   </div>
                 </div>
+                
+                {/* Mobile Follow Button */}
+                {!isOwner && (
+                  <div className="sm:hidden mt-4">
+                    <FollowButton userId={profileId} size="md" className="w-full" />
+                  </div>
+                )}
+                
                 <div className="mt-6 flex flex-wrap gap-2">
                   {badges.map((badge) => (
                     <span

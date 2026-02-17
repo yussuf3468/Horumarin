@@ -32,13 +32,11 @@ export default function NotificationsPage() {
       fetchNotifications();
 
       // Subscribe to real-time notifications
-      const channel = subscribeToNotifications(user.id, () => {
+      const unsubscribe = subscribeToNotifications(user.id, () => {
         fetchNotifications();
       });
 
-      return () => {
-        channel.unsubscribe();
-      };
+      return unsubscribe;
     }
   }, [user, authLoading, router]);
 
@@ -122,8 +120,8 @@ export default function NotificationsPage() {
     setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
 
     // Update in database
-    const { error } = await markAllNotificationsAsRead(user.id);
-    if (error) {
+    const result = await markAllNotificationsAsRead();
+    if (!result.success) {
       toast.error("Failed to mark all as read");
       fetchNotifications(); // Refetch on error
     } else {

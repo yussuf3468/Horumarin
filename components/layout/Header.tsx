@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Avatar from "@/components/ui/Avatar";
 import { useProfile } from "@/hooks/useProfile";
+import NotificationBell from "@/components/ui/NotificationBell";
 
 export default function Header() {
   const { user } = useAuth();
@@ -128,7 +129,7 @@ export default function Header() {
               </Link>
             </nav>
 
-            {/* Right: Search + Profile */}
+            {/* Right: Search + Notifications + Profile */}
             <div className="flex items-center gap-1.5">
               <button
                 onClick={() => setSearchOpen(!searchOpen)}
@@ -149,6 +150,7 @@ export default function Header() {
                   />
                 </svg>
               </button>
+              {user && <NotificationBell />}
               {user ? (
                 <Link href="/profile" className="relative">
                   <Avatar
