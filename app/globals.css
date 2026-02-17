@@ -161,6 +161,22 @@
     }
   }
 
+  /* Fade in animation for toasts and notifications */
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out;
+  }
+
   /* Contrast debug mode - add .contrast-debug to body */
   .contrast-debug * {
     outline: 1px solid rgba(255, 0, 0, 0.2) !important;
@@ -168,5 +184,24 @@
 
   .contrast-debug [class*="text-white"]:not([class*="bg-"]) {
     outline: 3px solid red !important;
+  }
+
+  /* Safe area insets for mobile devices with notches */
+  .safe-area-inset-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-area-inset-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  /* No scrollbar utility */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }

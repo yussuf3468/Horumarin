@@ -10,13 +10,16 @@ export const useToast = () => {
     success: (message: string) => {
       toast.success(message, {
         duration: 3000,
-        position: "bottom-right",
+        position: "top-center",
         style: {
           background: "hsl(var(--surface))",
           color: "hsl(var(--foreground))",
-          border: "1px solid hsl(var(--border))",
-          padding: "16px",
+          border: "2px solid hsl(var(--primary))",
+          padding: "16px 24px",
           borderRadius: "12px",
+          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.2)",
+          fontWeight: "500",
+          maxWidth: "500px",
         },
         iconTheme: {
           primary: "hsl(var(--primary))",
@@ -28,13 +31,16 @@ export const useToast = () => {
     error: (message: string) => {
       toast.error(message, {
         duration: 4000,
-        position: "bottom-right",
+        position: "top-center",
         style: {
           background: "hsl(var(--surface))",
           color: "hsl(var(--foreground))",
-          border: "1px solid hsl(var(--danger-border))",
-          padding: "16px",
+          border: "2px solid hsl(var(--danger))",
+          padding: "16px 24px",
           borderRadius: "12px",
+          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.2)",
+          fontWeight: "500",
+          maxWidth: "500px",
         },
         iconTheme: {
           primary: "hsl(var(--danger))",
@@ -46,27 +52,33 @@ export const useToast = () => {
     info: (message: string) => {
       toast(message, {
         duration: 3000,
-        position: "bottom-right",
+        position: "top-center",
         icon: "ℹ️",
         style: {
           background: "hsl(var(--surface))",
           color: "hsl(var(--foreground))",
-          border: "1px solid hsl(var(--border))",
-          padding: "16px",
+          border: "2px solid hsl(var(--border))",
+          padding: "16px 24px",
           borderRadius: "12px",
+          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.2)",
+          fontWeight: "500",
+          maxWidth: "500px",
         },
       });
     },
 
     loading: (message: string) => {
       return toast.loading(message, {
-        position: "bottom-right",
+        position: "top-center",
         style: {
           background: "hsl(var(--surface))",
           color: "hsl(var(--foreground))",
-          border: "1px solid hsl(var(--border))",
-          padding: "16px",
+          border: "2px solid hsl(var(--border))",
+          padding: "16px 24px",
           borderRadius: "12px",
+          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.2)",
+          fontWeight: "500",
+          maxWidth: "500px",
         },
       });
     },

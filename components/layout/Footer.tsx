@@ -16,11 +16,13 @@ import { MideeyeLogo } from "@/components/brand/MideeyeLogo";
  *
  * NO flat white. NO template feel.
  */
-export default function Footer() {
+export default function Footer({ className = "" }: { className?: string }) {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 overflow-hidden text-foreground dark">
+    <footer
+      className={`relative bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 overflow-hidden text-foreground dark ${className}`}
+    >
       {/* Force dark mode tokens for this always-dark section */}
       {/* Radial glows for depth */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl" />
@@ -33,8 +35,8 @@ export default function Footer() {
           <div className="lg:col-span-5">
             <MideeyeLogo size="lg" variant="dark" className="mb-6" />
             <p className="text-foreground/80 text-lg leading-relaxed mb-6 max-w-md">
-              <span className="text-foreground font-semibold">MIDEEYE</span>{" "}
-              waa goobta aqoonta ee ugu weyn ee dadka Soomaaliyeed. Waanu isku
+              <span className="text-foreground font-semibold">MIDEEYE</span> waa
+              goobta aqoonta ee ugu weyn ee dadka Soomaaliyeed. Waanu isku
               keenaynaa dadka su'aalo qaba iyo kuwa aqoon u haysta.
             </p>
 

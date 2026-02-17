@@ -179,6 +179,12 @@ export default function QuestionDetailPage() {
     e.preventDefault();
     if (!user || !newAnswer.trim()) return;
 
+    // Validate minimum length
+    if (newAnswer.trim().length < 10) {
+      toast.error("Jawaabtu waa inay ahaato ugu yaraan 10 xaraf.");
+      return;
+    }
+
     setSubmitting(true);
     const loadingToast = toast.loading("Jawaabta waa la diyaarinayaa...");
 
@@ -215,6 +221,12 @@ export default function QuestionDetailPage() {
     if (!user) return;
     const content = replyDrafts[parentId]?.trim();
     if (!content) return;
+
+    // Validate minimum length
+    if (content.length < 10) {
+      toast.error("Jawaabtu waa inay ahaato ugu yaraan 10 xaraf.");
+      return;
+    }
 
     setReplySubmittingId(parentId);
     const loadingToast = toast.loading("Jawaabta waa la diyaarinayaa...");
@@ -482,14 +494,27 @@ export default function QuestionDetailPage() {
                 }
                 placeholder="Qor jawaabtaada..."
                 rows={3}
-                className="mb-3"
+                className="mb-2"
               />
+              <div className="mb-3">
+                <span
+                  className={`text-xs ${
+                    (replyDrafts[answer.id]?.trim().length || 0) < 10
+                      ? "text-foreground-muted"
+                      : "text-success"
+                  }`}
+                >
+                  {replyDrafts[answer.id]?.trim().length || 0}/10 xaraf
+                  (minimum)
+                </span>
+              </div>
               <div className="flex items-center gap-2">
                 <Button
                   type="button"
                   size="sm"
                   isLoading={replySubmittingId === answer.id}
                   onClick={() => handleSubmitReply(answer.id)}
+                  disabled={(replyDrafts[answer.id]?.trim().length || 0) < 10}
                 >
                   Soo Dir
                 </Button>
@@ -748,10 +773,25 @@ export default function QuestionDetailPage() {
                       onChange={(e) => setNewAnswer(e.target.value)}
                       placeholder="Halkan ku qor jawaabta..."
                       rows={6}
-                      className="mb-4"
+                      className="mb-2"
                       required
                     />
-                    <Button type="submit" isLoading={submitting}>
+                    <div className="flex items-center justify-between mb-4">
+                      <span
+                        className={`text-xs ${
+                          newAnswer.trim().length < 10
+                            ? "text-foreground-muted"
+                            : "text-success"
+                        }`}
+                      >
+                        {newAnswer.trim().length}/10 xaraf (minimum)
+                      </span>
+                    </div>
+                    <Button
+                      type="submit"
+                      isLoading={submitting}
+                      disabled={newAnswer.trim().length < 10}
+                    >
                       Soo Dir Jawaabta
                     </Button>
                   </form>

@@ -10,16 +10,18 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
-import LightboxImage from "@/components/ui/LightboxImage";
+import PostCard from "@/components/ui/PostCard";
 import { categories } from "@/utils/constants";
-import { formatDate, getHotScore, truncateText } from "@/utils/helpers";
+import { formatDate, getHotScore } from "@/utils/helpers";
 import {
   getQuestions,
+  deleteQuestion,
   type QuestionWithAuthor,
 } from "@/services/question.service";
 import {
@@ -31,6 +33,7 @@ import { subscribeToQuestions } from "@/services/realtime.service";
 
 export default function QuestionsPage() {
   const { user } = useAuth();
+  const router = useRouter();
   const toast = useToast();
   const [questions, setQuestions] = useState<QuestionWithAuthor[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,14 +42,6 @@ export default function QuestionsPage() {
   const [voteMap, setVoteMap] = useState<Record<string, number>>({});
   const [sortBy, setSortBy] = useState<"hot" | "new" | "top">("hot");
   const [topRange, setTopRange] = useState<"24h" | "7d" | "all">("24h");
-
-  const postTypeLabels: Record<string, string> = {
-    question: "Su'aal",
-    discussion: "Dood",
-    media: "Sawir",
-    resource: "Khayraad",
-    announcement: "Ogeysiis",
-  };
 
   const categoryStats = categories
     .map((category) => ({
@@ -334,174 +329,57 @@ export default function QuestionsPage() {
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ delay: index * 0.05 }}
                       >
-                        <Card
-                          hover
-                          className="overflow-hidden transition-all hover:-translate-y-0.5 hover:bg-surface"
-                        >
-                          <div className="p-4 sm:p-6">
-                            {/* Post Content */}
-                            <div className="flex-1">
-                              <div className="flex flex-wrap items-center gap-2 text-[11px] sm:text-xs text-foreground-subtle mb-2.5 sm:mb-3">
-                                <span className="px-2 py-1 rounded-full bg-surface-muted border border-border text-foreground-muted">
-                                  {postTypeLabels[
-                                    question.post_type || "question"
-                                  ] || "Qoraal"}
-                                </span>
-                                <span className="text-foreground-subtle">
-                                  •
-                                </span>
-                                <span>
-                                  {question.author?.fullName || "Xubin"}
-                                </span>
-                                <span className="text-foreground-subtle">
-                                  •
-                                </span>
-                                <span>{formatDate(question.created_at)}</span>
-                              </div>
-
-                              <Link href={`/questions/${question.id}`}>
-                                <h3 className="font-bold text-lg sm:text-xl mb-2.5 sm:mb-3 hover:text-primary transition-colors leading-tight">
-                                  {question.title}
-                                </h3>
-                              </Link>
-
-                              <p className="text-sm sm:text-base text-foreground-muted mb-3 sm:mb-4 line-clamp-2 sm:line-clamp-3">
-                                {truncateText(question.content, 240)}
-                              </p>
-
-                              {question.image_video_url && (
-                                <div className="mb-4">
-                                  <LightboxImage
-                                    src={question.image_video_url}
-                                    alt={question.title}
-                                    className="border border-border"
-                                    aspectRatio="16 / 9"
-                                  />
-                                </div>
-                              )}
-
-                              <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-foreground-subtle mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-border">
-                                <span
-                                  className={`px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-medium bg-gradient-to-r ${
-                                    categories.find(
-                                      (c) => c.id === question.category,
-                                    )?.gradient ||
-                                    "from-primary-600 to-accent-600"
-                                  } text-primary-foreground`}
-                                >
-                                  {categories.find(
-                                    (c) => c.id === question.category,
-                                  )?.name || question.category}
-                                </span>
-                                <motion.button
-                                  whileHover={{ scale: 1.05 }}
-                                  whileTap={{ scale: 0.95 }}
-                                  onClick={() => handleVote(question.id, 1)}
-                                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border transition-all ${
-                                    voteMap[question.id] === 1
-                                      ? "text-danger border-danger/30 bg-danger/10"
-                                      : "text-foreground-subtle border-border hover:text-danger hover:border-danger/30"
-                                  }`}
-                                  aria-pressed={voteMap[question.id] === 1}
-                                  title={user ? "Like" : "Login to like"}
-                                >
-                                  {voteMap[question.id] === 1 ? (
-                                    <svg
-                                      className="w-5 h-5"
-                                      fill="currentColor"
-                                      viewBox="0 0 20 20"
-                                    >
-                                      <path
-                                        fillRule="evenodd"
-                                        d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656"
-                                        clipRule="evenodd"
-                                      />
-                                    </svg>
-                                  ) : (
-                                    <svg
-                                      className="w-5 h-5"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      viewBox="0 0 24 24"
-                                    >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                                      />
-                                    </svg>
-                                  )}
-                                  <span className="font-medium">
-                                    {(voteCounts[question.id] ??
-                                      question.voteSum) ||
-                                      question.vote_count ||
-                                      0}
-                                  </span>
-                                </motion.button>
-                                <Link
-                                  href={`/questions/${question.id}`}
-                                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border border-border text-foreground-subtle hover:text-primary hover:border-primary/30 transition-colors"
-                                >
-                                  <svg
-                                    className="w-5 h-5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                                    />
-                                  </svg>
-                                  <span className="font-medium">
-                                    {question.comment_count ||
-                                      question.answerCount ||
-                                      0}
-                                  </span>
-                                </Link>
-                                <span className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border border-border">
-                                  <svg
-                                    className="w-5 h-5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                    />
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                                    />
-                                  </svg>
-                                  <span>{question.view_count}</span>
-                                </span>
-                                <div className="ml-auto hidden sm:flex items-center gap-3">
-                                  <button
-                                    type="button"
-                                    className="text-xs text-foreground-subtle hover:text-foreground transition-colors"
-                                  >
-                                    Kaydi
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="text-xs text-foreground-subtle hover:text-foreground transition-colors"
-                                  >
-                                    Wadaag
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </Card>
+                        <PostCard
+                          id={question.id}
+                          author={{
+                            id: question.author?.id || question.user_id,
+                            fullName: question.author?.fullName || "Xubin",
+                            avatar_url: question.author?.avatar_url,
+                          }}
+                          title={question.title}
+                          content={question.content}
+                          category={
+                            categories.find((c) => c.id === question.category)
+                              ?.name || question.category
+                          }
+                          imageUrl={question.image_video_url}
+                          linkUrl={question.link_url}
+                          voteCount={
+                            (voteCounts[question.id] ?? question.voteSum) ||
+                            question.vote_count ||
+                            0
+                          }
+                          commentCount={
+                            question.comment_count || question.answerCount || 0
+                          }
+                          createdAt={question.created_at}
+                          userVote={voteMap[question.id]}
+                          onVote={handleVote}
+                          isOwner={
+                            user?.id ===
+                            (question.author?.id || question.user_id)
+                          }
+                          onEdit={() =>
+                            router.push(`/questions/${question.id}/edit`)
+                          }
+                          onDelete={async () => {
+                            if (
+                              confirm(
+                                "Ma hubtaa inaad rabto inaad tirtirto qoraalkan?",
+                              )
+                            ) {
+                              const { success, error } = await deleteQuestion(
+                                question.id,
+                              );
+                              if (success) {
+                                toast.success("Qoraalka waa la tirtiray!");
+                                fetchQuestions();
+                              } else {
+                                toast.error(error || "Khalad ayaa dhacay.");
+                              }
+                            }
+                          }}
+                        />
                       </motion.div>
                     ))
                   ) : (
