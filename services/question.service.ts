@@ -28,6 +28,7 @@ export interface QuestionWithAuthor extends Question {
     id: string;
     fullName: string | null;
     email: string;
+    avatar_url?: string | null;
   };
   answerCount: number;
   voteSum: number;
@@ -89,7 +90,8 @@ export async function getQuestions(
         profiles:user_id (
           id,
           full_name,
-          email
+          email,
+          avatar_url
         )
       `,
       )
@@ -115,6 +117,7 @@ export async function getQuestions(
         id: q.profiles?.id || "",
         fullName: q.profiles?.full_name || null,
         email: q.profiles?.email || "",
+        avatar_url: q.profiles?.avatar_url || null,
       },
       answerCount: 0, // Would be aggregated in Django
       voteSum: 0, // Would be aggregated in Django
@@ -140,7 +143,8 @@ export async function getQuestionById(
         profiles:user_id (
           id,
           full_name,
-          email
+          email,
+          avatar_url
         )
       `,
       )
@@ -155,6 +159,7 @@ export async function getQuestionById(
         id: data.profiles?.id || "",
         fullName: data.profiles?.full_name || null,
         email: data.profiles?.email || "",
+        avatar_url: data.profiles?.avatar_url || null,
       },
       answerCount: 0,
       voteSum: 0,
@@ -254,7 +259,8 @@ export async function getRelatedQuestions(
         profiles:user_id (
           id,
           full_name,
-          email
+          email,
+          avatar_url
         )
       `,
       )
@@ -271,6 +277,7 @@ export async function getRelatedQuestions(
         id: q.profiles?.id || "",
         fullName: q.profiles?.full_name || null,
         email: q.profiles?.email || "",
+        avatar_url: q.profiles?.avatar_url || null,
       },
       answerCount: q.comment_count || 0,
       voteSum: q.vote_count || 0,

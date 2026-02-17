@@ -152,8 +152,8 @@ export default function Header() {
               {user ? (
                 <Link href="/profile" className="relative">
                   <Avatar
-                    src={profile?.avatar_url}
-                    alt={profile?.full_name || "User"}
+                    src={profile?.avatarUrl || undefined}
+                    alt={profile?.fullName || "User"}
                     size="sm"
                     className="w-7 h-7"
                   />
