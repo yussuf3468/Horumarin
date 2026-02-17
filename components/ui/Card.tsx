@@ -16,19 +16,18 @@ interface CardProps extends Omit<HTMLMotionProps<"div">, "children"> {
   elevated?: boolean;
   gradient?: boolean;
   tilt?: boolean;
+  interactive?: boolean;
 }
 
 /**
- * MIDEEYE CARD COMPONENT - SEMANTIC COLOR SYSTEM
+ * MIDEEYE PREMIUM CARD COMPONENT
  *
  * Design principles:
- * - Uses semantic color tokens for proper contrast
- * - Strong contrast with subtle shadow
- * - Hover depth effect for interactivity
+ * - Premium elevation system with smooth transitions
+ * - Subtle hover effects for interactivity
  * - Optional 3D tilt on mouse move
- * - Tighter internal padding
- * - Background gradient option for visual richness
- * - Clear interaction affordance
+ * - Clean visual hierarchy
+ * - Optimized for both light and dark modes
  */
 export default function Card({
   children,
@@ -36,6 +35,7 @@ export default function Card({
   elevated = false,
   gradient = false,
   tilt = false,
+  interactive = false,
   className,
   ...props
 }: CardProps) {
@@ -72,20 +72,24 @@ export default function Card({
   return (
     <motion.div
       className={cn(
-        // LOCKED: Base styling - semantic colors ONLY (no hardcoded colors allowed)
-        "bg-surface-elevated text-foreground rounded-lg border border-border overflow-hidden",
+        // Base styling - clean and minimal
+        "bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden",
 
-        // Shadow system - proper depth
-        elevated ? "shadow-elevated" : "shadow-card",
+        // Elevation system
+        elevated
+          ? "shadow-lg"
+          : "shadow-[0_1px_3px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.06)]",
 
-        // Gradient background option (semantic only)
-        gradient && "bg-gradient-card",
+        // Gradient background option
+        gradient &&
+          "bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900",
 
-        // Hover effects - clear interactivity with semantic colors ONLY
-        hover && [
-          "transition-all duration-200",
-          "hover:shadow-card-hover hover:-translate-y-1",
-          "hover:border-border-strong",
+        // Interactive hover effects with premium feel
+        (hover || interactive) && [
+          "transition-all duration-250 ease-out",
+          "hover:shadow-[0_4px_12px_rgba(0,0,0,0.1),0_2px_6px_rgba(0,0,0,0.08)]",
+          "hover:-translate-y-0.5",
+          "hover:border-gray-300 dark:hover:border-gray-600",
           "cursor-pointer",
         ],
 

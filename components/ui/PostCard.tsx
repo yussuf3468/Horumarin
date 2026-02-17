@@ -4,6 +4,9 @@ import Link from "next/link";
 import { formatDate } from "@/utils/helpers";
 import Avatar from "@/components/ui/Avatar";
 import LightboxImage from "@/components/ui/LightboxImage";
+import Card from "@/components/ui/Card";
+import SaveButton from "@/components/ui/SaveButton";
+import { motion } from "framer-motion";
 
 interface PostCardProps {
   id: string;
@@ -25,6 +28,8 @@ interface PostCardProps {
   isOwner?: boolean;
   onEdit?: () => void;
   onDelete?: () => void;
+  userId?: string | null;
+  isSaved?: boolean;
 }
 
 export default function PostCard({
@@ -43,6 +48,8 @@ export default function PostCard({
   isOwner = false,
   onEdit,
   onDelete,
+  userId = null,
+  isSaved = false,
 }: PostCardProps) {
   const handleVote = (value: number) => {
     if (onVote) {
@@ -51,7 +58,7 @@ export default function PostCard({
   };
 
   return (
-    <div className="bg-surface border border-border rounded-lg hover:border-border-strong transition-all hover:shadow-sm overflow-hidden">
+    <Card hover className="overflow-hidden">
       <div className="p-4 sm:p-6">
         {/* Author Info */}
         <div className="flex items-center justify-between gap-2 mb-3">
@@ -179,41 +186,50 @@ export default function PostCard({
 
         {/* Action Buttons */}
         <div className="flex items-center gap-4 pt-3 border-t border-border">
-          {/* Like Button */}
-          <button
+          {/* Like Button with Animation */}
+          <motion.button
             onClick={() => handleVote(1)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all ${
               userVote === 1
-                ? "text-danger border-danger/30 bg-danger/10"
-                : "text-foreground-muted border-border hover:text-danger hover:border-danger/30"
+                ? "text-orange-600 border-orange-300 bg-orange-50 dark:bg-orange-900/20"
+                : "text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:text-orange-600 hover:border-orange-300"
             }`}
             aria-pressed={userVote === 1}
+            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.05 }}
           >
-            {userVote === 1 ? (
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <motion.svg
+              className="w-5 h-5"
+              fill={userVote === 1 ? "currentColor" : "none"}
+              stroke={userVote === 1 ? "none" : "currentColor"}
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              animate={
+                userVote === 1
+                  ? {
+                      scale: [1, 1.2, 1],
+                      rotate: [0, -15, 0],
+                    }
+                  : {}
+              }
+              transition={{ duration: 0.3 }}
+            >
+              {userVote === 1 ? (
                 <path
                   fillRule="evenodd"
                   d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656"
                   clipRule="evenodd"
                 />
-              </svg>
-            ) : (
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              ) : (
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth={2}
                   d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                 />
-              </svg>
-            )}
+              )}
+            </motion.svg>
             <span className="text-sm font-medium">{voteCount}</span>
-          </button>
+          </motion.button>
 
           {/* Comments */}
           <Link
@@ -254,25 +270,17 @@ export default function PostCard({
             <span className="text-sm font-medium hidden sm:inline">Share</span>
           </button>
 
-          {/* Save */}
-          <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border text-foreground-muted hover:text-foreground hover:border-border-strong transition-colors ml-auto">
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
-              />
-            </svg>
-            <span className="text-sm font-medium hidden sm:inline">Save</span>
-          </button>
+          {/* Save Button */}
+          <div className="ml-auto">
+            <SaveButton
+              postId={id}
+              userId={userId}
+              initialSaved={isSaved}
+              variant="inline"
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

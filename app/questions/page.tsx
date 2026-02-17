@@ -15,7 +15,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
-import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
+import { FeedPostSkeleton } from "@/components/ui/Skeleton";
 import PostCard from "@/components/ui/PostCard";
 import { categories } from "@/utils/constants";
 import { formatDate, getHotScore } from "@/utils/helpers";
@@ -316,7 +316,11 @@ export default function QuestionsPage() {
           {/* Main Feed */}
           <div>
             {loading ? (
-              <LoadingSkeleton />
+              <div className="space-y-4">
+                <FeedPostSkeleton />
+                <FeedPostSkeleton />
+                <FeedPostSkeleton />
+              </div>
             ) : (
               <AnimatePresence>
                 <div className="space-y-3 sm:space-y-4">
@@ -355,6 +359,8 @@ export default function QuestionsPage() {
                           createdAt={question.created_at}
                           userVote={voteMap[question.id]}
                           onVote={handleVote}
+                          userId={user?.id || null}
+                          isSaved={false}
                           isOwner={
                             user?.id ===
                             (question.author?.id || question.user_id)

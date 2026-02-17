@@ -332,6 +332,8 @@ export default function DashboardPage() {
                     createdAt={post.created_at}
                     userVote={voteMap[post.id]}
                     onVote={handleVote}
+                    userId={user?.id || null}
+                    isSaved={false}
                     isOwner={true}
                     onEdit={() => router.push(`/questions/${post.id}/edit`)}
                     onDelete={async () => {
@@ -434,6 +436,8 @@ export default function DashboardPage() {
                     createdAt={question.created_at}
                     userVote={voteMap[question.id]}
                     onVote={handleVote}
+                    userId={user?.id || null}
+                    isSaved={false}
                   />
                 </motion.div>
               ))
