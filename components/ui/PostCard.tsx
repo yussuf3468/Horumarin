@@ -59,26 +59,28 @@ export default function PostCard({
 
   return (
     <Card hover className="overflow-hidden">
-      <div className="p-4 sm:p-6">
+      <div className="p-3 sm:p-4 md:p-6">
         {/* Author Info */}
-        <div className="flex items-center justify-between gap-2 mb-3">
-          <div className="flex items-center gap-2">
+        <div className="flex items-start justify-between gap-2 mb-2 sm:mb-3">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
             <Avatar
               src={author.avatar_url || undefined}
               alt={author.fullName || "User"}
               size="sm"
-              className="w-8 h-8"
+              className="w-7 h-7 sm:w-8 sm:h-8 shrink-0"
             />
-            <div className="flex flex-wrap items-center gap-1.5 text-xs text-foreground-muted">
-              <span className="font-semibold text-foreground">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-0.5 sm:gap-1.5 text-xs text-foreground-muted min-w-0">
+              <span className="font-semibold text-foreground truncate">
                 {author.fullName || "User"}
               </span>
-              <span>•</span>
-              <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-primary-500/10 to-accent-500/10 text-primary font-medium">
+              <span className="hidden sm:inline">•</span>
+              <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-primary-500/10 to-accent-500/10 text-primary font-medium text-[10px] sm:text-xs w-fit">
                 {category}
               </span>
-              <span>•</span>
-              <span>{formatDate(createdAt)}</span>
+              <span className="hidden sm:inline">•</span>
+              <span className="text-[10px] sm:text-xs">
+                {formatDate(createdAt)}
+              </span>
             </div>
           </div>
 
@@ -133,25 +135,25 @@ export default function PostCard({
 
         {/* Title */}
         <Link href={`/questions/${id}`}>
-          <h2 className="text-lg sm:text-xl font-bold text-foreground hover:text-primary mb-2 line-clamp-2 transition-colors">
+          <h2 className="text-base sm:text-lg md:text-xl font-bold text-foreground hover:text-primary mb-2 line-clamp-2 transition-colors">
             {title}
           </h2>
         </Link>
 
         {/* Content Preview */}
         {content && (
-          <p className="text-sm sm:text-base text-foreground-muted mb-4 line-clamp-3">
+          <p className="text-sm text-foreground-muted mb-3 sm:mb-4 line-clamp-2 sm:line-clamp-3">
             {content}
           </p>
         )}
 
         {/* Image */}
         {imageUrl && (
-          <div className="mb-4">
+          <div className="mb-3 sm:mb-4 -mx-3 sm:-mx-4 md:-mx-6">
             <LightboxImage
               src={imageUrl}
               alt={title}
-              className="rounded border border-border"
+              className="w-full"
               aspectRatio="16 / 9"
             />
           </div>
@@ -185,11 +187,11 @@ export default function PostCard({
         )}
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-4 pt-3 border-t border-border">
+        <div className="flex items-center gap-2 sm:gap-4 pt-2 sm:pt-3 border-t border-border flex-wrap">
           {/* Like Button with Animation */}
           <motion.button
             onClick={() => handleVote(1)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all ${
+            className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full border transition-all text-xs sm:text-sm ${
               userVote === 1
                 ? "text-orange-600 border-orange-300 bg-orange-50 dark:bg-orange-900/20"
                 : "text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:text-orange-600 hover:border-orange-300"
@@ -199,7 +201,7 @@ export default function PostCard({
             whileHover={{ scale: 1.05 }}
           >
             <motion.svg
-              className="w-5 h-5"
+              className="w-4 h-4 sm:w-5 sm:h-5"
               fill={userVote === 1 ? "currentColor" : "none"}
               stroke={userVote === 1 ? "none" : "currentColor"}
               viewBox="0 0 24 24"
@@ -228,16 +230,16 @@ export default function PostCard({
                 />
               )}
             </motion.svg>
-            <span className="text-sm font-medium">{voteCount}</span>
+            <span className="font-medium">{voteCount}</span>
           </motion.button>
 
           {/* Comments */}
           <Link
             href={`/questions/${id}`}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border text-foreground-muted hover:text-primary hover:border-primary/30 transition-colors"
+            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full border border-border text-foreground-muted hover:text-primary hover:border-primary/30 transition-colors text-xs sm:text-sm"
           >
             <svg
-              className="w-5 h-5"
+              className="w-4 h-4 sm:w-5 sm:h-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -249,13 +251,13 @@ export default function PostCard({
                 d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
               />
             </svg>
-            <span className="text-sm font-medium">{commentCount}</span>
+            <span className="font-medium">{commentCount}</span>
           </Link>
 
           {/* Share */}
-          <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border text-foreground-muted hover:text-foreground hover:border-border-strong transition-colors">
+          <button className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full border border-border text-foreground-muted hover:text-foreground hover:border-border-strong transition-colors text-xs sm:text-sm">
             <svg
-              className="w-5 h-5"
+              className="w-4 h-4 sm:w-5 sm:h-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -267,7 +269,7 @@ export default function PostCard({
                 d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
               />
             </svg>
-            <span className="text-sm font-medium hidden sm:inline">Share</span>
+            <span className="font-medium hidden sm:inline">Share</span>
           </button>
 
           {/* Save Button */}

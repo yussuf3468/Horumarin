@@ -112,7 +112,7 @@ export default function ProfileBanner({
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
-              <div className="w-32 h-32 rounded-2xl ring-4 ring-white dark:ring-gray-900 overflow-hidden bg-white dark:bg-gray-800 shadow-xl">
+              <div className="w-32 h-32 rounded-2xl ring-4 ring-surface overflow-hidden bg-surface shadow-xl">
                 <Avatar
                   src={(avatarUrl as string | undefined) || undefined}
                   alt={fullName || "User"}

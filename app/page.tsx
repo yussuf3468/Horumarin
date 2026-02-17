@@ -155,31 +155,42 @@ export default function HomePage() {
               <div className="md:col-span-5 grid grid-cols-1 gap-3 sm:gap-4">
                 {latestPosts.slice(1, 4).map((post) => (
                   <Link key={post.id} href={`/questions/${post.id}`}>
-                    <Card hover className="p-3.5 sm:p-4 h-full">
-                      <div className="flex gap-3">
-                        {post.image_video_url ? (
-                          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg overflow-hidden border border-border shrink-0">
-                            <img
-                              src={post.image_video_url}
-                              alt={post.title}
-                              className="w-full h-full object-cover"
-                            />
+                    <Card hover className="overflow-hidden h-full">
+                      {post.image_video_url ? (
+                        <div className="relative h-40 sm:h-48">
+                          <img
+                            src={post.image_video_url}
+                            alt={post.title}
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                          <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
+                            <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary-600/90 text-white mb-1.5">
+                              {categories.find((c) => c.id === post.category)
+                                ?.name || post.category}
+                            </span>
+                            <h3 className="font-bold text-sm sm:text-base text-white line-clamp-2">
+                              {post.title}
+                            </h3>
                           </div>
-                        ) : (
-                          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg border border-border bg-surface-muted shrink-0" />
-                        )}
-                        <div className="min-w-0 flex-1">
-                          <div className="text-[11px] text-foreground-subtle mb-1">
-                            {formatDate(post.created_at)}
-                          </div>
-                          <h3 className="font-semibold text-sm sm:text-base text-foreground line-clamp-2 mb-1.5">
+                        </div>
+                      ) : (
+                        <div className="p-3.5 sm:p-4">
+                          <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary-100 dark:bg-primary-900/30 text-primary mb-2">
+                            {categories.find((c) => c.id === post.category)
+                              ?.name || post.category}
+                          </span>
+                          <h3 className="font-bold text-sm sm:text-base text-foreground line-clamp-2 mb-2">
                             {post.title}
                           </h3>
-                          <p className="text-xs sm:text-sm text-foreground-muted line-clamp-2">
-                            {truncateText(post.content, 90)}
+                          <p className="text-xs sm:text-sm text-foreground-muted line-clamp-3">
+                            {post.content}
                           </p>
+                          <div className="text-[11px] text-foreground-subtle mt-2">
+                            {formatDate(post.created_at)}
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </Card>
                   </Link>
                 ))}
