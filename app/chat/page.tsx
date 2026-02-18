@@ -461,35 +461,10 @@ export default function ChatPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-violet-50/20 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-4 lg:py-6 h-screen flex flex-col">
-        {/* ── Top bar (mobile) ── */}
-        <div className="flex lg:hidden items-center justify-between mb-3 px-2">
-          <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
-            Messages
-          </h1>
-          <button
-            onClick={() => setShowPeoplePanel(!showPeoplePanel)}
-            className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center shadow-md shadow-blue-200 dark:shadow-blue-900/40 text-white transition-transform active:scale-95"
-          >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 4.5v15m7.5-7.5h-15"
-              />
-            </svg>
-          </button>
-        </div>
-
         {/* ── Main grid ── */}
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-[340px_minmax(0,1fr)] gap-3 lg:gap-4 min-h-0">
           {/* ═══════ LEFT SIDEBAR ═══════ */}
-          <aside className="flex flex-col min-h-0 rounded-2xl overflow-hidden bg-white dark:bg-gray-900 lg:bg-white/90 lg:backdrop-blur-xl border border-slate-200 dark:border-gray-700/60 shadow-xl shadow-slate-200/60 dark:shadow-black/40">
+          <aside className="flex flex-col min-h-0 rounded-2xl overflow-hidden bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-lg">
             {/* Sidebar header */}
             <div className="px-5 pt-5 pb-3 flex-shrink-0">
               <div className="flex items-center justify-between mb-4">
@@ -663,13 +638,13 @@ export default function ChatPage() {
           </aside>
 
           {/* ═══════ RIGHT: MESSAGE PANE ═══════ */}
-          <main className="flex flex-col min-h-0 rounded-2xl overflow-hidden bg-white dark:bg-gray-900 lg:bg-white/90 lg:backdrop-blur-xl border border-slate-200 dark:border-gray-700/60 shadow-xl shadow-slate-200/60 dark:shadow-black/40">
+          <main className="flex flex-col min-h-0 rounded-2xl overflow-hidden bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-lg">
             {!selectedConversation ? (
               <NoConversationSelected />
             ) : (
               <>
                 {/* ── Conversation header ── */}
-                <div className="flex-shrink-0 flex items-center gap-3 px-5 py-4 border-b border-slate-200 dark:border-gray-800 bg-slate-50 dark:bg-gray-900">
+                <div className="flex-shrink-0 flex items-center gap-3 px-5 py-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
                   {otherParticipant && (
                     <ChatAvatar
                       user={{
@@ -837,7 +812,7 @@ export default function ChatPage() {
                 </div>
 
                 {/* ── Input bar ── */}
-                <div className="flex-shrink-0 px-4 py-3 border-t border-slate-200 dark:border-gray-800 bg-slate-50 dark:bg-gray-900">
+                <div className="flex-shrink-0 px-4 py-3 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
                   <div className="flex items-end gap-2">
                     {/* Attach icon */}
                     <button className="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-foreground-muted hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors mb-0.5">
