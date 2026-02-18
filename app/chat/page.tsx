@@ -304,6 +304,7 @@ export default function ChatPage() {
 
   /* ── Auth guard ── */
   useEffect(() => {
+    console.log('[Chat] Auth state:', { authLoading, userId: user?.id });
     if (!authLoading && !user) router.push("/auth/login");
   }, [authLoading, user, router]);
 
@@ -312,23 +313,34 @@ export default function ChatPage() {
     if (!user) return;
 
     const load = async () => {
+      console.log('[Chat] Loading conversations...');
       setLoadingConversations(true);
-      const [convResult, peopleResult] = await Promise.all([
-        getConversations(),
-        (supabase as any)
-          .from("profiles")
-          .select("id, full_name, avatar_url")
-          .neq("id", user.id)
-          .order("created_at", { ascending: false })
-          .limit(30),
-      ]);
-      if (convResult.success && convResult.data) {
-        setConversations(convResult.data);
-        if (convResult.data.length > 0)
-          setSelectedConversationId(convResult.data[0].id);
+      try {
+        const [convResult, peopleResult] = await Promise.all([
+          getConversations(),
+          (supabase as any)
+            .from("profiles")
+            .select("id, full_name, avatar_url")
+            .neq("id", user.id)
+            .order("created_at", { ascending: false })
+            .limit(30),
+        ]);
+        console.log('[Chat] Conversations loaded:', { 
+          success: convResult.success, 
+          count: convResult.data?.length,
+          peopleCount: peopleResult.data?.length 
+        });
+        if (convResult.success && convResult.data) {
+          setConversations(convResult.data);
+          if (convResult.data.length > 0)
+            setSelectedConversationId(convResult.data[0].id);
+        }
+        setPeople((peopleResult.data || []) as ChatUser[]);
+      } catch (error) {
+        console.error('[Chat] Failed to load:', error);
+      } finally {
+        setLoadingConversations(false);
       }
-      setPeople((peopleResult.data || []) as ChatUser[]);
-      setLoadingConversations(false);
     };
 
     load();
@@ -338,18 +350,29 @@ export default function ChatPage() {
   useEffect(() => {
     if (!selectedConversationId || !user) return;
 
+    console.log('[Chat] Loading messages for:', selectedConversationId);
     setLoadingMessages(true);
     setMessages([]);
 
     const loadMessages = async () => {
-      const result = await getMessages({
-        conversationId: selectedConversationId,
-        limit: 100,
-      });
-      if (result.success && result.data) setMessages(result.data);
-      else setMessages([]);
-      await markConversationAsRead(selectedConversationId);
-      setLoadingMessages(false);
+      try {
+        const result = await getMessages({
+          conversationId: selectedConversationId,
+          limit: 100,
+        });
+        console.log('[Chat] Messages loaded:', { 
+          success: result.success, 
+          count: result.data?.length 
+        });
+        if (result.success && result.data) setMessages(result.data);
+        else setMessages([]);
+        await markConversationAsRead(selectedConversationId);
+      } catch (error) {
+        console.error('[Chat] Failed to load messages:', error);
+        setMessages([]);
+      } finally {
+        setLoadingMessages(false);
+      }
     };
 
     loadMessages();
@@ -461,13 +484,32 @@ export default function ChatPage() {
     [handleSendMessage],
   );
 
-  if (authLoading || (!user && !authLoading)) return null;
-
   const otherParticipant = selectedConversation?.other_participant;
 
   /* ═══════════════ RENDER ═══════════════ */
+  console.log('[Chat] Rendering, conversations:', conversations.length, 'selected:', selectedConversationId);
+  
+  // Loading state with dark background
+  if (authLoading) {
+    return (
+      <div className="dark min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" style={{ backgroundColor: '#0f172a', minHeight: '100vh' }}>
+        <div className="flex items-center justify-center h-screen">
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-12 h-12 border-4 border-slate-700 border-t-blue-500 rounded-full animate-spin" />
+            <p className="text-slate-400 text-sm">Loading chat...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    router.push("/auth/login");
+    return null;
+  }
+  
   return (
-    <div className="dark min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className="dark min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" style={{ backgroundColor: '#0f172a', minHeight: '100vh' }}>
       <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-4 lg:py-6 h-screen flex flex-col">
         {/* ── Main grid ── */}
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-[340px_minmax(0,1fr)] gap-3 lg:gap-4 min-h-0">
