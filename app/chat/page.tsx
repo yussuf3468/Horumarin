@@ -391,15 +391,16 @@ export default function ChatPage() {
   if (authLoading) {
     return (
       <div
-        style={{ backgroundColor: "#0a0f1a", minHeight: "100dvh" }}
+        style={{ backgroundColor: "#0a0f1a" }}
         className="flex items-center justify-center"
+        // eslint-disable-next-line react/no-unknown-property
       >
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-4" style={{ height: "calc(100dvh - 64px)" }}>
           <div
             className="w-12 h-12 rounded-full border-4 animate-spin"
-            style={{ borderColor: "#1e293b", borderTopColor: "#3b82f6" }}
+            style={{ borderColor: "#1e293b", borderTopColor: "#3b82f6", marginTop: "auto" }}
           />
-          <p style={{ color: "#64748b" }} className="text-sm">Loading…</p>
+          <p style={{ color: "#64748b", marginBottom: "auto" }} className="text-sm">Loading…</p>
         </div>
       </div>
     );
@@ -414,10 +415,13 @@ export default function ChatPage() {
     <div
       style={{
         backgroundColor: "#0a0f1a",
-        height: "100dvh",
+        // On mobile: subtract the bottom nav height (64px) + safe area
+        // On desktop (lg): full height since BottomNav is hidden
+        height: "calc(100dvh - 64px)",
         display: "flex",
         overflow: "hidden",
       }}
+      className="lg:h-dvh"
     >
       {/* ══════════ CONVERSATION LIST PANEL ══════════ */}
       <div
