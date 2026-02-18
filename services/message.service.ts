@@ -105,6 +105,30 @@ function extractConversationIdFromRpcResult(data: any): string | null {
   return null;
 }
 
+function extractMessageIdFromRpcResult(data: any): string | null {
+  if (!data) return null;
+
+  if (typeof data === "string") return data;
+  if (typeof data === "number") return String(data);
+
+  if (Array.isArray(data) && data.length > 0) {
+    const first = data[0];
+    if (typeof first === "string") return first;
+    if (typeof first === "number") return String(first);
+    if (first && typeof first === "object") {
+      if (typeof first.send_message === "string") return first.send_message;
+      if (typeof first.id === "string") return first.id;
+    }
+  }
+
+  if (typeof data === "object") {
+    if (typeof data.send_message === "string") return data.send_message;
+    if (typeof data.id === "string") return data.id;
+  }
+
+  return null;
+}
+
 // =====================================================
 // CONVERSATION MANAGEMENT
 // =====================================================
@@ -231,7 +255,6 @@ export async function getConversation(
       .maybeSingle();
 
     if (convError) throw convError;
-    if (!convData) throw new Error("Conversation not found");
 
     // 2. Fetch participants (no profile join — FK is to auth.users, not profiles)
     const { data: participantRows, error: pError } = await supabase
@@ -269,7 +292,14 @@ export async function getConversation(
     // 6. Get unread count
     const unreadResult = await getUnreadMessageCount(conversationId);
 
+    const now = new Date().toISOString();
     const conversation: Conversation = {
+      id: conversationId,
+      created_at: now,
+      updated_at: now,
+      last_message_at: now,
+      last_message_preview: null,
+      is_archived: false,
       ...(convData as any),
       participants,
       other_participant: otherParticipant
@@ -413,16 +443,7 @@ export async function getMessages(params: {
 
     let query = supabase
       .from("messages")
-      .select(
-        `
-        *,
-        sender:profiles!messages_sender_id_fkey(
-          id,
-          full_name,
-          avatar_url
-        )
-      `,
-      )
+      .select("*")
       .eq("conversation_id", conversationId)
       .order("created_at", { ascending: false })
       .limit(limit);
@@ -435,9 +456,26 @@ export async function getMessages(params: {
 
     if (error) throw error;
 
+    const rows = (data || []) as any[];
+    const senderIds = [
+      ...new Set(rows.map((m) => m.sender_id).filter(Boolean)),
+    ];
+    const profileMap = await fetchProfilesForUserIds(senderIds as string[]);
+
+    const messages = rows
+      .map((m) => ({
+        ...m,
+        sender: profileMap[m.sender_id] || {
+          id: m.sender_id,
+          full_name: null,
+          avatar_url: null,
+        },
+      }))
+      .reverse() as Message[];
+
     return {
       success: true,
-      data: (data || []).reverse() as Message[],
+      data: messages,
     };
   } catch (error: any) {
     console.error("Get messages error:", error);
@@ -456,6 +494,10 @@ export async function sendMessage(
   content: string,
 ): Promise<ServiceResponse<Message>> {
   try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     const { data, error } = await (supabase as any).rpc("send_message", {
       p_conversation_id: conversationId,
       p_content: content,
@@ -463,27 +505,52 @@ export async function sendMessage(
 
     if (error) throw error;
 
+    const messageId = extractMessageIdFromRpcResult(data);
+    if (!messageId) {
+      throw new Error("Failed to resolve sent message ID");
+    }
+
     // Fetch the created message
     const { data: message, error: fetchError } = await supabase
       .from("messages")
-      .select(
-        `
-        *,
-        sender:profiles!messages_sender_id_fkey(
-          id,
-          full_name,
-          avatar_url
-        )
-      `,
-      )
-      .eq("id", data)
-      .single();
+      .select("*")
+      .eq("id", messageId)
+      .maybeSingle();
 
     if (fetchError) throw fetchError;
 
+    if (!message) {
+      const fallback: Message = {
+        id: messageId,
+        conversation_id: conversationId,
+        sender_id: user?.id || "",
+        content,
+        created_at: new Date().toISOString(),
+        edited_at: null,
+        is_deleted: false,
+        deleted_at: null,
+        read_by: [],
+      };
+      return {
+        success: true,
+        data: fallback,
+      };
+    }
+
+    const rawMessage = message as any;
+    const profileMap = await fetchProfilesForUserIds([rawMessage.sender_id]);
+    const enrichedMessage: Message = {
+      ...rawMessage,
+      sender: profileMap[rawMessage.sender_id] || {
+        id: rawMessage.sender_id,
+        full_name: null,
+        avatar_url: null,
+      },
+    };
+
     return {
       success: true,
-      data: message as Message,
+      data: enrichedMessage,
     };
   } catch (error: any) {
     console.error("Send message error:", error);
@@ -729,25 +796,20 @@ export function subscribeToMessages(
         filter: `conversation_id=eq.${conversationId}`,
       },
       async (payload) => {
-        // Fetch full message with sender
-        const { data: message } = await supabase
-          .from("messages")
-          .select(
-            `
-            *,
-            sender:profiles!messages_sender_id_fkey(
-              id,
-              full_name,
-              avatar_url
-            )
-          `,
-          )
-          .eq("id", payload.new.id)
-          .single();
+        const newMessage = payload.new as any;
+        const profileMap = await fetchProfilesForUserIds([
+          newMessage.sender_id,
+        ]);
+        const enrichedMessage: Message = {
+          ...newMessage,
+          sender: profileMap[newMessage.sender_id] || {
+            id: newMessage.sender_id,
+            full_name: null,
+            avatar_url: null,
+          },
+        };
 
-        if (message) {
-          callback(message as Message);
-        }
+        callback(enrichedMessage);
       },
     )
     .subscribe();
