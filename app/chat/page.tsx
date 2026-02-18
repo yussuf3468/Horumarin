@@ -218,7 +218,9 @@ function NoConversationSelected() {
         <div className="absolute inset-0 rounded-full border-2 border-blue-300 dark:border-blue-700 animate-ping opacity-20" />
       </div>
       <div className="text-center space-y-2">
-        <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-50">Your messages</h3>
+        <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-50">
+          Your messages
+        </h3>
         <p className="text-sm text-slate-600 dark:text-slate-300 max-w-xs leading-relaxed">
           Choose a conversation on the left, or tap + to start a new one.
         </p>
@@ -246,9 +248,15 @@ function NoMessages({ name }: { name: string }) {
         </svg>
       </div>
       <div className="text-center space-y-1.5">
-        <p className="font-semibold text-slate-900 dark:text-slate-50">Start a conversation</p>
+        <p className="font-semibold text-slate-900 dark:text-slate-50">
+          Start a conversation
+        </p>
         <p className="text-sm text-slate-600 dark:text-slate-300">
-          Say hi to <span className="font-medium text-slate-900 dark:text-slate-50">{name}</span>!
+          Say hi to{" "}
+          <span className="font-medium text-slate-900 dark:text-slate-50">
+            {name}
+          </span>
+          !
         </p>
       </div>
     </div>
@@ -459,7 +467,7 @@ export default function ChatPage() {
 
   /* ═══════════════ RENDER ═══════════════ */
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-100 to-violet-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+    <div className="dark min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-4 lg:py-6 h-screen flex flex-col">
         {/* ── Main grid ── */}
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-[340px_minmax(0,1fr)] gap-3 lg:gap-4 min-h-0">
@@ -468,7 +476,9 @@ export default function ChatPage() {
             {/* Sidebar header */}
             <div className="px-5 pt-5 pb-3 flex-shrink-0">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-slate-900 dark:text-slate-50">Messages</h2>
+                <h2 className="text-lg font-bold text-slate-900 dark:text-slate-50">
+                  Messages
+                </h2>
                 <button
                   onClick={() => setShowPeoplePanel(!showPeoplePanel)}
                   title="New chat"
