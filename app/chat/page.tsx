@@ -459,7 +459,7 @@ export default function ChatPage() {
 
   /* ═══════════════ RENDER ═══════════════ */
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-violet-50/20 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-100 to-violet-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-4 lg:py-6 h-screen flex flex-col">
         {/* ── Main grid ── */}
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-[340px_minmax(0,1fr)] gap-3 lg:gap-4 min-h-0">
