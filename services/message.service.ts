@@ -1,7 +1,7 @@
 /**
- * MESSAGE/CHAT SERVICE  
+ * MESSAGE/CHAT SERVICE
  * Production-grade 1-on-1 messaging for Mideeye
- * 
+ *
  * Architecture:
  * - Event-driven real-time messaging
  * - Optimistic UI support
@@ -87,7 +87,7 @@ interface ServiceResponse<T> {
  * Get or create conversation between two users
  */
 export async function getOrCreateConversation(
-  otherUserId: string
+  otherUserId: string,
 ): Promise<ServiceResponse<Conversation>> {
   try {
     const {
@@ -95,10 +95,13 @@ export async function getOrCreateConversation(
     } = await supabase.auth.getUser();
     if (!user) throw new Error("Not authenticated");
 
-    const { data, error } = await (supabase as any).rpc("get_or_create_conversation", {
-      p_user_id_1: user.id,
-      p_user_id_2: otherUserId,
-    });
+    const { data, error } = await (supabase as any).rpc(
+      "get_or_create_conversation",
+      {
+        p_user_id_1: user.id,
+        p_user_id_2: otherUserId,
+      },
+    );
 
     if (error) throw error;
 
@@ -120,10 +123,33 @@ export async function getOrCreateConversation(
 }
 
 /**
+ * Fetch profile rows for an array of user IDs from the profiles table.
+ * Used by getConversation / getConversations to avoid the broken
+ * auto-join (conversation_participants.user_id → auth.users, not profiles).
+ */
+async function fetchProfilesForUserIds(
+  userIds: string[],
+): Promise<
+  Record<
+    string,
+    { id: string; full_name: string | null; avatar_url: string | null }
+  >
+> {
+  if (userIds.length === 0) return {};
+  const { data } = await supabase
+    .from("profiles")
+    .select("id, full_name, avatar_url")
+    .in("id", userIds);
+  const map: Record<string, any> = {};
+  for (const p of (data as any[]) || []) map[p.id] = p;
+  return map;
+}
+
+/**
  * Get conversation by ID with participants
  */
 export async function getConversation(
-  conversationId: string
+  conversationId: string,
 ): Promise<ServiceResponse<Conversation>> {
   try {
     const {
@@ -131,40 +157,55 @@ export async function getConversation(
     } = await supabase.auth.getUser();
     if (!user) throw new Error("Not authenticated");
 
-    const { data, error } = await supabase
+    // 1. Fetch the conversation row
+    const { data: convData, error: convError } = await supabase
       .from("conversations")
-      .select(
-        `
-        *,
-        participants:conversation_participants(
-          *,
-          user:profiles(id, full_name, avatar_url)
-        )
-      `
-      )
+      .select("*")
       .eq("id", conversationId)
       .single();
 
-    if (error || !data) throw error || new Error("Conversation not found");
+    if (convError || !convData)
+      throw convError || new Error("Conversation not found");
 
-    // Get other participant
-    const participants = (data as any).participants;
+    // 2. Fetch participants (no profile join — FK is to auth.users, not profiles)
+    const { data: participantRows, error: pError } = await supabase
+      .from("conversation_participants")
+      .select("*")
+      .eq("conversation_id", conversationId);
+
+    if (pError) throw pError;
+
+    // 3. Manually fetch profiles for all participant user IDs
+    const userIds = (participantRows || []).map((p: any) => p.user_id);
+    const profileMap = await fetchProfilesForUserIds(userIds);
+
+    const participants = (participantRows || []).map((p: any) => ({
+      ...p,
+      user: profileMap[p.user_id] || {
+        id: p.user_id,
+        full_name: null,
+        avatar_url: null,
+      },
+    }));
+
+    // 4. Identify the other participant
     const otherParticipant = participants.find(
-      (p: any) => p.user_id !== user.id
+      (p: any) => p.user_id !== user.id,
     );
 
-    // Get presence
+    // 5. Get presence (best-effort)
     let presence;
     if (otherParticipant) {
       const presenceResult = await getUserPresence(otherParticipant.user_id);
       presence = presenceResult.data;
     }
 
-    // Get unread count
+    // 6. Get unread count
     const unreadResult = await getUnreadMessageCount(conversationId);
 
     const conversation: Conversation = {
-      ...(data as any),
+      ...(convData as any),
+      participants,
       other_participant: otherParticipant
         ? {
             ...otherParticipant.user,
@@ -175,15 +216,12 @@ export async function getConversation(
       unread_count: unreadResult.data || 0,
     };
 
-    return {
-      success: true,
-      data: conversation,
-    };
+    return { success: true, data: conversation };
   } catch (error: any) {
     console.error("Get conversation error:", error);
     return {
       success: false,
- error: error.message || "Failed to get conversation",
+      error: error.message || "Failed to get conversation",
     };
   }
 }
@@ -208,39 +246,60 @@ export async function getConversations(): Promise<
 
     if (participantError) throw participantError;
 
-    const conversationIds = (participantData as any).map((p: any) => p.conversation_id);
+    const conversationIds = (participantData as any).map(
+      (p: any) => p.conversation_id,
+    );
 
     if (conversationIds.length === 0) {
       return { success: true, data: [] };
     }
 
-    // Get conversations
+    // 1. Get conversation rows (no participant join — FK is to auth.users)
     const { data, error } = await supabase
       .from("conversations")
-      .select(
-        `
-        *,
-        participants:conversation_participants(
-          *,
-          user:profiles(id, full_name, avatar_url)
-        )
-      `
-      )
+      .select("*")
       .in("id", conversationIds)
       .order("last_message_at", { ascending: false });
 
     if (error) throw error;
 
-    // Process conversations
+    // 2. Fetch all participant rows for these conversations in one query
+    const { data: allParticipantRows } = await supabase
+      .from("conversation_participants")
+      .select("*")
+      .in("conversation_id", conversationIds);
+
+    // 3. Collect all unique user IDs and fetch their profiles in one shot
+    const allUserIds = [
+      ...new Set(
+        (allParticipantRows || []).map((p: any) => p.user_id as string),
+      ),
+    ];
+    const profileMap = await fetchProfilesForUserIds(allUserIds);
+
+    // 4. Process each conversation
     const conversations: Conversation[] = await Promise.all(
       (data || []).map(async (conv: any) => {
-        const otherParticipant = conv.participants.find(
-          (p: any) => p.user_id !== user.id
+        const convParticipants = (allParticipantRows || [])
+          .filter((p: any) => p.conversation_id === conv.id)
+          .map((p: any) => ({
+            ...p,
+            user: profileMap[p.user_id] || {
+              id: p.user_id,
+              full_name: null,
+              avatar_url: null,
+            },
+          }));
+
+        const otherParticipant = convParticipants.find(
+          (p: any) => p.user_id !== user.id,
         );
 
         let presence;
         if (otherParticipant) {
-          const presenceResult = await getUserPresence(otherParticipant.user_id);
+          const presenceResult = await getUserPresence(
+            otherParticipant.user_id,
+          );
           presence = presenceResult.data;
         }
 
@@ -248,6 +307,7 @@ export async function getConversations(): Promise<
 
         return {
           ...conv,
+          participants: convParticipants,
           other_participant: otherParticipant
             ? {
                 ...otherParticipant.user,
@@ -257,13 +317,10 @@ export async function getConversations(): Promise<
             : undefined,
           unread_count: unreadResult.data || 0,
         };
-      })
+      }),
     );
 
-    return {
-      success: true,
-      data: conversations,
-    };
+    return { success: true, data: conversations };
   } catch (error: any) {
     console.error("Get conversations error:", error);
     return {
@@ -298,7 +355,7 @@ export async function getMessages(params: {
           full_name,
           avatar_url
         )
-      `
+      `,
       )
       .eq("conversation_id", conversationId)
       .order("created_at", { ascending: false })
@@ -330,7 +387,7 @@ export async function getMessages(params: {
  */
 export async function sendMessage(
   conversationId: string,
-  content: string
+  content: string,
 ): Promise<ServiceResponse<Message>> {
   try {
     const { data, error } = await (supabase as any).rpc("send_message", {
@@ -351,7 +408,7 @@ export async function sendMessage(
           full_name,
           avatar_url
         )
-      `
+      `,
       )
       .eq("id", data)
       .single();
@@ -376,7 +433,7 @@ export async function sendMessage(
  */
 export async function editMessage(
   messageId: string,
-  newContent: string
+  newContent: string,
 ): Promise<ServiceResponse<void>> {
   try {
     const { error } = await (supabase as any).rpc("edit_message", {
@@ -400,7 +457,7 @@ export async function editMessage(
  * Delete a message (soft delete)
  */
 export async function deleteMessage(
-  messageId: string
+  messageId: string,
 ): Promise<ServiceResponse<void>> {
   try {
     const { error } = await (supabase as any).rpc("delete_message", {
@@ -423,7 +480,7 @@ export async function deleteMessage(
  * Mark conversation as read
  */
 export async function markConversationAsRead(
-  conversationId: string
+  conversationId: string,
 ): Promise<ServiceResponse<void>> {
   try {
     const { error } = await (supabase as any).rpc("mark_conversation_read", {
@@ -446,15 +503,19 @@ export async function markConversationAsRead(
  * Get unread message count for conversation
  */
 export async function getUnreadMessageCount(
-  conversationId: string
+  conversationId: string,
 ): Promise<ServiceResponse<number>> {
   try {
-    const { data, error } = await (supabase as any).rpc("get_unread_message_count");
+    const { data, error } = await (supabase as any).rpc(
+      "get_unread_message_count",
+    );
 
     if (error) throw error;
 
     const counts = data || [];
-    const conversation = counts.find((c: any) => c.conversation_id === conversationId);
+    const conversation = counts.find(
+      (c: any) => c.conversation_id === conversationId,
+    );
 
     return {
       success: true,
@@ -478,7 +539,7 @@ export async function getUnreadMessageCount(
  * Set typing indicator
  */
 export async function setTyping(
-  conversationId: string
+  conversationId: string,
 ): Promise<ServiceResponse<void>> {
   try {
     const { error } = await (supabase as any).rpc("set_typing", {
@@ -501,7 +562,7 @@ export async function setTyping(
  * Clear typing indicator
  */
 export async function clearTyping(
-  conversationId: string
+  conversationId: string,
 ): Promise<ServiceResponse<void>> {
   try {
     const { error } = await (supabase as any).rpc("clear_typing", {
@@ -528,7 +589,7 @@ export async function clearTyping(
  * Update user presence
  */
 export async function updatePresence(
-  status: "online" | "away" | "offline"
+  status: "online" | "away" | "offline",
 ): Promise<ServiceResponse<void>> {
   try {
     const { error } = await (supabase as any).rpc("update_presence", {
@@ -551,7 +612,7 @@ export async function updatePresence(
  * Get user presence
  */
 export async function getUserPresence(
-  userId: string
+  userId: string,
 ): Promise<ServiceResponse<UserPresence>> {
   try {
     const { data, error } = await supabase
@@ -589,7 +650,7 @@ export async function getUserPresence(
  */
 export function subscribeToMessages(
   conversationId: string,
-  callback: (message: Message) => void
+  callback: (message: Message) => void,
 ): () => void {
   const subscription = supabase
     .channel(`messages:${conversationId}`)
@@ -613,7 +674,7 @@ export function subscribeToMessages(
               full_name,
               avatar_url
             )
-          `
+          `,
           )
           .eq("id", payload.new.id)
           .single();
@@ -621,7 +682,7 @@ export function subscribeToMessages(
         if (message) {
           callback(message as Message);
         }
-      }
+      },
     )
     .subscribe();
 
@@ -635,7 +696,7 @@ export function subscribeToMessages(
  */
 export function subscribeToTyping(
   conversationId: string,
-  callback: (userId: string, isTyping: boolean) => void
+  callback: (userId: string, isTyping: boolean) => void,
 ): () => void {
   const subscription = supabase
     .channel(`typing:${conversationId}`)
@@ -653,7 +714,7 @@ export function subscribeToTyping(
         } else if (payload.eventType === "DELETE") {
           callback((payload.old as any).user_id, false);
         }
-      }
+      },
     )
     .subscribe();
 
@@ -667,7 +728,7 @@ export function subscribeToTyping(
  */
 export function subscribeToPresence(
   userId: string,
-  callback: (presence: UserPresence) => void
+  callback: (presence: UserPresence) => void,
 ): () => void {
   const subscription = supabase
     .channel(`presence:${userId}`)
@@ -683,7 +744,7 @@ export function subscribeToPresence(
         if (payload.new) {
           callback(payload.new as UserPresence);
         }
-      }
+      },
     )
     .subscribe();
 
