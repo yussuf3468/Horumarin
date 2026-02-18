@@ -127,6 +127,26 @@ export default function Header() {
                   <span>Topics</span>
                 </button>
               </Link>
+              {user && (
+                <Link href="/chat">
+                  <button className="flex items-center gap-2 px-3 py-1.5 rounded hover:bg-surface-muted transition-colors text-sm font-medium">
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                      />
+                    </svg>
+                    <span>Chat</span>
+                  </button>
+                </Link>
+              )}
             </nav>
 
             {/* Right: Search + Notifications + Profile */}
@@ -305,6 +325,26 @@ export default function Header() {
                         />
                       </svg>
                       <span className="font-medium">Profile</span>
+                    </Link>
+                    <Link
+                      href="/chat"
+                      onClick={() => setSidebarOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 hover:bg-surface-muted transition-colors"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                        />
+                      </svg>
+                      <span className="font-medium">Chat</span>
                     </Link>
                     <div className="border-t border-border my-2"></div>
                     <button

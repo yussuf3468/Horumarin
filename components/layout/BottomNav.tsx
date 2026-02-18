@@ -12,7 +12,6 @@ import {
 export default function BottomNav() {
   const pathname = usePathname();
   const { user } = useAuth();
-  const [showComingSoon, setShowComingSoon] = useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
 
   useEffect(() => {
@@ -39,12 +38,6 @@ export default function BottomNav() {
   const isActive = (path: string) => {
     if (path === "/") return pathname === "/";
     return pathname.startsWith(path);
-  };
-
-  const handleChatClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setShowComingSoon(true);
-    setTimeout(() => setShowComingSoon(false), 2000);
   };
 
   const navItems = user
@@ -110,8 +103,6 @@ export default function BottomNav() {
         {
           href: "/chat",
           label: "Chat",
-          isComingSoon: true,
-          onClick: handleChatClick,
           icon: (
             <svg
               className="w-5 h-5"
@@ -229,15 +220,6 @@ export default function BottomNav() {
 
   return (
     <>
-      {/* Coming Soon Notice */}
-      {showComingSoon && (
-        <div className="md:hidden fixed bottom-20 left-1/2 -translate-x-1/2 z-50 animate-fade-in">
-          <div className="bg-gradient-to-r from-primary to-accent text-white px-5 py-2 rounded-full shadow-2xl">
-            <p className="text-sm font-semibold">Coming Soon! 🚀</p>
-          </div>
-        </div>
-      )}
-
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface/80 backdrop-blur-xl border-t border-border/50 shadow-2xl safe-area-inset-bottom">
         <div className="flex items-center justify-around px-2 h-16">
           {navItems.map((item) => {
@@ -295,18 +277,6 @@ export default function BottomNav() {
                 )}
               </>
             );
-
-            if (item.isComingSoon && item.onClick) {
-              return (
-                <button
-                  key={item.href}
-                  onClick={item.onClick}
-                  className="flex items-center justify-center"
-                >
-                  {content}
-                </button>
-              );
-            }
 
             return (
               <Link
