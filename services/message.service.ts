@@ -79,6 +79,32 @@ interface ServiceResponse<T> {
   error?: string;
 }
 
+function extractConversationIdFromRpcResult(data: any): string | null {
+  if (!data) return null;
+
+  if (typeof data === "string") return data;
+
+  if (Array.isArray(data) && data.length > 0) {
+    const first = data[0];
+    if (typeof first === "string") return first;
+    if (first && typeof first === "object") {
+      if (typeof first.get_or_create_conversation === "string") {
+        return first.get_or_create_conversation;
+      }
+      if (typeof first.id === "string") return first.id;
+    }
+  }
+
+  if (typeof data === "object") {
+    if (typeof data.get_or_create_conversation === "string") {
+      return data.get_or_create_conversation;
+    }
+    if (typeof data.id === "string") return data.id;
+  }
+
+  return null;
+}
+
 // =====================================================
 // CONVERSATION MANAGEMENT
 // =====================================================
@@ -105,13 +131,53 @@ export async function getOrCreateConversation(
 
     if (error) throw error;
 
+    const conversationId = extractConversationIdFromRpcResult(data);
+    if (!conversationId) {
+      throw new Error("Failed to resolve conversation ID");
+    }
+
     // Fetch full conversation details
-    const conversationResult = await getConversation(data);
-    if (!conversationResult.success) throw new Error(conversationResult.error);
+    const conversationResult = await getConversation(conversationId);
+    if (conversationResult.success && conversationResult.data) {
+      return {
+        success: true,
+        data: conversationResult.data,
+      };
+    }
+
+    // Fallback 1: Try from conversation list
+    const listResult = await getConversations();
+    if (listResult.success && listResult.data) {
+      const matched = listResult.data.find((c) => c.id === conversationId);
+      if (matched) {
+        return {
+          success: true,
+          data: matched,
+        };
+      }
+    }
+
+    // Fallback 2: Build minimal conversation object so UI can proceed
+    const profileMap = await fetchProfilesForUserIds([otherUserId]);
+    const otherProfile = profileMap[otherUserId] || {
+      id: otherUserId,
+      full_name: null,
+      avatar_url: null,
+    };
+    const now = new Date().toISOString();
 
     return {
       success: true,
-      data: conversationResult.data,
+      data: {
+        id: conversationId,
+        created_at: now,
+        updated_at: now,
+        last_message_at: now,
+        last_message_preview: null,
+        is_archived: false,
+        other_participant: otherProfile,
+        unread_count: 0,
+      },
     };
   } catch (error: any) {
     console.error("Get/create conversation error:", error);
@@ -162,10 +228,10 @@ export async function getConversation(
       .from("conversations")
       .select("*")
       .eq("id", conversationId)
-      .single();
+      .maybeSingle();
 
-    if (convError || !convData)
-      throw convError || new Error("Conversation not found");
+    if (convError) throw convError;
+    if (!convData) throw new Error("Conversation not found");
 
     // 2. Fetch participants (no profile join — FK is to auth.users, not profiles)
     const { data: participantRows, error: pError } = await supabase
