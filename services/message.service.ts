@@ -334,38 +334,29 @@ export async function getConversations(): Promise<
     } = await supabase.auth.getUser();
     if (!user) throw new Error("Not authenticated");
 
-    // Get conversation IDs for user
-    const { data: participantData, error: participantError } = await supabase
+    // ── Step 1: get all participant rows for this user (conversation_id + metadata)
+    // This table is accessible; RLS is USING (TRUE) after fix_messaging_rls.sql
+    const { data: myParticipantRows, error: participantError } = await supabase
       .from("conversation_participants")
-      .select("conversation_id")
+      .select("*")
       .eq("user_id", user.id);
 
     if (participantError) throw participantError;
-
-    const conversationIds = (participantData as any).map(
-      (p: any) => p.conversation_id,
-    );
-
-    if (conversationIds.length === 0) {
+    if (!myParticipantRows || myParticipantRows.length === 0) {
       return { success: true, data: [] };
     }
 
-    // 1. Get conversation rows (no participant join — FK is to auth.users)
-    const { data, error } = await supabase
-      .from("conversations")
-      .select("*")
-      .in("id", conversationIds)
-      .order("last_message_at", { ascending: false });
+    const conversationIds = (myParticipantRows as any[]).map(
+      (p) => p.conversation_id as string,
+    );
 
-    if (error) throw error;
-
-    // 2. Fetch all participant rows for these conversations in one query
+    // ── Step 2: all participant rows for those conversations (to find the other person)
     const { data: allParticipantRows } = await supabase
       .from("conversation_participants")
       .select("*")
       .in("conversation_id", conversationIds);
 
-    // 3. Collect all unique user IDs and fetch their profiles in one shot
+    // ── Step 3: profiles for everyone in bulk
     const allUserIds = [
       ...new Set(
         (allParticipantRows || []).map((p: any) => p.user_id as string),
@@ -373,68 +364,76 @@ export async function getConversations(): Promise<
     ];
     const profileMap = await fetchProfilesForUserIds(allUserIds);
 
-    // 4. Process each conversation — each item isolated so one failure can't
-    //    kill the whole list.
-    const conversations: Conversation[] = await Promise.all(
-      (data || []).map(async (conv: any) => {
+    // ── Step 4: for each conversation, get the last message
+    // (avoids querying the `conversations` table which is blocked by RLS)
+    const lastMessageMap: Record<
+      string,
+      { content: string; created_at: string } | null
+    > = {};
+    await Promise.all(
+      conversationIds.map(async (convId) => {
         try {
-          const convParticipants = (allParticipantRows || [])
-            .filter((p: any) => p.conversation_id === conv.id)
-            .map((p: any) => ({
-              ...p,
-              user: profileMap[p.user_id] || {
-                id: p.user_id,
-                full_name: null,
-                avatar_url: null,
-              },
-            }));
-
-          const otherParticipant = convParticipants.find(
-            (p: any) => p.user_id !== user.id,
-          );
-
-          // Presence — best-effort, never throw
-          let presence: UserPresence | undefined;
-          try {
-            if (otherParticipant) {
-              const presenceResult = await getUserPresence(
-                otherParticipant.user_id,
-              );
-              presence = presenceResult.data;
-            }
-          } catch (_) { /* ignore */ }
-
-          // Unread — best-effort, never throw
-          let unreadCount = 0;
-          try {
-            const unreadResult = await getUnreadMessageCount(conv.id);
-            unreadCount = unreadResult.data || 0;
-          } catch (_) { /* ignore */ }
-
-          return {
-            ...conv,
-            participants: convParticipants,
-            other_participant: otherParticipant
-              ? {
-                  ...otherParticipant.user,
-                  status: presence?.status,
-                  last_seen_at: presence?.last_seen_at,
-                }
-              : undefined,
-            unread_count: unreadCount,
-          };
-        } catch (itemErr) {
-          // If processing this conversation fails for any reason, return a
-          // minimal shell so the rest of the list still shows.
-          console.error("[getConversations] error processing conv", conv.id, itemErr);
-          return {
-            ...conv,
-            participants: [],
-            other_participant: undefined,
-            unread_count: 0,
-          };
+          const { data: msgs } = await supabase
+            .from("messages")
+            .select("content, created_at")
+            .eq("conversation_id", convId)
+            .eq("is_deleted", false)
+            .order("created_at", { ascending: false })
+            .limit(1);
+          lastMessageMap[convId] =
+            msgs && msgs.length > 0 ? (msgs[0] as any) : null;
+        } catch (_) {
+          lastMessageMap[convId] = null;
         }
       }),
+    );
+
+    // ── Step 5: build Conversation objects — no `conversations` table needed
+    const conversations: Conversation[] = conversationIds.map((convId) => {
+      const convParticipants = (allParticipantRows || [])
+        .filter((p: any) => p.conversation_id === convId)
+        .map((p: any) => ({
+          ...p,
+          user: profileMap[p.user_id] || {
+            id: p.user_id,
+            full_name: null,
+            avatar_url: null,
+          },
+        }));
+
+      const otherParticipant = convParticipants.find(
+        (p: any) => p.user_id !== user.id,
+      );
+
+      const lastMsg = lastMessageMap[convId];
+      const myRow = (myParticipantRows as any[]).find(
+        (p) => p.conversation_id === convId,
+      );
+
+      return {
+        id: convId,
+        created_at: myRow?.joined_at || new Date().toISOString(),
+        updated_at: lastMsg?.created_at || myRow?.joined_at || new Date().toISOString(),
+        last_message_at: lastMsg?.created_at || myRow?.joined_at || new Date().toISOString(),
+        last_message_preview: lastMsg?.content || null,
+        is_archived: false,
+        participants: convParticipants,
+        other_participant: otherParticipant
+          ? {
+              ...otherParticipant.user,
+              status: undefined,
+              last_seen_at: undefined,
+            }
+          : undefined,
+        unread_count: 0,
+      };
+    });
+
+    // Sort by last message descending
+    conversations.sort(
+      (a, b) =>
+        new Date(b.last_message_at).getTime() -
+        new Date(a.last_message_at).getTime(),
     );
 
     return { success: true, data: conversations };
