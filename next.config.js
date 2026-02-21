@@ -26,6 +26,10 @@ const securityHeaders = [
 ];
 
 const nextConfig = {
+  experimental: {
+    // Required for Sentry instrumentation (Next.js 14)
+    instrumentationHook: true,
+  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '*.supabase.co' },
