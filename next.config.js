@@ -17,7 +17,7 @@ const securityHeaders = [
       "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https://*.supabase.co https://avatars.githubusercontent.com https://picsum.photos https://i.picsum.photos",
+      "img-src 'self' data: blob: https://*.supabase.co https://avatars.githubusercontent.com https://picsum.photos https://i.picsum.photos https://fastly.picsum.photos",
       "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
       "frame-ancestors 'none'",
     ].join("; "),
