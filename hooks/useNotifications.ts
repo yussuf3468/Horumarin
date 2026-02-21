@@ -17,7 +17,9 @@ import { useAuth } from "./useAuth";
 
 export function useNotifications() {
   const { user } = useAuth();
-  const [notifications, setNotifications] = useState<NotificationWithActor[]>([]);
+  const [notifications, setNotifications] = useState<NotificationWithActor[]>(
+    [],
+  );
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -50,24 +52,29 @@ export function useNotifications() {
   }, [user]);
 
   // Mark notification as read (optimistic)
-  const markAsRead = useCallback(async (notificationId: string) => {
-    // Optimistic update
-    setNotifications((prev) =>
-      prev.map((n) =>
-        n.id === notificationId ? { ...n, is_read: true, read_at: new Date().toISOString() } : n
-      )
-    );
-    setUnreadCount((prev) => Math.max(0, prev - 1));
+  const markAsRead = useCallback(
+    async (notificationId: string) => {
+      // Optimistic update
+      setNotifications((prev) =>
+        prev.map((n) =>
+          n.id === notificationId
+            ? { ...n, is_read: true, read_at: new Date().toISOString() }
+            : n,
+        ),
+      );
+      setUnreadCount((prev) => Math.max(0, prev - 1));
 
-    // Server update
-    const result = await markNotificationAsRead(notificationId);
+      // Server update
+      const result = await markNotificationAsRead(notificationId);
 
-    if (!result.success) {
-      // Rollback on error
-      fetchNotifications();
-      fetchUnreadCount();
-    }
-  }, [fetchNotifications, fetchUnreadCount]);
+      if (!result.success) {
+        // Rollback on error
+        fetchNotifications();
+        fetchUnreadCount();
+      }
+    },
+    [fetchNotifications, fetchUnreadCount],
+  );
 
   // Mark all as read
   const markAllAsRead = useCallback(async () => {
@@ -76,7 +83,11 @@ export function useNotifications() {
 
     // Optimistic update
     setNotifications((prev) =>
-      prev.map((n) => ({ ...n, is_read: true, read_at: new Date().toISOString() }))
+      prev.map((n) => ({
+        ...n,
+        is_read: true,
+        read_at: new Date().toISOString(),
+      })),
     );
     setUnreadCount(0);
 
@@ -103,7 +114,7 @@ export function useNotifications() {
     const unsubscribe = subscribeToNotifications(user.id, (notification) => {
       // Add new notification to list
       setNotifications((prev) => [notification, ...prev]);
-      
+
       // Increment unread count
       if (!notification.is_read) {
         setUnreadCount((prev) => prev + 1);

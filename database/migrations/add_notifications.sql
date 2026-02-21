@@ -3,14 +3,22 @@
 -- Production-grade notification system for Mideeye
 -- =====================================================
 
--- Create notification type enum
-CREATE TYPE notification_type AS ENUM (
-  'post_upvote',
-  'comment_reply',
-  'mention',
-  'new_follower',
-  'post_comment'
-);
+-- Create notification type enum (idempotent)
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_type WHERE typname = 'notification_type'
+  ) THEN
+    CREATE TYPE notification_type AS ENUM (
+      'post_upvote',
+      'comment_reply',
+      'mention',
+      'new_follower',
+      'post_comment'
+    );
+  END IF;
+END
+$$;
 
 -- Create notifications table
 CREATE TABLE IF NOT EXISTS notifications (
@@ -38,24 +46,24 @@ CREATE TABLE IF NOT EXISTS notifications (
 -- =====================================================
 
 -- Primary query: Get user's unread notifications
-CREATE INDEX idx_notifications_user_unread 
+CREATE INDEX IF NOT EXISTS idx_notifications_user_unread 
   ON notifications(user_id, is_read, created_at DESC) 
   WHERE is_read = FALSE;
 
 -- Query: Get all user notifications (paginated)
-CREATE INDEX idx_notifications_user_created 
+CREATE INDEX IF NOT EXISTS idx_notifications_user_created 
   ON notifications(user_id, created_at DESC);
 
 -- Query: Get notifications by entity (for deduplication)
-CREATE INDEX idx_notifications_entity 
+CREATE INDEX IF NOT EXISTS idx_notifications_entity 
   ON notifications(entity_id, entity_type, user_id);
 
 -- Query: Get notifications by actor
-CREATE INDEX idx_notifications_actor 
+CREATE INDEX IF NOT EXISTS idx_notifications_actor 
   ON notifications(actor_id, created_at DESC);
 
 -- Composite index for efficient counting
-CREATE INDEX idx_notifications_user_read_count 
+CREATE INDEX IF NOT EXISTS idx_notifications_user_read_count 
   ON notifications(user_id, is_read);
 
 -- =====================================================
@@ -65,21 +73,25 @@ CREATE INDEX idx_notifications_user_read_count
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 
 -- Users can only read their own notifications
+DROP POLICY IF EXISTS "Users can view own notifications" ON notifications;
 CREATE POLICY "Users can view own notifications" 
   ON notifications FOR SELECT 
   USING (auth.uid() = user_id);
 
 -- Users can mark their own notifications as read
+DROP POLICY IF EXISTS "Users can update own notifications" ON notifications;
 CREATE POLICY "Users can update own notifications" 
   ON notifications FOR UPDATE 
   USING (auth.uid() = user_id);
 
 -- System can insert notifications for any user
+DROP POLICY IF EXISTS "System can insert notifications" ON notifications;
 CREATE POLICY "System can insert notifications" 
   ON notifications FOR INSERT 
   WITH CHECK (TRUE);
 
 -- Users can delete their own notifications
+DROP POLICY IF EXISTS "Users can delete own notifications" ON notifications;
 CREATE POLICY "Users can delete own notifications" 
   ON notifications FOR DELETE 
   USING (auth.uid() = user_id);
@@ -196,6 +208,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_notify_vote ON votes;
 CREATE TRIGGER trigger_notify_vote
   AFTER INSERT ON votes
   FOR EACH ROW
@@ -218,6 +231,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_notify_answer ON answers;
 CREATE TRIGGER trigger_notify_answer
   AFTER INSERT ON answers
   FOR EACH ROW
@@ -245,6 +259,6 @@ $$ LANGUAGE plpgsql;
 -- Grant permissions
 GRANT USAGE ON TYPE notification_type TO authenticated;
 GRANT ALL ON notifications TO authenticated;
-GRANT EXECUTE ON FUNCTION mark_notification_read TO authenticated;
-GRANT EXECUTE ON FUNCTION mark_all_notifications_read TO authenticated;
-GRANT EXECUTE ON FUNCTION get_unread_notification_count TO authenticated;
+GRANT EXECUTE ON FUNCTION mark_notification_read(UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION mark_all_notifications_read() TO authenticated;
+GRANT EXECUTE ON FUNCTION get_unread_notification_count() TO authenticated;

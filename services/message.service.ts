@@ -413,8 +413,10 @@ export async function getConversations(): Promise<
       return {
         id: convId,
         created_at: myRow?.joined_at || new Date().toISOString(),
-        updated_at: lastMsg?.created_at || myRow?.joined_at || new Date().toISOString(),
-        last_message_at: lastMsg?.created_at || myRow?.joined_at || new Date().toISOString(),
+        updated_at:
+          lastMsg?.created_at || myRow?.joined_at || new Date().toISOString(),
+        last_message_at:
+          lastMsg?.created_at || myRow?.joined_at || new Date().toISOString(),
         last_message_preview: lastMsg?.content || null,
         is_archived: false,
         participants: convParticipants,

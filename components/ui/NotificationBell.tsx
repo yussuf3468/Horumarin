@@ -51,7 +51,7 @@ export default function NotificationBell() {
   const handleNotificationClick = async (
     notificationId: string,
     link: string,
-    isRead: boolean
+    isRead: boolean,
   ) => {
     if (!isRead) {
       await markAsRead(notificationId);
@@ -180,7 +180,7 @@ export default function NotificationBell() {
                       handleNotificationClick(
                         notification.id,
                         notification.link || "/dashboard",
-                        notification.is_read
+                        notification.is_read,
                       )
                     }
                   />
@@ -227,10 +227,12 @@ function NotificationItem({ notification, onClick }: NotificationItemProps) {
   return (
     <motion.button
       onClick={onClick}
-      whileHover={{ backgroundColor: "rgba(var(--color-surface-muted-rgb), 0.5)" }}
+      whileHover={{
+        backgroundColor: "rgba(var(--color-surface-muted-rgb), 0.5)",
+      }}
       className={cn(
         "w-full px-4 py-3 flex items-start gap-3 border-b border-border/50 text-left transition-colors",
-        !notification.is_read && "bg-primary/5"
+        !notification.is_read && "bg-primary/5",
       )}
     >
       {/* Icon */}
@@ -239,7 +241,7 @@ function NotificationItem({ notification, onClick }: NotificationItemProps) {
           "flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-lg",
           !notification.is_read
             ? "bg-primary/20 text-primary"
-            : "bg-surface-muted text-foreground-secondary"
+            : "bg-surface-muted text-foreground-secondary",
         )}
       >
         {icon}
@@ -252,7 +254,7 @@ function NotificationItem({ notification, onClick }: NotificationItemProps) {
             "text-sm leading-relaxed",
             notification.is_read
               ? "text-foreground-secondary"
-              : "text-foreground font-medium"
+              : "text-foreground font-medium",
           )}
         >
           {notification.message}

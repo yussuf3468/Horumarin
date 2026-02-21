@@ -215,14 +215,18 @@ export default function ProfilePage() {
                     <div className="text-sm text-foreground-muted">Codad</div>
                   </div>
                 </div>
-                
+
                 {/* Mobile Follow Button */}
                 {!isOwner && (
                   <div className="sm:hidden mt-4">
-                    <FollowButton userId={profileId} size="md" className="w-full" />
+                    <FollowButton
+                      userId={profileId}
+                      size="md"
+                      className="w-full"
+                    />
                   </div>
                 )}
-                
+
                 <div className="mt-6 flex flex-wrap gap-2">
                   {badges.map((badge) => (
                     <span

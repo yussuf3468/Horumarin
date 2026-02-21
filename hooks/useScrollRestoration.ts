@@ -80,11 +80,13 @@ export function useScrollMemory() {
  * Performance-optimized infinite scroll with cursor-based pagination
  */
 export function useInfiniteScrollOptimized<T>(
-  fetchFn: (cursor?: string) => Promise<{ data: T[]; hasMore: boolean; nextCursor?: string }>,
+  fetchFn: (
+    cursor?: string,
+  ) => Promise<{ data: T[]; hasMore: boolean; nextCursor?: string }>,
   options?: {
     threshold?: number;
     initialLoad?: boolean;
-  }
+  },
 ) {
   const { threshold = 300, initialLoad = true } = options || {};
   const [items, setItems] = React.useState<T[]>([]);
@@ -130,14 +132,14 @@ export function useInfiniteScrollOptimized<T>(
         },
         {
           rootMargin: `${threshold}px`,
-        }
+        },
       );
 
       if (node) {
         observerRef.current.observe(node);
       }
     },
-    [loading, hasMore, loadMore, threshold]
+    [loading, hasMore, loadMore, threshold],
   );
 
   // Initial load

@@ -153,7 +153,7 @@ export async function deleteNotification(
  */
 export function subscribeToNotifications(
   userId: string,
-  callback: (notification: NotificationWithActor) => void
+  callback: (notification: NotificationWithActor) => void,
 ) {
   const channel = (supabase as any)
     .channel(`notifications:user_id=${userId}`)
@@ -172,12 +172,16 @@ export function subscribeToNotifications(
           .select("id, full_name, avatar_url")
           .eq("id", payload.new.actor_id)
           .single();
-        
+
         callback({
           ...payload.new,
-          actor: actor || { id: payload.new.actor_id, full_name: null, avatar_url: null },
+          actor: actor || {
+            id: payload.new.actor_id,
+            full_name: null,
+            avatar_url: null,
+          },
         });
-      }
+      },
     )
     .subscribe();
 
@@ -216,7 +220,7 @@ export async function getNotifications(options?: {
           full_name,
           avatar_url
         )
-      `
+      `,
       )
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
@@ -245,7 +249,9 @@ export async function getNotifications(options?: {
 /**
  * Get unread notification count
  */
-export async function getUnreadNotificationCount(): Promise<ServiceResponse<number>> {
+export async function getUnreadNotificationCount(): Promise<
+  ServiceResponse<number>
+> {
   try {
     const user = await getCurrentUser();
     if (!user) {
@@ -271,7 +277,9 @@ export async function getUnreadNotificationCount(): Promise<ServiceResponse<numb
 /**
  * Mark all notifications as read (new API)
  */
-export async function markAllNotificationsAsRead(): Promise<ServiceResponse<number>> {
+export async function markAllNotificationsAsRead(): Promise<
+  ServiceResponse<number>
+> {
   try {
     const user = await getCurrentUser();
     if (!user) {

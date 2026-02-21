@@ -1,7 +1,7 @@
 /**
  * FOLLOW SERVICE
  * Production-grade social graph for Mideeye
- * 
+ *
  * Architecture:
  * - Optimistic UI support
  * - Cached stats for performance
@@ -63,7 +63,7 @@ interface ServiceResponse<T> {
  * Uses optimistic UI pattern
  */
 export async function followUser(
-  userId: string
+  userId: string,
 ): Promise<ServiceResponse<string>> {
   try {
     const { data, error } = await (supabase as any).rpc("follow_user", {
@@ -89,7 +89,7 @@ export async function followUser(
  * Unfollow a user
  */
 export async function unfollowUser(
-  userId: string
+  userId: string,
 ): Promise<ServiceResponse<boolean>> {
   try {
     const { data, error } = await (supabase as any).rpc("unfollow_user", {
@@ -115,7 +115,7 @@ export async function unfollowUser(
  * Check if current user is following someone
  */
 export async function isFollowing(
-  userId: string
+  userId: string,
 ): Promise<ServiceResponse<boolean>> {
   try {
     const { data, error } = await (supabase as any).rpc("is_following", {
@@ -142,7 +142,7 @@ export async function isFollowing(
  * Check if mutual follow (both follow each other)
  */
 export async function isMutualFollow(
-  userId: string
+  userId: string,
 ): Promise<ServiceResponse<boolean>> {
   try {
     const { data, error } = await (supabase as any).rpc("is_mutual_follow", {
@@ -237,12 +237,23 @@ export async function getFollowing(params: {
  * Get mutual followers (people who follow both you and the target user)
  */
 export async function getMutualFollowers(
-  userId: string
-): Promise<ServiceResponse<Array<{ user_id: string; full_name: string | null; avatar_url: string | null }>>> {
+  userId: string,
+): Promise<
+  ServiceResponse<
+    Array<{
+      user_id: string;
+      full_name: string | null;
+      avatar_url: string | null;
+    }>
+  >
+> {
   try {
-    const { data, error } = await (supabase as any).rpc("get_mutual_followers", {
-      p_user_id: userId,
-    });
+    const { data, error } = await (supabase as any).rpc(
+      "get_mutual_followers",
+      {
+        p_user_id: userId,
+      },
+    );
 
     if (error) throw error;
 
@@ -267,7 +278,7 @@ export async function getMutualFollowers(
  * Get user statistics
  */
 export async function getUserStats(
-  userId: string
+  userId: string,
 ): Promise<ServiceResponse<UserStats>> {
   try {
     const { data, error } = await supabase
@@ -311,7 +322,7 @@ export async function getUserStats(
  * Recalculate user stats (admin/maintenance function)
  */
 export async function recalculateUserStats(
-  userId: string
+  userId: string,
 ): Promise<ServiceResponse<void>> {
   try {
     const { error } = await (supabase as any).rpc("recalculate_user_stats", {
@@ -339,12 +350,15 @@ export async function recalculateUserStats(
  * Algorithm: Users followed by people you follow
  */
 export async function getSuggestedFollows(
-  limit: number = 10
+  limit: number = 10,
 ): Promise<ServiceResponse<SuggestedFollow[]>> {
   try {
-    const { data, error } = await (supabase as any).rpc("get_suggested_follows", {
-      p_limit: limit,
-    });
+    const { data, error } = await (supabase as any).rpc(
+      "get_suggested_follows",
+      {
+        p_limit: limit,
+      },
+    );
 
     if (error) throw error;
 
@@ -366,11 +380,11 @@ export async function getSuggestedFollows(
 // =====================================================
 
 /**
- * Get following status for multiple users  
+ * Get following status for multiple users
  * Useful for rendering follow buttons in lists
  */
 export async function getBulkFollowingStatus(
-  userIds: string[]
+  userIds: string[],
 ): Promise<ServiceResponse<Record<string, boolean>>> {
   try {
     const {
@@ -412,7 +426,7 @@ export async function getBulkFollowingStatus(
  * Get follower counts for multiple users
  */
 export async function getBulkFollowerCounts(
-  userIds: string[]
+  userIds: string[],
 ): Promise<ServiceResponse<Record<string, number>>> {
   try {
     const { data, error } = await supabase
@@ -454,7 +468,7 @@ export async function getBulkFollowerCounts(
  */
 export function subscribeToFollowEvents(
   userId: string,
-  callback: (event: "follow" | "unfollow", followerId: string) => void
+  callback: (event: "follow" | "unfollow", followerId: string) => void,
 ): () => void {
   const subscription = supabase
     .channel(`follows:${userId}`)
@@ -468,7 +482,7 @@ export function subscribeToFollowEvents(
       },
       (payload) => {
         callback("follow", (payload.new as any).follower_id);
-      }
+      },
     )
     .on(
       "postgres_changes",
@@ -480,7 +494,7 @@ export function subscribeToFollowEvents(
       },
       (payload) => {
         callback("unfollow", (payload.old as any).follower_id);
-      }
+      },
     )
     .subscribe();
 
@@ -511,7 +525,7 @@ export function formatFollowerCount(count: number): string {
  */
 export function getFollowButtonText(
   isFollowing: boolean,
-  isMutual: boolean
+  isMutual: boolean,
 ): string {
   if (isMutual) return "Following";
   if (isFollowing) return "Following";

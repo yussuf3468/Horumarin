@@ -1,6 +1,7 @@
 # Phase 5 Part 2: Hybrid Immersion Engine - Architecture Documentation
 
 ## Table of Contents
+
 1. [System Overview](#system-overview)
 2. [Real-Time Architecture](#real-time-architecture)
 3. [Scaling Strategy](#scaling-strategy)
@@ -19,12 +20,14 @@
 Mideeye Phase 5 Part 2 implements a **FAANG-level hybrid intellectual + social engagement platform** with three core real-time systems:
 
 ### Feature Set
+
 1. **Real-Time Notifications** - Instant delivery of upvotes, comments, mentions, follows
 2. **1-on-1 Messaging** - Live chat with typing indicators and presence status
 3. **Social Graph** - Follow system with cached stats and algorithmic suggestions
 4. **Immersive Flow UX** - Scroll restoration, infinite scroll, keyboard shortcuts
 
 ### Tech Stack
+
 - **Frontend**: Next.js 14 (App Router), React Server Components, TypeScript
 - **Database**: PostgreSQL (via Supabase)
 - **Real-Time**: Supabase Realtime (WebSocket-based publish-subscribe)
@@ -32,6 +35,7 @@ Mideeye Phase 5 Part 2 implements a **FAANG-level hybrid intellectual + social e
 - **Architecture Pattern**: Layered service architecture (DB → Service → Hook → Component)
 
 ### Design Principles
+
 - ✅ **No mock data** - All features use real database operations
 - ✅ **No business logic in UI** - All logic in service layer
 - ✅ **Event-driven design** - Database triggers create notifications automatically
@@ -52,11 +56,13 @@ User Action → Database Change → PostgreSQL Trigger → WebSocket Event → R
 #### Example: User receives notification for upvote
 
 1. **User A upvotes User B's post**
+
    ```typescript
    await voteService.upvote(postId);
    ```
 
 2. **Database trigger fires** (`database/migrations/add_notifications.sql`)
+
    ```sql
    CREATE TRIGGER notify_on_vote
    AFTER INSERT ON votes
@@ -64,6 +70,7 @@ User Action → Database Change → PostgreSQL Trigger → WebSocket Event → R
    ```
 
 3. **Notification created automatically**
+
    ```sql
    INSERT INTO notifications (user_id, type, message, entity_id)
    VALUES (post_author_id, 'post_upvote', '...', post_id);
@@ -74,6 +81,7 @@ User Action → Database Change → PostgreSQL Trigger → WebSocket Event → R
    - Payload: New notification object
 
 5. **React hook receives event** (`hooks/useNotifications.ts`)
+
    ```typescript
    useEffect(() => {
      const subscription = notificationService.subscribeToNotifications(
@@ -81,7 +89,7 @@ User Action → Database Change → PostgreSQL Trigger → WebSocket Event → R
        (notification) => {
          setNotifications((prev) => [notification, ...prev]);
          setUnreadCount((prev) => prev + 1);
-       }
+       },
      );
    }, [userId]);
    ```
@@ -93,13 +101,13 @@ User Action → Database Change → PostgreSQL Trigger → WebSocket Event → R
 
 ### Real-Time Channels
 
-| Feature | Channel Pattern | Event Types |
-|---------|----------------|-------------|
-| Notifications | `notifications:user_id={userId}` | INSERT |
-| Messages | `messages:conversation_id={conversationId}` | INSERT, UPDATE, DELETE |
-| Typing | `typing:conversation_id={conversationId}` | INSERT, UPDATE, DELETE |
-| Presence | `presence:user_id={userId}` | UPDATE |
-| Follows | `follows:user_id={userId}` | INSERT, DELETE |
+| Feature       | Channel Pattern                             | Event Types            |
+| ------------- | ------------------------------------------- | ---------------------- |
+| Notifications | `notifications:user_id={userId}`            | INSERT                 |
+| Messages      | `messages:conversation_id={conversationId}` | INSERT, UPDATE, DELETE |
+| Typing        | `typing:conversation_id={conversationId}`   | INSERT, UPDATE, DELETE |
+| Presence      | `presence:user_id={userId}`                 | UPDATE                 |
+| Follows       | `follows:user_id={userId}`                  | INSERT, DELETE         |
 
 ### Why This Architecture Scales
 
@@ -118,6 +126,7 @@ User Action → Database Change → PostgreSQL Trigger → WebSocket Event → R
 #### Database Optimizations
 
 **Indexes on Hot Paths**
+
 ```sql
 -- Notification queries (user's unread notifications)
 CREATE INDEX idx_notifications_user_unread ON notifications(user_id, is_read, created_at DESC);
@@ -130,11 +139,12 @@ CREATE INDEX idx_follows_follower ON user_follows(follower_id, created_at DESC);
 CREATE INDEX idx_follows_following ON user_follows(following_id, created_at DESC);
 
 -- Mutual follow queries
-CREATE INDEX idx_follows_mutual ON user_follows(follower_id, following_id) 
+CREATE INDEX idx_follows_mutual ON user_follows(follower_id, following_id)
 WHERE follower_id < following_id;
 ```
 
 **Cached Stats** (eliminates COUNT queries)
+
 ```sql
 -- Instead of: SELECT COUNT(*) FROM user_follows WHERE following_id = $1
 -- Use cached: SELECT followers_count FROM user_stats WHERE user_id = $1
@@ -149,13 +159,14 @@ CREATE TABLE user_stats (
 ```
 
 **Auto-Cleanup** (prevents table bloat)
+
 ```sql
 -- Delete read notifications after 90 days
 CREATE OR REPLACE FUNCTION cleanup_old_notifications()
 RETURNS void AS $$
 BEGIN
-  DELETE FROM notifications 
-  WHERE is_read = true 
+  DELETE FROM notifications
+  WHERE is_read = true
   AND created_at < NOW() - INTERVAL '90 days';
 END;
 $$ LANGUAGE plpgsql;
@@ -169,18 +180,20 @@ FOR EACH ROW EXECUTE FUNCTION delete_old_typing_indicators();
 #### Pagination Strategy
 
 **Cursor-Based (not offset-based)**
+
 ```typescript
 // ❌ BAD: Offset pagination (slow at high offsets)
 SELECT * FROM notifications ORDER BY created_at DESC LIMIT 20 OFFSET 10000;
 
 // ✅ GOOD: Cursor pagination (constant time)
-SELECT * FROM notifications 
-WHERE created_at < $cursor 
-ORDER BY created_at DESC 
+SELECT * FROM notifications
+WHERE created_at < $cursor
+ORDER BY created_at DESC
 LIMIT 20;
 ```
 
 **Benefits**:
+
 - Constant query time regardless of page depth
 - No duplicate/missing items when new data inserted
 - Works with infinite scroll
@@ -188,6 +201,7 @@ LIMIT 20;
 #### Frontend Optimizations
 
 **Intersection Observer** (not scroll events)
+
 ```typescript
 // useInfiniteScrollOptimized hook
 const observer = new IntersectionObserver(
@@ -196,27 +210,32 @@ const observer = new IntersectionObserver(
       loadMore();
     }
   },
-  { rootMargin: '300px' } // Preload before user reaches end
+  { rootMargin: "300px" }, // Preload before user reaches end
 );
 ```
 
 **Optimistic UI** (instant feedback)
+
 ```typescript
 // Follow button updates immediately, rolls back on error
 const handleFollow = async () => {
   setIsFollowing(true); // Optimistic
   setStats((prev) => ({ ...prev, followers_count: prev.followers_count + 1 }));
-  
+
   try {
     await followService.followUser(userId);
   } catch (error) {
     setIsFollowing(false); // Rollback
-    setStats((prev) => ({ ...prev, followers_count: prev.followers_count - 1 }));
+    setStats((prev) => ({
+      ...prev,
+      followers_count: prev.followers_count - 1,
+    }));
   }
 };
 ```
 
 **Scroll Restoration** (seamless navigation)
+
 ```typescript
 // useScrollRestoration hook
 // Remembers scroll position when navigating back
@@ -262,6 +281,7 @@ useEffect(() => {
 ### Notification System
 
 **Schema**:
+
 ```sql
 CREATE TYPE notification_type AS ENUM (
   'post_upvote', 'post_comment', 'comment_reply',
@@ -284,12 +304,14 @@ CREATE TABLE notifications (
 ```
 
 **Key Features**:
+
 - `actor_id` - Who performed the action (for "John upvoted your post")
 - `entity_id` + `entity_type` - Polymorphic reference (post, comment, user)
 - `link` - Deep link to relevant page
 - Auto-created by database triggers (no manual insertion needed)
 
 **Triggers**:
+
 ```sql
 -- Auto-create notification when someone upvotes a post
 CREATE TRIGGER notify_on_vote
@@ -307,11 +329,11 @@ BEGIN
     AND type = NEW.type
     AND entity_id = NEW.entity_id
     AND created_at > NOW() - INTERVAL '1 hour';
-  
+
   IF existing_id IS NULL THEN
     INSERT INTO notifications (...) VALUES (...);
   END IF;
-  
+
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -320,6 +342,7 @@ $$ LANGUAGE plpgsql;
 ### Messaging System
 
 **Schema**:
+
 ```sql
 CREATE TABLE conversations (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -351,12 +374,14 @@ CREATE TABLE messages (
 ```
 
 **Key Features**:
+
 - `last_message_preview` cached on conversation (no JOIN needed for list view)
 - `read_by` array for read receipts (supports group chat expansion)
 - Soft delete for messages (keeps conversation history intact)
 - `last_read_at` per participant for unread badges
 
 **Triggers**:
+
 ```sql
 -- Update conversation when message sent
 CREATE TRIGGER update_conversation_on_message
@@ -367,6 +392,7 @@ FOR EACH ROW EXECUTE FUNCTION update_conversation_timestamp();
 ### Follow System
 
 **Schema**:
+
 ```sql
 CREATE TABLE user_follows (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -398,12 +424,14 @@ CREATE TABLE suggested_follows (
 ```
 
 **Key Features**:
+
 - `user_stats` eliminates expensive COUNT queries
 - `suggested_follows` pre-computed recommendations
 - `no_self_follow` constraint prevents bugs
 - Indexes on both `follower_id` and `following_id` for bidirectional queries
 
 **Functions**:
+
 ```sql
 -- Follow a user (updates stats automatically)
 CREATE OR REPLACE FUNCTION follow_user(
@@ -417,18 +445,18 @@ BEGIN
   VALUES (p_follower_id, p_following_id)
   ON CONFLICT DO NOTHING
   RETURNING id INTO new_follow_id;
-  
+
   -- Update cached stats
   UPDATE user_stats SET followers_count = followers_count + 1
   WHERE user_id = p_following_id;
-  
+
   UPDATE user_stats SET following_count = following_count + 1
   WHERE user_id = p_follower_id;
-  
+
   -- Create notification
   INSERT INTO notifications (user_id, type, actor_id, ...)
   VALUES (p_following_id, 'new_follower', p_follower_id, ...);
-  
+
   RETURN new_follow_id;
 END;
 $$ LANGUAGE plpgsql;
@@ -437,11 +465,13 @@ $$ LANGUAGE plpgsql;
 ### Row-Level Security (RLS)
 
 **Why RLS?**
+
 - Enforces permissions at database level (not just application layer)
 - Prevents accidental data leaks in service layer bugs
 - Works with Supabase Realtime (only sends authorized data)
 
 **Examples**:
+
 ```sql
 -- Users can only see their own notifications
 CREATE POLICY "Users can view own notifications"
@@ -474,6 +504,7 @@ USING (true);
 The service layer abstracts database operations and provides a **migration path to Django** without rewriting component code.
 
 **Architecture**:
+
 ```
 Component → Hook → Service → Database
 ```
@@ -494,7 +525,7 @@ function FollowButton({ userId }) {
 // ✅ GOOD: Component uses hook, hook uses service
 function FollowButton({ userId }) {
   const { isFollowing, toggle } = useFollowButton(userId);
-  
+
   return <button onClick={toggle}>
     {isFollowing ? 'Following' : 'Follow'}
   </button>;
@@ -503,7 +534,7 @@ function FollowButton({ userId }) {
 // Hook (hooks/useFollow.ts)
 export function useFollowButton(userId: string) {
   const [isFollowing, setIsFollowing] = useState(false);
-  
+
   const toggle = async () => {
     setIsFollowing((prev) => !prev); // Optimistic
     try {
@@ -516,7 +547,7 @@ export function useFollowButton(userId: string) {
       setIsFollowing((prev) => !prev); // Rollback
     }
   };
-  
+
   return { isFollowing, toggle };
 }
 
@@ -524,13 +555,13 @@ export function useFollowButton(userId: string) {
 export async function followUser(followingId: string): Promise<string> {
   const user = await getCurrentUser();
   if (!user) throw new Error('Not authenticated');
-  
+
   // Calls database function (handles stats, notifications, everything)
   const { data, error } = await supabase.rpc('follow_user', {
     p_follower_id: user.id,
     p_following_id: followingId,
   });
-  
+
   if (error) throw error;
   return data;
 }
@@ -551,7 +582,7 @@ export async function followUser(followingId: string): Promise<string> {
 ```typescript
 // Before (services/follow.service.ts)
 export async function followUser(followingId: string): Promise<string> {
-  const { data, error } = await supabase.rpc('follow_user', {
+  const { data, error } = await supabase.rpc("follow_user", {
     p_follower_id: user.id,
     p_following_id: followingId,
   });
@@ -561,13 +592,13 @@ export async function followUser(followingId: string): Promise<string> {
 
 // After (services/follow.service.ts)
 export async function followUser(followingId: string): Promise<string> {
-  const response = await fetch('/api/follows/', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  const response = await fetch("/api/follows/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ following_id: followingId }),
   });
-  
-  if (!response.ok) throw new Error('Failed to follow user');
+
+  if (!response.ok) throw new Error("Failed to follow user");
   const data = await response.json();
   return data.id;
 }
@@ -579,33 +610,37 @@ export async function followUser(followingId: string): Promise<string> {
 // Before (services/notification.service.ts)
 export function subscribeToNotifications(
   userId: string,
-  callback: (notification: Notification) => void
+  callback: (notification: Notification) => void,
 ) {
   const subscription = supabase
     .channel(`notifications:user_id=${userId}`)
-    .on('postgres_changes', {
-      event: 'INSERT',
-      schema: 'public',
-      table: 'notifications',
-      filter: `user_id=eq.${userId}`,
-    }, (payload) => callback(payload.new as Notification))
+    .on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "notifications",
+        filter: `user_id=eq.${userId}`,
+      },
+      (payload) => callback(payload.new as Notification),
+    )
     .subscribe();
-  
+
   return () => subscription.unsubscribe();
 }
 
 // After (services/notification.service.ts)
 export function subscribeToNotifications(
   userId: string,
-  callback: (notification: Notification) => void
+  callback: (notification: Notification) => void,
 ) {
   const ws = new WebSocket(`wss://api.mideeye.com/ws/notifications/${userId}/`);
-  
+
   ws.onmessage = (event) => {
     const notification = JSON.parse(event.data);
     callback(notification);
   };
-  
+
   return () => ws.close();
 }
 ```
@@ -626,15 +661,15 @@ Update UI immediately (assume success), then rollback if server errors.
 export function useFollowButton(userId: string) {
   const [isFollowing, setIsFollowing] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
   const toggle = async () => {
     // 1. Save current state for rollback
     const previousState = isFollowing;
-    
+
     // 2. Update UI immediately (optimistic)
     setIsFollowing(!isFollowing);
     setLoading(true);
-    
+
     try {
       // 3. Send request to server
       if (isFollowing) {
@@ -646,12 +681,12 @@ export function useFollowButton(userId: string) {
     } catch (error) {
       // 4. Error! Rollback to previous state
       setIsFollowing(previousState);
-      showToast('Failed to update follow status');
+      showToast("Failed to update follow status");
     } finally {
       setLoading(false);
     }
   };
-  
+
   return { isFollowing, loading, toggle };
 }
 ```
@@ -670,6 +705,7 @@ export function useFollowButton(userId: string) {
 - **Critical actions** - Anything with legal/financial consequences
 
 For Mideeye, optimistic UI is perfect for:
+
 - ✅ Follow/unfollow
 - ✅ Upvote/downvote
 - ✅ Mark notification as read
@@ -695,35 +731,39 @@ export function useInfiniteScrollOptimized<T>({
   const [loading, setLoading] = useState(false);
   const loadingRef = useRef(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
-  
-  const lastItemRef = useCallback((node: HTMLElement | null) => {
-    if (loading || !hasMore) return;
-    
-    if (observerRef.current) observerRef.current.disconnect();
-    
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !loadingRef.current) {
-          loadingRef.current = true;
-          setLoading(true);
-          
-          loadMore().finally(() => {
-            loadingRef.current = false;
-            setLoading(false);
-          });
-        }
-      },
-      { rootMargin: `${threshold}px` } // Load 300px before reaching end
-    );
-    
-    if (node) observerRef.current.observe(node);
-  }, [loading, hasMore]);
-  
+
+  const lastItemRef = useCallback(
+    (node: HTMLElement | null) => {
+      if (loading || !hasMore) return;
+
+      if (observerRef.current) observerRef.current.disconnect();
+
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting && !loadingRef.current) {
+            loadingRef.current = true;
+            setLoading(true);
+
+            loadMore().finally(() => {
+              loadingRef.current = false;
+              setLoading(false);
+            });
+          }
+        },
+        { rootMargin: `${threshold}px` }, // Load 300px before reaching end
+      );
+
+      if (node) observerRef.current.observe(node);
+    },
+    [loading, hasMore],
+  );
+
   return { lastItemRef, loading };
 }
 ```
 
 **Usage**:
+
 ```typescript
 function NotificationList() {
   const { notifications, loadMore, hasMore } = useNotifications();
@@ -732,7 +772,7 @@ function NotificationList() {
     hasMore,
     threshold: 300,
   });
-  
+
   return (
     <div>
       {notifications.map((notification, index) => (
@@ -760,32 +800,32 @@ function NotificationList() {
 export async function getNotifications(
   userId: string,
   cursor?: string,
-  limit: number = 20
+  limit: number = 20,
 ): Promise<{ notifications: Notification[]; nextCursor: string | null }> {
   let query = supabase
-    .from('notifications')
-    .select('*')
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false })
+    .from("notifications")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
     .limit(limit);
-  
+
   // If cursor provided, only get notifications older than cursor
   if (cursor) {
-    query = query.lt('created_at', cursor);
+    query = query.lt("created_at", cursor);
   }
-  
+
   const { data, error } = await query;
   if (error) throw error;
-  
-  const nextCursor = data.length === limit
-    ? data[data.length - 1].created_at
-    : null;
-  
+
+  const nextCursor =
+    data.length === limit ? data[data.length - 1].created_at : null;
+
   return { notifications: data, nextCursor };
 }
 ```
 
 **Benefits**:
+
 - Constant query time regardless of page depth
 - No missing items when new data inserted
 - Works perfectly with infinite scroll
@@ -823,28 +863,29 @@ SELECT followers_count FROM user_stats WHERE user_id = $1;
 ```typescript
 // services/follow.service.ts
 export async function getBulkFollowingStatus(
-  userIds: string[]
+  userIds: string[],
 ): Promise<Record<string, boolean>> {
   const user = await getCurrentUser();
   if (!user) return {};
-  
+
   const { data } = await supabase
-    .from('user_follows')
-    .select('following_id')
-    .eq('follower_id', user.id)
-    .in('following_id', userIds);
-  
+    .from("user_follows")
+    .select("following_id")
+    .eq("follower_id", user.id)
+    .in("following_id", userIds);
+
   // Convert array to map
   const followingMap: Record<string, boolean> = {};
   userIds.forEach((id) => {
     followingMap[id] = data?.some((f) => f.following_id === id) || false;
   });
-  
+
   return followingMap;
 }
 ```
 
 **Usage**:
+
 ```typescript
 // Get follow status for all users in list
 const userIds = users.map((u) => u.id);
@@ -871,20 +912,20 @@ const scrollCache = new Map<string, number>();
 
 export function useScrollRestoration() {
   const pathname = usePathname();
-  
+
   useEffect(() => {
     // Restore scroll position on mount
     const savedPosition = scrollCache.get(pathname);
     if (savedPosition !== undefined) {
       window.scrollTo(0, savedPosition);
     }
-    
+
     // Save scroll position on unmount
     return () => {
       scrollCache.set(pathname, window.scrollY);
     };
   }, [pathname]);
-  
+
   return {
     clearCache: () => scrollCache.clear(),
   };
@@ -900,19 +941,21 @@ export function useScrollRestoration() {
 #### 1. Database Queries (Most Likely)
 
 **Symptoms**:
+
 - Slow page loads
 - Timeout errors
 - High database CPU
 
 **Solutions**:
+
 ```sql
 -- Add missing indexes
-CREATE INDEX idx_notifications_user_unread 
+CREATE INDEX idx_notifications_user_unread
 ON notifications(user_id, is_read, created_at DESC);
 
 -- Use EXPLAIN ANALYZE to find slow queries
 EXPLAIN ANALYZE
-SELECT * FROM notifications 
+SELECT * FROM notifications
 WHERE user_id = $1 AND is_read = false
 ORDER BY created_at DESC LIMIT 20;
 
@@ -923,11 +966,13 @@ ORDER BY created_at DESC LIMIT 20;
 #### 2. Real-Time WebSocket Connections
 
 **Symptoms**:
+
 - Notifications delayed
 - "Connection lost" errors
 - High server memory
 
 **Solutions**:
+
 - Supabase scales WebSocket connections automatically
 - If moving to custom backend, use Redis Pub/Sub
 - Consider batching notifications (send every 5 seconds instead of instant)
@@ -935,10 +980,12 @@ ORDER BY created_at DESC LIMIT 20;
 #### 3. Frontend Bundle Size
 
 **Symptoms**:
+
 - Slow initial page load
 - High bounce rate on mobile
 
 **Solutions**:
+
 ```typescript
 // Code splitting with dynamic imports
 const NotificationBell = dynamic(() => import('@/components/ui/NotificationBell'), {
@@ -953,10 +1000,12 @@ const { formatDistanceToNow } = await import('date-fns');
 #### 4. Supabase Rate Limits
 
 **Symptoms**:
+
 - 429 Too Many Requests errors
 - Failed API calls
 
 **Solutions**:
+
 - Upgrade to Supabase Pro ($25/mo = 100K requests/min)
 - Add Redis caching layer for frequently accessed data
 - Migrate to self-hosted Supabase (unlimited)
@@ -966,6 +1015,7 @@ const { formatDistanceToNow } = await import('date-fns');
 **Add these tools**:
 
 1. **Sentry** - Error tracking and performance monitoring
+
    ```typescript
    Sentry.init({
      dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
@@ -974,9 +1024,10 @@ const { formatDistanceToNow } = await import('date-fns');
    ```
 
 2. **Vercel Analytics** - Real user monitoring
+
    ```typescript
    import { Analytics } from '@vercel/analytics/react';
-   
+
    export default function RootLayout({ children }) {
      return (
        <html>
@@ -1085,4 +1136,4 @@ const { formatDistanceToNow } = await import('date-fns');
 ---
 
 **Built by Mideeye Engineering Team**  
-*Thinking like a 200-person product team, shipping like a startup.*
+_Thinking like a 200-person product team, shipping like a startup._

@@ -32,7 +32,9 @@ export function useFollow({ userId }: UseFollowProps) {
 
     // Fetch both in parallel
     const [followResult, statsResult] = await Promise.all([
-      user ? checkIsFollowing(userId) : Promise.resolve({ success: true, data: false }),
+      user
+        ? checkIsFollowing(userId)
+        : Promise.resolve({ success: true, data: false }),
       getUserStats(userId),
     ]);
 
@@ -160,7 +162,7 @@ export function useFollowButton(userId: string) {
 
     setLoading(true);
     const previousState = isFollowing;
-    
+
     // Optimistic update
     setIsFollowing(!isFollowing);
 

@@ -84,36 +84,36 @@ CREATE TABLE IF NOT EXISTS user_presence (
 -- =====================================================
 
 -- Conversations indexes
-CREATE INDEX idx_conversations_updated 
+CREATE INDEX IF NOT EXISTS idx_conversations_updated 
   ON conversations(updated_at DESC);
 
-CREATE INDEX idx_conversations_last_message 
+CREATE INDEX IF NOT EXISTS idx_conversations_last_message 
   ON conversations(last_message_at DESC);
 
 -- Participants indexes
-CREATE INDEX idx_participants_user 
+CREATE INDEX IF NOT EXISTS idx_participants_user 
   ON conversation_participants(user_id, last_read_at DESC);
 
-CREATE INDEX idx_participants_conversation 
+CREATE INDEX IF NOT EXISTS idx_participants_conversation 
   ON conversation_participants(conversation_id);
 
 -- Messages indexes  
-CREATE INDEX idx_messages_conversation_created 
+CREATE INDEX IF NOT EXISTS idx_messages_conversation_created 
   ON messages(conversation_id, created_at DESC);
 
-CREATE INDEX idx_messages_sender 
+CREATE INDEX IF NOT EXISTS idx_messages_sender 
   ON messages(sender_id, created_at DESC);
 
-CREATE INDEX idx_messages_unread 
+CREATE INDEX IF NOT EXISTS idx_messages_unread 
   ON messages(conversation_id, created_at) 
   WHERE is_deleted = FALSE;
 
 -- Typing indicators index
-CREATE INDEX idx_typing_conversation 
+CREATE INDEX IF NOT EXISTS idx_typing_conversation 
   ON typing_indicators(conversation_id, started_at);
 
 -- Presence index
-CREATE INDEX idx_presence_status 
+CREATE INDEX IF NOT EXISTS idx_presence_status 
   ON user_presence(status, last_seen_at);
 
 -- =====================================================
@@ -123,6 +123,7 @@ CREATE INDEX idx_presence_status
 -- Conversations RLS
 ALTER TABLE conversations ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own conversations" ON conversations;
 CREATE POLICY "Users can view own conversations" 
   ON conversations FOR SELECT 
   USING (
@@ -132,6 +133,7 @@ CREATE POLICY "Users can view own conversations"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update own conversations" ON conversations;
 CREATE POLICY "Users can update own conversations" 
   ON conversations FOR UPDATE 
   USING (
@@ -144,6 +146,7 @@ CREATE POLICY "Users can update own conversations"
 -- Participants RLS
 ALTER TABLE conversation_participants ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view participants in own conversations" ON conversation_participants;
 CREATE POLICY "Users can view participants in own conversations" 
   ON conversation_participants FOR SELECT 
   USING (
@@ -153,10 +156,12 @@ CREATE POLICY "Users can view participants in own conversations"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update own participant record" ON conversation_participants;
 CREATE POLICY "Users can update own participant record" 
   ON conversation_participants FOR UPDATE 
   USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "System can insert participants" ON conversation_participants;
 CREATE POLICY "System can insert participants" 
   ON conversation_participants FOR INSERT 
   WITH CHECK (TRUE);
@@ -164,6 +169,7 @@ CREATE POLICY "System can insert participants"
 -- Messages RLS
 ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view messages in own conversations" ON messages;
 CREATE POLICY "Users can view messages in own conversations" 
   ON messages FOR SELECT 
   USING (
@@ -173,6 +179,7 @@ CREATE POLICY "Users can view messages in own conversations"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert messages in own conversations" ON messages;
 CREATE POLICY "Users can insert messages in own conversations" 
   ON messages FOR INSERT 
   WITH CHECK (
@@ -183,6 +190,7 @@ CREATE POLICY "Users can insert messages in own conversations"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update own messages" ON messages;
 CREATE POLICY "Users can update own messages" 
   ON messages FOR UPDATE 
   USING (sender_id = auth.uid());
@@ -190,6 +198,7 @@ CREATE POLICY "Users can update own messages"
 -- Typing indicators RLS
 ALTER TABLE typing_indicators ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view typing in own conversations" ON typing_indicators;
 CREATE POLICY "Users can view typing in own conversations" 
   ON typing_indicators FOR SELECT 
   USING (
@@ -199,10 +208,12 @@ CREATE POLICY "Users can view typing in own conversations"
     )
   );
 
+DROP POLICY IF EXISTS "Users can insert own typing status" ON typing_indicators;
 CREATE POLICY "Users can insert own typing status" 
   ON typing_indicators FOR INSERT 
   WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can delete own typing status" ON typing_indicators;
 CREATE POLICY "Users can delete own typing status" 
   ON typing_indicators FOR DELETE 
   USING (user_id = auth.uid());
@@ -210,17 +221,21 @@ CREATE POLICY "Users can delete own typing status"
 -- Presence RLS
 ALTER TABLE user_presence ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Anyone can view presence" ON user_presence;
 CREATE POLICY "Anyone can view presence" 
   ON user_presence FOR SELECT 
   USING (TRUE);
 
-CREATE POLICY "Users can update own presence" 
+DROP POLICY IF EXISTS "Users can insert own presence" ON user_presence;
+CREATE POLICY "Users can insert own presence" 
   ON user_presence FOR INSERT 
-  WITH CHECK (user_id = auth.uid())
-  ON CONFLICT (user_id) DO UPDATE 
-  SET status = EXCLUDED.status, 
-      last_seen_at = EXCLUDED.last_seen_at,
-      updated_at = NOW();
+  WITH CHECK (user_id = auth.uid());
+
+DROP POLICY IF EXISTS "Users can update own presence" ON user_presence;
+CREATE POLICY "Users can update own presence" 
+  ON user_presence FOR UPDATE 
+  USING (user_id = auth.uid())
+  WITH CHECK (user_id = auth.uid());
 
 -- =====================================================
 -- HELPER FUNCTIONS
@@ -396,6 +411,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_cleanup_typing ON typing_indicators;
 CREATE TRIGGER trigger_cleanup_typing
   AFTER INSERT ON typing_indicators
   EXECUTE FUNCTION cleanup_old_typing();
@@ -415,6 +431,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_update_conversation ON messages;
 CREATE TRIGGER trigger_update_conversation
   AFTER INSERT ON messages
   FOR EACH ROW
