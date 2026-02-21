@@ -37,7 +37,9 @@ function formatTime(iso: string | null | undefined) {
   if (!iso) return "";
   const date = new Date(iso);
   const now = new Date();
-  const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+  const diffDays = Math.floor(
+    (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24),
+  );
   if (diffDays === 0)
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   if (diffDays === 1) return "Yesterday";
@@ -46,7 +48,10 @@ function formatTime(iso: string | null | undefined) {
 }
 
 function formatMessageTime(iso: string) {
-  return new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  return new Date(iso).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 function isSameDay(a: string, b: string) {
@@ -62,7 +67,9 @@ function isSameDay(a: string, b: string) {
 function formatDaySeparator(iso: string) {
   const d = new Date(iso);
   const now = new Date();
-  const diffDays = Math.floor((now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24));
+  const diffDays = Math.floor(
+    (now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24),
+  );
   if (diffDays === 0) return "Today";
   if (diffDays === 1) return "Yesterday";
   return d.toLocaleDateString([], { month: "long", day: "numeric" });
@@ -136,7 +143,11 @@ function TypingIndicator() {
           <span
             key={delay}
             className="w-2 h-2 rounded-full animate-bounce"
-            style={{ background: "#64748b", animationDelay: `${delay}ms`, animationDuration: "1.2s" }}
+            style={{
+              background: "#64748b",
+              animationDelay: `${delay}ms`,
+              animationDuration: "1.2s",
+            }}
           />
         ))}
       </div>
@@ -149,13 +160,28 @@ function ConvListSkeleton() {
   return (
     <div>
       {[1, 2, 3, 4, 5].map((i) => (
-        <div key={i} className="flex items-center gap-3 px-4 py-3 animate-pulse">
-          <div className="rounded-full flex-shrink-0" style={{ width: 50, height: 50, background: "#1e293b" }} />
+        <div
+          key={i}
+          className="flex items-center gap-3 px-4 py-3 animate-pulse"
+        >
+          <div
+            className="rounded-full flex-shrink-0"
+            style={{ width: 50, height: 50, background: "#1e293b" }}
+          />
           <div className="flex-1 space-y-2 min-w-0">
-            <div className="rounded-full" style={{ height: 13, width: "55%", background: "#1e293b" }} />
-            <div className="rounded-full" style={{ height: 11, width: "75%", background: "#172033" }} />
+            <div
+              className="rounded-full"
+              style={{ height: 13, width: "55%", background: "#1e293b" }}
+            />
+            <div
+              className="rounded-full"
+              style={{ height: 11, width: "75%", background: "#172033" }}
+            />
           </div>
-          <div className="rounded-full" style={{ height: 10, width: 32, background: "#1e293b" }} />
+          <div
+            className="rounded-full"
+            style={{ height: 10, width: 32, background: "#1e293b" }}
+          />
         </div>
       ))}
     </div>
@@ -164,16 +190,27 @@ function ConvListSkeleton() {
 
 function MsgSkeleton() {
   const items = [
-    { mine: false, w: 180 }, { mine: true, w: 140 }, { mine: false, w: 220 },
-    { mine: true, w: 160 }, { mine: false, w: 110 }, { mine: true, w: 190 },
+    { mine: false, w: 180 },
+    { mine: true, w: 140 },
+    { mine: false, w: 220 },
+    { mine: true, w: 160 },
+    { mine: false, w: 110 },
+    { mine: true, w: 190 },
   ];
   return (
     <div className="space-y-3 p-4 animate-pulse">
       {items.map((item, i) => (
-        <div key={i} className={`flex ${item.mine ? "justify-end" : "justify-start"}`}>
+        <div
+          key={i}
+          className={`flex ${item.mine ? "justify-end" : "justify-start"}`}
+        >
           <div
             className="rounded-2xl"
-            style={{ width: item.w, height: 40, background: item.mine ? "#1e3a5f" : "#1e293b" }}
+            style={{
+              width: item.w,
+              height: 40,
+              background: item.mine ? "#1e3a5f" : "#1e293b",
+            }}
           />
         </div>
       ))}
@@ -190,7 +227,9 @@ export default function ChatPage() {
   const currentUserId = user?.id;
 
   const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
+  const [selectedConversationId, setSelectedConversationId] = useState<
+    string | null
+  >(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [people, setPeople] = useState<ChatUser[]>([]);
   const [messageInput, setMessageInput] = useState("");
@@ -204,8 +243,10 @@ export default function ChatPage() {
   const [mobileView, setMobileView] = useState<"list" | "chat">("list");
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const typingTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevMessageCount = useRef(0);
 
   const selectedConversation = useMemo(
     () => conversations.find((c) => c.id === selectedConversationId),
@@ -260,11 +301,15 @@ export default function ChatPage() {
 
     setLoadingMessages(true);
     setMessages([]);
+    prevMessageCount.current = 0;
     let cancelled = false;
 
     const loadMessages = async () => {
       try {
-        const result = await getMessages({ conversationId: selectedConversationId, limit: 100 });
+        const result = await getMessages({
+          conversationId: selectedConversationId,
+          limit: 100,
+        });
         if (!cancelled) {
           setMessages(result.success && result.data ? result.data : []);
           await markConversationAsRead(selectedConversationId);
@@ -279,21 +324,27 @@ export default function ChatPage() {
 
     loadMessages();
 
-    const unsubMessages = subscribeToMessages(selectedConversationId, (newMsg) => {
-      setMessages((prev) => {
-        if (prev.some((m) => m.id === newMsg.id)) return prev;
-        return [...prev, newMsg];
-      });
-    });
+    const unsubMessages = subscribeToMessages(
+      selectedConversationId,
+      (newMsg) => {
+        setMessages((prev) => {
+          if (prev.some((m) => m.id === newMsg.id)) return prev;
+          return [...prev, newMsg];
+        });
+      },
+    );
 
-    const unsubTyping = subscribeToTyping(selectedConversationId, (uid, isTyping) => {
-      if (uid === user.id) return;
-      setTypingUserIds((prev) => {
-        if (isTyping && !prev.includes(uid)) return [...prev, uid];
-        if (!isTyping) return prev.filter((id) => id !== uid);
-        return prev;
-      });
-    });
+    const unsubTyping = subscribeToTyping(
+      selectedConversationId,
+      (uid, isTyping) => {
+        if (uid === user.id) return;
+        setTypingUserIds((prev) => {
+          if (isTyping && !prev.includes(uid)) return [...prev, uid];
+          if (!isTyping) return prev.filter((id) => id !== uid);
+          return prev;
+        });
+      },
+    );
 
     return () => {
       cancelled = true;
@@ -306,8 +357,33 @@ export default function ChatPage() {
 
   /* ── Auto-scroll ── */
   useEffect(() => {
-    if (messages.length > 0 || typingUserIds.length > 0) {
-      setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
+    const container = messagesContainerRef.current;
+    if (!container) return;
+    const isInitialLoad = prevMessageCount.current === 0 && messages.length > 0;
+    const isNewMessage =
+      prevMessageCount.current > 0 &&
+      messages.length > prevMessageCount.current;
+    prevMessageCount.current = messages.length;
+
+    if (isInitialLoad) {
+      // Double rAF: first frame commits layout, second frame the scroll is
+      // accurate. Required on mobile Safari where scrollHeight is stale
+      // right after setState.
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (messagesContainerRef.current) {
+            messagesContainerRef.current.scrollTop =
+              messagesContainerRef.current.scrollHeight;
+          }
+        });
+      });
+    } else if (isNewMessage || typingUserIds.length > 0) {
+      requestAnimationFrame(() => {
+        if (messagesContainerRef.current) {
+          messagesContainerRef.current.scrollTop =
+            messagesContainerRef.current.scrollHeight;
+        }
+      });
     }
   }, [messages, typingUserIds]);
 
@@ -321,16 +397,19 @@ export default function ChatPage() {
     setMobileView("list");
   }, []);
 
-  const startConversation = useCallback(async (targetUserId: string) => {
-    const result = await getOrCreateConversation(targetUserId);
-    if (!result.success || !result.data) return;
-    setConversations((prev) => {
-      if (prev.some((c) => c.id === result.data?.id)) return prev;
-      return [result.data as Conversation, ...prev];
-    });
-    setShowNewChat(false);
-    openConversation(result.data.id);
-  }, [openConversation]);
+  const startConversation = useCallback(
+    async (targetUserId: string) => {
+      const result = await getOrCreateConversation(targetUserId);
+      if (!result.success || !result.data) return;
+      setConversations((prev) => {
+        if (prev.some((c) => c.id === result.data?.id)) return prev;
+        return [result.data as Conversation, ...prev];
+      });
+      setShowNewChat(false);
+      openConversation(result.data.id);
+    },
+    [openConversation],
+  );
 
   const handleSendMessage = useCallback(async () => {
     if (!selectedConversationId || !messageInput.trim() || sending) return;
@@ -350,7 +429,11 @@ export default function ChatPage() {
       setConversations((prev) =>
         prev.map((c) =>
           c.id === selectedConversationId
-            ? { ...c, last_message_preview: content, last_message_at: new Date().toISOString() }
+            ? {
+                ...c,
+                last_message_preview: content,
+                last_message_at: new Date().toISOString(),
+              }
             : c,
         ),
       );
@@ -391,16 +474,30 @@ export default function ChatPage() {
   if (authLoading) {
     return (
       <div
-        style={{ backgroundColor: "#0a0f1a" }}
-        className="flex items-center justify-center"
-        // eslint-disable-next-line react/no-unknown-property
+        style={{
+          backgroundColor: "#0a0f1a",
+          position: "fixed",
+          top: 44,
+          left: 0,
+          right: 0,
+          bottom: 64,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+        className="md:bottom-0"
       >
-        <div className="flex flex-col items-center gap-4" style={{ height: "calc(100dvh - 64px)" }}>
+        <div className="flex flex-col items-center gap-4">
           <div
             className="w-12 h-12 rounded-full border-4 animate-spin"
-            style={{ borderColor: "#1e293b", borderTopColor: "#3b82f6", marginTop: "auto" }}
+            style={{
+              borderColor: "#1e293b",
+              borderTopColor: "#3b82f6",
+            }}
           />
-          <p style={{ color: "#64748b", marginBottom: "auto" }} className="text-sm">Loading…</p>
+          <p style={{ color: "#64748b" }} className="text-sm">
+            Loading…
+          </p>
         </div>
       </div>
     );
@@ -415,26 +512,28 @@ export default function ChatPage() {
     <div
       style={{
         backgroundColor: "#0a0f1a",
-        // On mobile: subtract the bottom nav height (64px) + safe area
-        // On desktop (lg): full height since BottomNav is hidden
-        height: "calc(100dvh - 64px)",
+        position: "fixed",
+        // Header is h-11 = 44px (sticky top-0)
+        top: 44,
+        left: 0,
+        right: 0,
+        // BottomNav is h-16 = 64px (md:hidden fixed bottom-0)
+        // On desktop BottomNav is hidden so we go to bottom:0 via className
+        bottom: 64,
         display: "flex",
         overflow: "hidden",
       }}
-      className="lg:h-dvh"
+      className="md:bottom-0"
     >
       {/* ══════════ CONVERSATION LIST PANEL ══════════ */}
       <div
         style={{
           backgroundColor: "#0d1525",
           borderRight: "1px solid #1a2744",
-          display: "flex",
-          flexDirection: "column",
           height: "100%",
-          // On mobile: full width when showing list, hidden when showing chat
-          // On desktop (≥1024px): fixed 360px sidebar always visible
         }}
         className={`
+          flex-col
           w-full lg:w-[360px] lg:flex-shrink-0
           ${mobileView === "list" ? "flex" : "hidden"} lg:flex
         `}
@@ -456,13 +555,29 @@ export default function ChatPage() {
               <button
                 onClick={() => router.push("/dashboard")}
                 className="transition-transform active:scale-90"
-                style={{ color: "#60a5fa", display: "flex", alignItems: "center" }}
+                style={{
+                  color: "#60a5fa",
+                  display: "flex",
+                  alignItems: "center",
+                }}
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+                  />
                 </svg>
               </button>
-              <h1 style={{ color: "#f1f5f9", fontSize: 18, fontWeight: 700 }}>Messages</h1>
+              <h1 style={{ color: "#f1f5f9", fontSize: 18, fontWeight: 700 }}>
+                Messages
+              </h1>
             </div>
             <button
               onClick={() => setShowNewChat((v) => !v)}
@@ -482,25 +597,52 @@ export default function ChatPage() {
                 transition: "all 0.2s",
               }}
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 4.5v15m7.5-7.5h-15"
+                />
               </svg>
             </button>
           </div>
         </div>
 
         {/* Search bar */}
-        <div style={{ backgroundColor: "#0d1525", padding: "10px 12px 8px", flexShrink: 0 }}>
+        <div
+          style={{
+            backgroundColor: "#0d1525",
+            padding: "10px 12px 8px",
+            flexShrink: 0,
+          }}
+        >
           <div style={{ position: "relative" }}>
             <svg
-              style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#475569", pointerEvents: "none" }}
+              style={{
+                position: "absolute",
+                left: 12,
+                top: "50%",
+                transform: "translateY(-50%)",
+                color: "#475569",
+                pointerEvents: "none",
+              }}
               className="w-4 h-4"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
               strokeWidth={2}
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607z"
+              />
             </svg>
             <input
               type="text"
@@ -537,13 +679,29 @@ export default function ChatPage() {
             }}
           >
             <div style={{ padding: "12px 16px 8px" }}>
-              <p style={{ color: "#3b82f6", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+              <p
+                style={{
+                  color: "#3b82f6",
+                  fontSize: 11,
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.06em",
+                }}
+              >
                 Start new chat
               </p>
             </div>
             <div style={{ maxHeight: 240, overflowY: "auto" }}>
               {people.length === 0 ? (
-                <p style={{ color: "#475569", fontSize: 13, padding: "12px 16px" }}>No users found</p>
+                <p
+                  style={{
+                    color: "#475569",
+                    fontSize: 13,
+                    padding: "12px 16px",
+                  }}
+                >
+                  No users found
+                </p>
               ) : (
                 people.map((person, idx) => (
                   <button
@@ -559,11 +717,32 @@ export default function ChatPage() {
                     }}
                   >
                     <Avatar user={person} size={38} />
-                    <span style={{ color: "#e2e8f0", fontSize: 14, fontWeight: 500, flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <span
+                      style={{
+                        color: "#e2e8f0",
+                        fontSize: 14,
+                        fontWeight: 500,
+                        flex: 1,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
                       {person.full_name || "Unknown user"}
                     </span>
-                    <svg className="w-4 h-4 flex-shrink-0" style={{ color: "#3b82f6" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+                    <svg
+                      className="w-4 h-4 flex-shrink-0"
+                      style={{ color: "#3b82f6" }}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"
+                      />
                     </svg>
                   </button>
                 ))
@@ -573,14 +752,47 @@ export default function ChatPage() {
         )}
 
         {/* Conversation list */}
-        <div style={{ flex: 1, overflowY: "auto", overscrollBehavior: "contain" }}>
+        <div
+          style={{ flex: 1, overflowY: "auto", overscrollBehavior: "contain" }}
+        >
           {loadingConversations ? (
             <ConvListSkeleton />
           ) : filteredConversations.length === 0 ? (
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "60px 24px", gap: 12, textAlign: "center" }}>
-              <div style={{ width: 60, height: 60, borderRadius: "50%", background: "#1e293b", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <svg className="w-8 h-8" style={{ color: "#475569" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "60px 24px",
+                gap: 12,
+                textAlign: "center",
+              }}
+            >
+              <div
+                style={{
+                  width: 60,
+                  height: 60,
+                  borderRadius: "50%",
+                  background: "#1e293b",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <svg
+                  className="w-8 h-8"
+                  style={{ color: "#475569" }}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"
+                  />
                 </svg>
               </div>
               <div>
@@ -588,7 +800,9 @@ export default function ChatPage() {
                   {searchQuery ? "No results" : "No conversations yet"}
                 </p>
                 <p style={{ color: "#475569", fontSize: 12, marginTop: 4 }}>
-                  {searchQuery ? "Try a different name" : "Tap + to start chatting"}
+                  {searchQuery
+                    ? "Try a different name"
+                    : "Tap + to start chatting"}
                 </p>
               </div>
             </div>
@@ -617,15 +831,47 @@ export default function ChatPage() {
                 >
                   <Avatar user={avatarUser} size={52} />
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
-                      <span style={{ color: "#f1f5f9", fontWeight: 600, fontSize: 15, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        gap: 8,
+                      }}
+                    >
+                      <span
+                        style={{
+                          color: "#f1f5f9",
+                          fontWeight: 600,
+                          fontSize: 15,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          flex: 1,
+                        }}
+                      >
                         {other?.full_name || "Unknown"}
                       </span>
-                      <span style={{ color: isActive ? "#60a5fa" : "#475569", fontSize: 11, flexShrink: 0 }}>
+                      <span
+                        style={{
+                          color: isActive ? "#60a5fa" : "#475569",
+                          fontSize: 11,
+                          flexShrink: 0,
+                        }}
+                      >
                         {formatTime(conv.last_message_at)}
                       </span>
                     </div>
-                    <p style={{ color: "#64748b", fontSize: 13, marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <p
+                      style={{
+                        color: "#64748b",
+                        fontSize: 13,
+                        marginTop: 2,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
                       {conv.last_message_preview || "No messages yet"}
                     </p>
                   </div>
@@ -640,13 +886,11 @@ export default function ChatPage() {
       <div
         style={{
           flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          height: "100%",
+          minHeight: 0,
+          overflow: "hidden",
           backgroundColor: "#0a0f1a",
-          // On mobile: full width when showing chat, hidden when showing list
         }}
-        className={`${mobileView === "chat" ? "flex" : "hidden"} lg:flex`}
+        className={`flex-col ${mobileView === "chat" ? "flex" : "hidden"} lg:flex`}
       >
         {!selectedConversation ? (
           /* Desktop empty state — only visible on large screens */
@@ -662,13 +906,28 @@ export default function ChatPage() {
                 justifyContent: "center",
               }}
             >
-              <svg className="w-11 h-11" style={{ color: "#3b82f6" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+              <svg
+                className="w-11 h-11"
+                style={{ color: "#3b82f6" }}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"
+                />
               </svg>
             </div>
             <div style={{ textAlign: "center" }}>
-              <h3 style={{ color: "#e2e8f0", fontSize: 17, fontWeight: 600 }}>Select a conversation</h3>
-              <p style={{ color: "#475569", fontSize: 13, marginTop: 6 }}>Choose from your messages or start a new one</p>
+              <h3 style={{ color: "#e2e8f0", fontSize: 17, fontWeight: 600 }}>
+                Select a conversation
+              </h3>
+              <p style={{ color: "#475569", fontSize: 13, marginTop: 6 }}>
+                Choose from your messages or start a new one
+              </p>
             </div>
           </div>
         ) : (
@@ -704,8 +963,18 @@ export default function ChatPage() {
                   background: "#1a2744",
                 }}
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+                  />
                 </svg>
               </button>
 
@@ -723,14 +992,44 @@ export default function ChatPage() {
 
               {/* Name + status */}
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ color: "#f1f5f9", fontWeight: 600, fontSize: 15, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <p
+                  style={{
+                    color: "#f1f5f9",
+                    fontWeight: 600,
+                    fontSize: 15,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
                   {otherParticipant?.full_name || "Chat"}
                 </p>
                 {typingUserIds.length > 0 ? (
-                  <p style={{ color: "#3b82f6", fontSize: 12, fontWeight: 500 }}>typing…</p>
+                  <p
+                    style={{ color: "#3b82f6", fontSize: 12, fontWeight: 500 }}
+                  >
+                    typing…
+                  </p>
                 ) : (
-                  <p style={{ color: "#22c55e", fontSize: 12, display: "flex", alignItems: "center", gap: 5 }}>
-                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", display: "inline-block", flexShrink: 0 }} />
+                  <p
+                    style={{
+                      color: "#22c55e",
+                      fontSize: 12,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 5,
+                    }}
+                  >
+                    <span
+                      style={{
+                        width: 6,
+                        height: 6,
+                        borderRadius: "50%",
+                        background: "#22c55e",
+                        display: "inline-block",
+                        flexShrink: 0,
+                      }}
+                    />
                     online
                   </p>
                 )}
@@ -740,18 +1039,56 @@ export default function ChatPage() {
               <div style={{ display: "flex", gap: 4, flexShrink: 0 }}>
                 <button
                   className="transition-transform active:scale-90"
-                  style={{ width: 36, height: 36, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", background: "#1a2744" }}
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#94a3b8",
+                    background: "#1a2744",
+                  }}
                 >
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25z" />
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25z"
+                    />
                   </svg>
                 </button>
                 <button
                   className="transition-transform active:scale-90"
-                  style={{ width: 36, height: 36, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", background: "#1a2744" }}
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#94a3b8",
+                    background: "#1a2744",
+                  }}
                 >
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5zM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5zM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5z" />
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5zM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5zM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5z"
+                    />
                   </svg>
                 </button>
               </div>
@@ -759,29 +1096,74 @@ export default function ChatPage() {
 
             {/* ── Messages area ── */}
             <div
+              ref={messagesContainerRef}
               style={{
                 flex: 1,
+                minHeight: 0, // critical: lets flex-child shrink so overflow works
                 overflowY: "auto",
+                overflowX: "hidden",
                 overscrollBehavior: "contain",
+                WebkitOverflowScrolling: "touch", // iOS momentum scroll
                 backgroundColor: "#0a0f1a",
                 backgroundImage:
                   "radial-gradient(circle at 12% 55%, rgba(59,130,246,0.04) 0%, transparent 55%), radial-gradient(circle at 88% 15%, rgba(124,58,237,0.04) 0%, transparent 55%)",
-                paddingBottom: 4,
+                paddingBottom: 8,
               }}
             >
               {loadingMessages ? (
                 <MsgSkeleton />
               ) : messages.length === 0 ? (
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 16, padding: "40px 24px", textAlign: "center" }}>
-                  <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(135deg, #064e3b, #134e4a)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <svg className="w-8 h-8" style={{ color: "#34d399" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 9.75a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 01.778-.332 48.294 48.294 0 005.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: "100%",
+                    gap: 16,
+                    padding: "40px 24px",
+                    textAlign: "center",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 64,
+                      height: 64,
+                      borderRadius: "50%",
+                      background: "linear-gradient(135deg, #064e3b, #134e4a)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <svg
+                      className="w-8 h-8"
+                      style={{ color: "#34d399" }}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={1.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M8.625 9.75a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 01.778-.332 48.294 48.294 0 005.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"
+                      />
                     </svg>
                   </div>
                   <div>
-                    <p style={{ color: "#e2e8f0", fontWeight: 600, fontSize: 15 }}>
+                    <p
+                      style={{
+                        color: "#e2e8f0",
+                        fontWeight: 600,
+                        fontSize: 15,
+                      }}
+                    >
                       Say hi to{" "}
-                      <span style={{ color: "#60a5fa" }}>{otherParticipant?.full_name || "them"}</span>!
+                      <span style={{ color: "#60a5fa" }}>
+                        {otherParticipant?.full_name || "them"}
+                      </span>
+                      !
                     </p>
                     <p style={{ color: "#475569", fontSize: 13, marginTop: 6 }}>
                       Be the first to send a message
@@ -789,42 +1171,86 @@ export default function ChatPage() {
                   </div>
                 </div>
               ) : (
-                <div style={{ paddingTop: 8, paddingBottom: 4 }}>
+                <div
+                  style={{
+                    paddingTop: 8,
+                    paddingBottom: 4,
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
                   {messages.map((msg, index) => {
-                    const isMine = !!currentUserId && msg.sender_id === currentUserId;
+                    const isMine =
+                      !!currentUserId && msg.sender_id === currentUserId;
                     const prevMsg = index > 0 ? messages[index - 1] : null;
-                    const nextMsg = index < messages.length - 1 ? messages[index + 1] : null;
-                    const showDaySep = !prevMsg || !isSameDay(prevMsg.created_at, msg.created_at);
-                    const isFirstInGroup = !prevMsg || prevMsg.sender_id !== msg.sender_id;
-                    const isLastInGroup = !nextMsg || nextMsg.sender_id !== msg.sender_id;
+                    const nextMsg =
+                      index < messages.length - 1 ? messages[index + 1] : null;
+                    const showDaySep =
+                      !prevMsg ||
+                      !isSameDay(prevMsg.created_at, msg.created_at);
+                    const isFirstInGroup =
+                      !prevMsg || prevMsg.sender_id !== msg.sender_id;
+                    const isLastInGroup =
+                      !nextMsg || nextMsg.sender_id !== msg.sender_id;
 
                     // Border radius: WhatsApp-style bubble tails
                     const r = 18;
                     const tailSize = 4;
-                    const borderRadius = isFirstInGroup && isLastInGroup
-                      ? `${r}px`
-                      : isFirstInGroup
-                        ? isMine
-                          ? `${r}px ${r}px ${tailSize}px ${r}px`
-                          : `${r}px ${r}px ${r}px ${tailSize}px`
-                        : isLastInGroup
+                    const borderRadius =
+                      isFirstInGroup && isLastInGroup
+                        ? `${r}px`
+                        : isFirstInGroup
                           ? isMine
-                            ? `${r}px ${tailSize}px ${r}px ${r}px`
-                            : `${tailSize}px ${r}px ${r}px ${r}px`
-                          : isMine
-                            ? `${r}px ${tailSize}px ${tailSize}px ${r}px`
-                            : `${tailSize}px ${r}px ${r}px ${tailSize}px`;
+                            ? `${r}px ${r}px ${tailSize}px ${r}px`
+                            : `${r}px ${r}px ${r}px ${tailSize}px`
+                          : isLastInGroup
+                            ? isMine
+                              ? `${r}px ${tailSize}px ${r}px ${r}px`
+                              : `${tailSize}px ${r}px ${r}px ${r}px`
+                            : isMine
+                              ? `${r}px ${tailSize}px ${tailSize}px ${r}px`
+                              : `${tailSize}px ${r}px ${r}px ${tailSize}px`;
 
                     return (
                       <div key={msg.id}>
                         {/* Day separator */}
                         {showDaySep && (
-                          <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 16px 6px", margin: "4px 0" }}>
-                            <div style={{ flex: 1, height: 1, background: "#1a2744" }} />
-                            <span style={{ color: "#94a3b8", fontSize: 11, fontWeight: 500, padding: "3px 12px", background: "#131c2e", border: "1px solid #1a2744", borderRadius: 20 }}>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 8,
+                              padding: "10px 16px 6px",
+                              margin: "4px 0",
+                            }}
+                          >
+                            <div
+                              style={{
+                                flex: 1,
+                                height: 1,
+                                background: "#1a2744",
+                              }}
+                            />
+                            <span
+                              style={{
+                                color: "#94a3b8",
+                                fontSize: 11,
+                                fontWeight: 500,
+                                padding: "3px 12px",
+                                background: "#131c2e",
+                                border: "1px solid #1a2744",
+                                borderRadius: 20,
+                              }}
+                            >
                               {formatDaySeparator(msg.created_at)}
                             </span>
-                            <div style={{ flex: 1, height: 1, background: "#1a2744" }} />
+                            <div
+                              style={{
+                                flex: 1,
+                                height: 1,
+                                background: "#1a2744",
+                              }}
+                            />
                           </div>
                         )}
 
@@ -842,7 +1268,14 @@ export default function ChatPage() {
                         >
                           {/* Avatar space for others */}
                           {!isMine && (
-                            <div style={{ width: 24, flexShrink: 0, display: "flex", alignItems: "flex-end" }}>
+                            <div
+                              style={{
+                                width: 24,
+                                flexShrink: 0,
+                                display: "flex",
+                                alignItems: "flex-end",
+                              }}
+                            >
                               {isLastInGroup && otherParticipant && (
                                 <div
                                   style={{
@@ -894,7 +1327,15 @@ export default function ChatPage() {
                             </div>
                             {/* Timestamp under last message in group */}
                             {isLastInGroup && (
-                              <span style={{ color: "#475569", fontSize: 10, marginTop: 3, paddingLeft: 2, paddingRight: 2 }}>
+                              <span
+                                style={{
+                                  color: "#475569",
+                                  fontSize: 10,
+                                  marginTop: 3,
+                                  paddingLeft: 2,
+                                  paddingRight: 2,
+                                }}
+                              >
                                 {formatMessageTime(msg.created_at)}
                               </span>
                             )}
@@ -937,8 +1378,18 @@ export default function ChatPage() {
                   marginBottom: 0,
                 }}
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13"
+                  />
                 </svg>
               </button>
 
@@ -951,7 +1402,8 @@ export default function ChatPage() {
                   onChange={(e) => {
                     handleInputChange(e.target.value);
                     e.target.style.height = "auto";
-                    e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
+                    e.target.style.height =
+                      Math.min(e.target.scrollHeight, 120) + "px";
                   }}
                   onKeyDown={handleKeyDown}
                   placeholder="Message…"
@@ -986,23 +1438,48 @@ export default function ChatPage() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  background: messageInput.trim() && !sending
-                    ? "linear-gradient(135deg, #2563eb, #7c3aed)"
-                    : "#1a2744",
+                  background:
+                    messageInput.trim() && !sending
+                      ? "linear-gradient(135deg, #2563eb, #7c3aed)"
+                      : "#1a2744",
                   color: messageInput.trim() && !sending ? "#fff" : "#3d5270",
-                  cursor: messageInput.trim() && !sending ? "pointer" : "not-allowed",
-                  boxShadow: messageInput.trim() && !sending ? "0 2px 10px rgba(37,99,235,0.5)" : "none",
+                  cursor:
+                    messageInput.trim() && !sending ? "pointer" : "not-allowed",
+                  boxShadow:
+                    messageInput.trim() && !sending
+                      ? "0 2px 10px rgba(37,99,235,0.5)"
+                      : "none",
                   transition: "all 0.15s",
                   marginBottom: 0,
                 }}
               >
                 {sending ? (
-                  <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  <svg
+                    className="w-4 h-4 animate-spin"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                    />
                   </svg>
                 ) : (
-                  <svg className="w-4 h-4" style={{ transform: "translateX(1px)" }} fill="currentColor" viewBox="0 0 24 24">
+                  <svg
+                    className="w-4 h-4"
+                    style={{ transform: "translateX(1px)" }}
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path d="M3.478 2.405a.75.75 0 0 0-.926.94l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.405z" />
                   </svg>
                 )}

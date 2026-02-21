@@ -373,46 +373,67 @@ export async function getConversations(): Promise<
     ];
     const profileMap = await fetchProfilesForUserIds(allUserIds);
 
-    // 4. Process each conversation
+    // 4. Process each conversation — each item isolated so one failure can't
+    //    kill the whole list.
     const conversations: Conversation[] = await Promise.all(
       (data || []).map(async (conv: any) => {
-        const convParticipants = (allParticipantRows || [])
-          .filter((p: any) => p.conversation_id === conv.id)
-          .map((p: any) => ({
-            ...p,
-            user: profileMap[p.user_id] || {
-              id: p.user_id,
-              full_name: null,
-              avatar_url: null,
-            },
-          }));
+        try {
+          const convParticipants = (allParticipantRows || [])
+            .filter((p: any) => p.conversation_id === conv.id)
+            .map((p: any) => ({
+              ...p,
+              user: profileMap[p.user_id] || {
+                id: p.user_id,
+                full_name: null,
+                avatar_url: null,
+              },
+            }));
 
-        const otherParticipant = convParticipants.find(
-          (p: any) => p.user_id !== user.id,
-        );
-
-        let presence;
-        if (otherParticipant) {
-          const presenceResult = await getUserPresence(
-            otherParticipant.user_id,
+          const otherParticipant = convParticipants.find(
+            (p: any) => p.user_id !== user.id,
           );
-          presence = presenceResult.data;
+
+          // Presence — best-effort, never throw
+          let presence: UserPresence | undefined;
+          try {
+            if (otherParticipant) {
+              const presenceResult = await getUserPresence(
+                otherParticipant.user_id,
+              );
+              presence = presenceResult.data;
+            }
+          } catch (_) { /* ignore */ }
+
+          // Unread — best-effort, never throw
+          let unreadCount = 0;
+          try {
+            const unreadResult = await getUnreadMessageCount(conv.id);
+            unreadCount = unreadResult.data || 0;
+          } catch (_) { /* ignore */ }
+
+          return {
+            ...conv,
+            participants: convParticipants,
+            other_participant: otherParticipant
+              ? {
+                  ...otherParticipant.user,
+                  status: presence?.status,
+                  last_seen_at: presence?.last_seen_at,
+                }
+              : undefined,
+            unread_count: unreadCount,
+          };
+        } catch (itemErr) {
+          // If processing this conversation fails for any reason, return a
+          // minimal shell so the rest of the list still shows.
+          console.error("[getConversations] error processing conv", conv.id, itemErr);
+          return {
+            ...conv,
+            participants: [],
+            other_participant: undefined,
+            unread_count: 0,
+          };
         }
-
-        const unreadResult = await getUnreadMessageCount(conv.id);
-
-        return {
-          ...conv,
-          participants: convParticipants,
-          other_participant: otherParticipant
-            ? {
-                ...otherParticipant.user,
-                status: presence?.status,
-                last_seen_at: presence?.last_seen_at,
-              }
-            : undefined,
-          unread_count: unreadResult.data || 0,
-        };
       }),
     );
 
