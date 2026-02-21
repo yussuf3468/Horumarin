@@ -513,13 +513,12 @@ export default function ChatPage() {
       style={{
         backgroundColor: "#0a0f1a",
         position: "fixed",
-        // Header is h-11 = 44px (sticky top-0)
-        top: 44,
+        // Header is h-11 (2.75rem) + safe-area-inset-top
+        top: "calc(2.75rem + env(safe-area-inset-top))" as any,
         left: 0,
         right: 0,
-        // BottomNav is h-16 = 64px (md:hidden fixed bottom-0)
-        // On desktop BottomNav is hidden so we go to bottom:0 via className
-        bottom: 64,
+        // BottomNav is hidden on chat page — go full to bottom
+        bottom: 0,
         display: "flex",
         overflow: "hidden",
       }}
