@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Disallow private/auth routes
+Disallow: /auth/
+Disallow: /dashboard/
+Disallow: /settings/
+Disallow: /api/
+Disallow: /profile/*/edit
+
+# Sitemap
+Sitemap: https://mideeye.com/sitemap.xml

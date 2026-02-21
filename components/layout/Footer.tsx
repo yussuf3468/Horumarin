@@ -130,11 +130,11 @@ export default function Footer({ className = "" }: { className?: string }) {
               </li>
               <li>
                 <Link
-                  href="/faq"
+                  href="/support"
                   className="text-foreground-muted hover:text-foreground transition-colors text-sm flex items-center gap-2 group"
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-accent-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  Su'aalaha FAQ
+                  Gargaar / Support
                 </Link>
               </li>
               <li>
@@ -222,6 +222,12 @@ export default function Footer({ className = "" }: { className?: string }) {
           </p>
 
           <div className="flex items-center gap-6 text-foreground-subtle text-xs">
+            <Link
+              href="/support"
+              className="hover:text-foreground transition-colors"
+            >
+              Support
+            </Link>
             <Link
               href="/privacy"
               className="hover:text-foreground transition-colors"
