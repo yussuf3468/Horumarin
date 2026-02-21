@@ -12,7 +12,7 @@
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM   = process.env.EMAIL_FROM ?? "MIDEEYE <noreply@mideeye.com>";
+const FROM = process.env.EMAIL_FROM ?? "MIDEEYE <noreply@mideeye.com>";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -26,12 +26,12 @@ interface SendResult {
 
 export async function sendWelcomeEmail(
   to: string,
-  name: string
+  name: string,
 ): Promise<SendResult> {
   try {
     const { data, error } = await resend.emails.send({
-      from:    FROM,
-      to:      [to],
+      from: FROM,
+      to: [to],
       subject: `Mideeye Ku Soo Dhawow, ${name}! 🧠`,
       html: `
         <!DOCTYPE html>
@@ -117,12 +117,12 @@ export async function sendAnswerNotification(
   toName: string,
   answererName: string,
   questionTitle: string,
-  questionId: string
+  questionId: string,
 ): Promise<SendResult> {
   try {
     const { data, error } = await resend.emails.send({
-      from:    FROM,
-      to:      [to],
+      from: FROM,
+      to: [to],
       subject: `${answererName} answered your question on MIDEEYE 💬`,
       html: `
         <!DOCTYPE html>
@@ -170,12 +170,12 @@ export async function sendAnswerNotification(
 
 export async function sendPasswordResetEmail(
   to: string,
-  resetUrl: string
+  resetUrl: string,
 ): Promise<SendResult> {
   try {
     const { data, error } = await resend.emails.send({
-      from:    FROM,
-      to:      [to],
+      from: FROM,
+      to: [to],
       subject: "Reset your MIDEEYE password",
       html: `
         <!DOCTYPE html>

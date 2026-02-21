@@ -140,7 +140,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider>
           <Header />
-          <main className="min-h-screen pt-safe-header pb-safe-bottom md:pb-0">{children}</main>
+          <main className="min-h-screen pt-safe-header pb-safe-bottom md:pb-0">
+            {children}
+          </main>
           <BottomNav />
           <Footer className="hidden md:block" />
           <Toaster />

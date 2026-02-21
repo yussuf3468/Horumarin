@@ -84,12 +84,12 @@
 
 ## 9. Backup Strategy
 
-| Data | Backup Method | Frequency | Retention |
-|------|---------------|-----------|-----------|
-| Database | Supabase auto-backup | Daily | 7 days (free) / 30 days (pro) |
-| Storage (images) | Supabase Storage (geo-redundant) | Continuous | Permanent |
-| Code | GitHub | Every push | Permanent |
-| Environment vars | Secure password manager | On change | Permanent |
+| Data             | Backup Method                    | Frequency  | Retention                     |
+| ---------------- | -------------------------------- | ---------- | ----------------------------- |
+| Database         | Supabase auto-backup             | Daily      | 7 days (free) / 30 days (pro) |
+| Storage (images) | Supabase Storage (geo-redundant) | Continuous | Permanent                     |
+| Code             | GitHub                           | Every push | Permanent                     |
+| Environment vars | Secure password manager          | On change  | Permanent                     |
 
 - [ ] Test backup restore procedure before launch
 - [ ] Store a manual DB dump in S3/Backblaze weekly
@@ -117,78 +117,78 @@
 
 ## Week 1 — Pre-Launch Hardening (Days 1–7)
 
-| Day | Task |
-|-----|------|
-| 1 | Audit all RLS policies; run penetration test checklist |
-| 1 | Set up Sentry error monitoring |
-| 2 | Set up uptime monitoring (UptimeRobot) |
-| 2 | Generate all app icons (72px → 1024px) |
-| 3 | Create OG image (1200×630) for social previews |
-| 3 | Submit domain to HSTS preload list |
-| 4 | Set up custom emails (support@, legal@, privacy@, appeals@) |
-| 4 | Configure Resend/Postmark for transactional emails |
-| 5 | Implement rate limiting on auth + post endpoints |
-| 5 | Add email verification requirement |
-| 6 | Run Lighthouse audit — target 90+ on all categories |
-| 6 | Test PWA install flow on iOS Safari + Android Chrome |
-| 7 | Full regression test of all core flows on mobile |
+| Day | Task                                                        |
+| --- | ----------------------------------------------------------- |
+| 1   | Audit all RLS policies; run penetration test checklist      |
+| 1   | Set up Sentry error monitoring                              |
+| 2   | Set up uptime monitoring (UptimeRobot)                      |
+| 2   | Generate all app icons (72px → 1024px)                      |
+| 3   | Create OG image (1200×630) for social previews              |
+| 3   | Submit domain to HSTS preload list                          |
+| 4   | Set up custom emails (support@, legal@, privacy@, appeals@) |
+| 4   | Configure Resend/Postmark for transactional emails          |
+| 5   | Implement rate limiting on auth + post endpoints            |
+| 5   | Add email verification requirement                          |
+| 6   | Run Lighthouse audit — target 90+ on all categories         |
+| 6   | Test PWA install flow on iOS Safari + Android Chrome        |
+| 7   | Full regression test of all core flows on mobile            |
 
 ## Week 2 — Beta Launch (Days 8–14)
 
-| Day | Task |
-|-----|------|
-| 8  | Deploy to production; announce to private beta list |
-| 8  | Monitor Sentry, Vercel logs, Supabase logs in real time |
-| 9  | Gather beta user feedback (use Tally.so free form) |
-| 10 | Fix critical bugs from beta feedback |
-| 11 | Submit PWA to Google Play (TWA) |
-| 12 | Submit iOS app to App Store TestFlight |
-| 13 | First social media post (launch announcement) |
-| 14 | 1-week review: metrics, errors, feedback |
+| Day | Task                                                    |
+| --- | ------------------------------------------------------- |
+| 8   | Deploy to production; announce to private beta list     |
+| 8   | Monitor Sentry, Vercel logs, Supabase logs in real time |
+| 9   | Gather beta user feedback (use Tally.so free form)      |
+| 10  | Fix critical bugs from beta feedback                    |
+| 11  | Submit PWA to Google Play (TWA)                         |
+| 12  | Submit iOS app to App Store TestFlight                  |
+| 13  | First social media post (launch announcement)           |
+| 14  | 1-week review: metrics, errors, feedback                |
 
 ## Week 3 — Growth & Polish (Days 15–21)
 
-| Day | Task |
-|-----|------|
-| 15 | Ship high-priority beta feedback fixes |
-| 16 | Launch social media content plan (see APP_STORE_AND_LAUNCH.md) |
-| 17 | Submit app for App Store review |
-| 18 | Set up Google Search Console + submit sitemap |
-| 18 | Set up Bing Webmaster Tools |
-| 19 | Begin email welcome sequence for new signups |
-| 20 | Partner outreach: Somali content creators & communities |
-| 21 | Second week review: DAU/MAU, question volume, error rate |
+| Day | Task                                                           |
+| --- | -------------------------------------------------------------- |
+| 15  | Ship high-priority beta feedback fixes                         |
+| 16  | Launch social media content plan (see APP_STORE_AND_LAUNCH.md) |
+| 17  | Submit app for App Store review                                |
+| 18  | Set up Google Search Console + submit sitemap                  |
+| 18  | Set up Bing Webmaster Tools                                    |
+| 19  | Begin email welcome sequence for new signups                   |
+| 20  | Partner outreach: Somali content creators & communities        |
+| 21  | Second week review: DAU/MAU, question volume, error rate       |
 
 ## Week 4 — Public Launch (Days 22–30)
 
-| Day | Task |
-|-----|------|
-| 22 | Public launch announcement on all social platforms |
-| 23 | App goes live on App Store (if approved) |
-| 23 | App live on Google Play |
-| 24 | Press outreach to Somali media outlets |
-| 25 | Community AMA: founders answer questions on MIDEEYE |
-| 26 | Monitor and respond to App Store / Play Store reviews |
-| 27 | Run performance audit #2 — optimize bottlenecks |
-| 28 | Celebrate first 1,000 users (community post) |
-| 29 | Implement most-requested feature from beta |
-| 30 | Month 1 retrospective + Month 2 roadmap planning |
+| Day | Task                                                  |
+| --- | ----------------------------------------------------- |
+| 22  | Public launch announcement on all social platforms    |
+| 23  | App goes live on App Store (if approved)              |
+| 23  | App live on Google Play                               |
+| 24  | Press outreach to Somali media outlets                |
+| 25  | Community AMA: founders answer questions on MIDEEYE   |
+| 26  | Monitor and respond to App Store / Play Store reviews |
+| 27  | Run performance audit #2 — optimize bottlenecks       |
+| 28  | Celebrate first 1,000 users (community post)          |
+| 29  | Implement most-requested feature from beta            |
+| 30  | Month 1 retrospective + Month 2 roadmap planning      |
 
 ---
 
 ## KEY METRICS TO TRACK FROM DAY 1
 
-| Metric | Tool | Target (Month 1) |
-|--------|------|------------------|
-| Daily Active Users | Vercel Analytics | 100+ |
-| Questions posted | Supabase dashboard | 500+ |
-| Answers posted | Supabase dashboard | 1,500+ |
-| Signup conversion rate | Custom event | >40% of homepage visitors |
-| Day-7 retention | Custom query | >20% |
-| Error rate | Sentry | <1% of requests |
-| p95 response time | Vercel | <800ms |
-| PWA installs | SW analytics | 50+ |
-| App Store rating | App Store Connect | ≥4.5 |
+| Metric                 | Tool               | Target (Month 1)          |
+| ---------------------- | ------------------ | ------------------------- |
+| Daily Active Users     | Vercel Analytics   | 100+                      |
+| Questions posted       | Supabase dashboard | 500+                      |
+| Answers posted         | Supabase dashboard | 1,500+                    |
+| Signup conversion rate | Custom event       | >40% of homepage visitors |
+| Day-7 retention        | Custom query       | >20%                      |
+| Error rate             | Sentry             | <1% of requests           |
+| p95 response time      | Vercel             | <800ms                    |
+| PWA installs           | SW analytics       | 50+                       |
+| App Store rating       | App Store Connect  | ≥4.5                      |
 
 ---
 
@@ -212,28 +212,36 @@
 ## DEEP LINKING (Universal Links / App Links)
 
 ### iOS Universal Links
+
 Create `public/.well-known/apple-app-site-association`:
+
 ```json
 {
   "applinks": {
     "apps": [],
-    "details": [{
-      "appID": "TEAMID.com.mideeye.app",
-      "paths": ["*"]
-    }]
+    "details": [
+      {
+        "appID": "TEAMID.com.mideeye.app",
+        "paths": ["*"]
+      }
+    ]
   }
 }
 ```
 
 ### Android App Links
+
 Create `public/.well-known/assetlinks.json`:
+
 ```json
-[{
-  "relation": ["delegate_permission/common.handle_all_urls"],
-  "target": {
-    "namespace": "android_app",
-    "package_name": "com.mideeye.app",
-    "sha256_cert_fingerprints": ["YOUR_SIGNING_CERT_SHA256"]
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.mideeye.app",
+      "sha256_cert_fingerprints": ["YOUR_SIGNING_CERT_SHA256"]
+    }
   }
-}]
+]
 ```

@@ -11,8 +11,5 @@ Sentry.init({
 
   enabled: process.env.NODE_ENV === "production",
 
-  ignoreErrors: [
-    "NEXT_NOT_FOUND",
-    "NEXT_REDIRECT",
-  ],
+  ignoreErrors: ["NEXT_NOT_FOUND", "NEXT_REDIRECT"],
 });

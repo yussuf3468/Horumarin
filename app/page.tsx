@@ -40,7 +40,7 @@ import {
   type QuestionWithAuthor,
 } from "@/services/question.service";
 import { categories } from "@/utils/constants";
-import { formatDate, truncateText } from "@/utils/helpers";
+import { formatDate, isVideoUrl, truncateText } from "@/utils/helpers";
 
 export default function HomePage() {
   const [email, setEmail] = useState("");
@@ -125,11 +125,23 @@ export default function HomePage() {
                   <Card hover className="h-full overflow-hidden group">
                     <div className="relative h-56 sm:h-72 md:h-[420px]">
                       {latestPosts[0].image_video_url ? (
-                        <img
-                          src={latestPosts[0].image_video_url}
-                          alt={latestPosts[0].title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
+                        isVideoUrl(latestPosts[0].image_video_url) ? (
+                          <video
+                            src={latestPosts[0].image_video_url}
+                            muted
+                            autoPlay
+                            loop
+                            playsInline
+                            preload="metadata"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        ) : (
+                          <img
+                            src={latestPosts[0].image_video_url}
+                            alt={latestPosts[0].title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        )
                       ) : (
                         <div className="w-full h-full bg-gradient-to-br from-primary-700/30 to-accent-700/30" />
                       )}
@@ -158,11 +170,23 @@ export default function HomePage() {
                     <Card hover className="overflow-hidden h-full">
                       {post.image_video_url ? (
                         <div className="relative h-40 sm:h-48">
-                          <img
-                            src={post.image_video_url}
-                            alt={post.title}
-                            className="w-full h-full object-cover"
-                          />
+                          {isVideoUrl(post.image_video_url) ? (
+                            <video
+                              src={post.image_video_url}
+                              muted
+                              autoPlay
+                              loop
+                              playsInline
+                              preload="metadata"
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <img
+                              src={post.image_video_url}
+                              alt={post.title}
+                              className="w-full h-full object-cover"
+                            />
+                          )}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                           <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
                             <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary-600/90 text-white mb-1.5">

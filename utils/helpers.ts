@@ -46,3 +46,18 @@ export function getHotScore(votes: number, createdAt: string): number {
 
   return voteScore * sign - timePenalty;
 }
+
+/**
+ * Returns true when a post media URL points to a video file.
+ * Videos are uploaded under the `videos/` prefix in the "post-media" bucket,
+ * or can be detected by common video extensions / MIME-type strings in the URL.
+ */
+export function isVideoUrl(url: string): boolean {
+  if (!url) return false;
+  const lower = url.toLowerCase();
+  // Storage path-based detection (our upload convention)
+  if (lower.includes("/videos/")) return true;
+  // Extension-based fallback
+  const videoExts = [".mp4", ".mov", ".webm", ".avi", ".mkv", ".m4v", ".ogv"];
+  return videoExts.some((ext) => lower.split("?")[0].endsWith(ext));
+}

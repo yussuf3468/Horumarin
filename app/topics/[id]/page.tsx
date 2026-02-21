@@ -9,7 +9,7 @@ import Card from "@/components/ui/Card";
 import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
 import LightboxImage from "@/components/ui/LightboxImage";
 import { categories } from "@/utils/constants";
-import { formatDate, getHotScore, truncateText } from "@/utils/helpers";
+import { formatDate, getHotScore, isVideoUrl, truncateText } from "@/utils/helpers";
 import {
   castVote,
   getUserVotesForItems,
@@ -316,12 +316,21 @@ export default function TopicDetailPage() {
 
                             {post.image_video_url && (
                               <div className="mb-4">
-                                <LightboxImage
-                                  src={post.image_video_url}
-                                  alt={post.title}
-                                  className="border border-border"
-                                  aspectRatio="16 / 9"
-                                />
+                                {isVideoUrl(post.image_video_url) ? (
+                                  <video
+                                    src={post.image_video_url}
+                                    controls
+                                    preload="metadata"
+                                    className="w-full rounded-xl border border-border max-h-64 object-contain bg-black"
+                                  />
+                                ) : (
+                                  <LightboxImage
+                                    src={post.image_video_url}
+                                    alt={post.title}
+                                    className="border border-border"
+                                    aspectRatio="16 / 9"
+                                  />
+                                )}
                               </div>
                             )}
 

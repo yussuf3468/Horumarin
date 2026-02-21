@@ -16,11 +16,11 @@ import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Textarea from "@/components/ui/Textarea";
 import Card from "@/components/ui/Card";
-import ImageUpload from "@/components/ui/ImageUpload";
+import MediaUpload from "@/components/ui/MediaUpload";
 import LightboxImage from "@/components/ui/LightboxImage";
 import FloatingShapes from "@/components/layout/FloatingShapes";
 import { createQuestion } from "@/services/question.service";
-import { uploadPostImage } from "@/services/media.service";
+import { uploadPostImage, uploadPostVideo } from "@/services/media.service";
 import { categories } from "@/utils/constants";
 import { compressImage } from "@/utils/image";
 
@@ -41,6 +41,7 @@ export default function AskQuestionPage() {
   const [linkUrl, setLinkUrl] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+  const [mediaType, setMediaType] = useState<"image" | "video" | null>(null);
 
   const postTypeLabels = {
     question: "Su'aal",
@@ -97,16 +98,23 @@ export default function AskQuestionPage() {
     if (imageFile) {
       setUploadingImage(true);
       try {
-        const compressed = await compressImage(imageFile, {
-          maxWidth: 1600,
-          maxHeight: 1600,
-          quality: 0.82,
-        });
+        let publicUrl: string | null = null;
+        let uploadError: string | null = null;
 
-        const { publicUrl, error: uploadError } = await uploadPostImage(
-          compressed,
-          user.id,
-        );
+        if (mediaType === "video") {
+          const result = await uploadPostVideo(imageFile, user.id);
+          publicUrl = result.publicUrl;
+          uploadError = result.error;
+        } else {
+          const compressed = await compressImage(imageFile, {
+            maxWidth: 1600,
+            maxHeight: 1600,
+            quality: 0.82,
+          });
+          const result = await uploadPostImage(compressed, user.id);
+          publicUrl = result.publicUrl;
+          uploadError = result.error;
+        }
 
         if (uploadError) {
           toast.dismiss(loadingToast);
@@ -119,7 +127,7 @@ export default function AskQuestionPage() {
         imageUrl = publicUrl;
       } catch (uploadError: any) {
         toast.dismiss(loadingToast);
-        toast.error(uploadError?.message || "Failed to upload image.");
+        toast.error(uploadError?.message || "Failed to upload media.");
         setUploadingImage(false);
         setSubmitting(false);
         return;
@@ -266,19 +274,21 @@ export default function AskQuestionPage() {
                 </div>
 
                 <div>
-                  <ImageUpload
-                    label="Sawir (Ikhtiyaari)"
+                  <MediaUpload
+                    label="Sawir ama Video (Ikhtiyaari)"
                     value={imageFile}
                     previewUrl={imagePreviewUrl}
-                    onChange={(file, previewUrl) => {
+                    mediaType={mediaType}
+                    onChange={(file, previewUrl, type) => {
                       setImageFile(file);
                       setImagePreviewUrl(previewUrl);
+                      setMediaType(type);
                     }}
                     isUploading={uploadingImage}
                     disabled={submitting || uploadingImage}
                   />
                   <p className="mt-1 text-sm text-foreground-subtle">
-                    Sawir ma aha qasab. Waad diri kartaa adigoon sawir ku darin.
+                    Sawir ama video ma aha qasab. Waad diri kartaa adigoon ku darin.
                   </p>
                 </div>
 
@@ -308,7 +318,7 @@ export default function AskQuestionPage() {
                   <ul className="text-sm text-foreground-muted space-y-1">
                     <li>• Hal mawduuc ku koob qoraalkaaga</li>
                     <li>• Cinwaan kooban + sharaxaad cad</li>
-                    <li>• Sawirku waa ikhtiyaari (optional)</li>
+                    <li>• Sawir ama video waa ikhtiyaari (optional)</li>
                     <li>
                       • Dhammaan fields waa muuqdaan, ma jiraan tabs qarsoon
                     </li>

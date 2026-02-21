@@ -22,7 +22,7 @@ import {
   type QuestionWithAuthor,
 } from "@/services/question.service";
 import { supabase } from "@/lib/supabase/client";
-import { cn, formatDate } from "@/utils/helpers";
+import { cn, formatDate, isVideoUrl } from "@/utils/helpers";
 import { categories } from "@/utils/constants";
 import type { Question, Answer, Profile } from "@/types";
 
@@ -620,12 +620,21 @@ export default function QuestionDetailPage() {
 
                   {question.image_video_url && (
                     <div className="mb-6">
-                      <LightboxImage
-                        src={question.image_video_url}
-                        alt={question.title}
-                        className="border border-border"
-                        aspectRatio="16 / 9"
-                      />
+                      {isVideoUrl(question.image_video_url) ? (
+                        <video
+                          src={question.image_video_url}
+                          controls
+                          preload="metadata"
+                          className="w-full rounded-xl border border-border max-h-[480px] object-contain bg-black"
+                        />
+                      ) : (
+                        <LightboxImage
+                          src={question.image_video_url}
+                          alt={question.title}
+                          className="border border-border"
+                          aspectRatio="16 / 9"
+                        />
+                      )}
                     </div>
                   )}
 

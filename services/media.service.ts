@@ -34,3 +34,41 @@ export async function uploadPostImage(
 
   return { publicUrl: data.publicUrl, path, error: null };
 }
+
+export async function uploadPostVideo(
+  file: File,
+  userId: string,
+): Promise<{
+  publicUrl: string | null;
+  path: string | null;
+  error: string | null;
+}> {
+  const MAX_VIDEO_BYTES = 100 * 1024 * 1024; // 100 MB
+  if (file.size > MAX_VIDEO_BYTES) {
+    return {
+      publicUrl: null,
+      path: null,
+      error: "Video file is too large. Max size is 100 MB.",
+    };
+  }
+
+  const timestamp = Date.now();
+  const safeName = sanitizeFileName(file.name || "video.mp4");
+  const path = `videos/${userId}/${timestamp}-${safeName}`;
+
+  const { error } = await supabase.storage
+    .from(POST_MEDIA_BUCKET)
+    .upload(path, file, {
+      cacheControl: "3600",
+      upsert: false,
+      contentType: file.type,
+    });
+
+  if (error) {
+    return { publicUrl: null, path: null, error: error.message };
+  }
+
+  const { data } = supabase.storage.from(POST_MEDIA_BUCKET).getPublicUrl(path);
+
+  return { publicUrl: data.publicUrl, path, error: null };
+}

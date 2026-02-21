@@ -4,11 +4,15 @@
     "details": [
       {
         "appID": "TEAMID.com.mideeye.app",
-        "paths": ["*"]
+        "paths": [
+          "*"
+        ]
       }
     ]
   },
   "webcredentials": {
-    "apps": ["TEAMID.com.mideeye.app"]
+    "apps": [
+      "TEAMID.com.mideeye.app"
+    ]
   }
 }

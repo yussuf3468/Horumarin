@@ -3,21 +3,26 @@
 ## APP STORE (iOS) LISTING
 
 ### App Name (30 chars max)
+
 `MIDEEYE — Somali Knowledge`
 
 ### Subtitle (30 chars max)
+
 `Weydii. Wadaag. Horumar.`
 
 ### Short Description (170 chars)
+
 Ask questions, share answers, and grow with the Somali community worldwide.
 Join thousands building knowledge together on MIDEEYE.
 
 ### Full Description (4,000 chars max)
+
 ---
+
 **MIDEEYE — The Somali Knowledge Community**
 
 Weydii. Wadaag. Horumar.
-*Ask. Share. Grow.*
+_Ask. Share. Grow._
 
 MIDEEYE connects the global Somali community through the power of shared knowledge.
 Whether you're a student, professional, entrepreneur, or community elder —
@@ -57,13 +62,16 @@ Sign up in seconds. No subscription required.
 ---
 
 ### Keywords (100 chars — comma separated)
+
 Somali,Somalia,African,community,Q&A,knowledge,questions,answers,education,forum,diaspora,Somalis
 
 ### Category
+
 Primary: **Social Networking**
 Secondary: **Education**
 
 ### Age Rating
+
 **12+** (Social interaction, mild language possible from UGC)
 
 ---
@@ -71,13 +79,17 @@ Secondary: **Education**
 ## GOOGLE PLAY LISTING
 
 ### Title (50 chars max)
+
 `MIDEEYE — Somali Knowledge Community`
 
 ### Short Description (80 chars)
+
 `Ask questions & share knowledge with the global Somali community.`
 
 ### Full Description (4,000 chars)
+
 ---
+
 **MIDEEYE** is the social knowledge platform built for the global Somali community.
 
 Ask questions. Share answers. Build a better future together.
@@ -107,25 +119,28 @@ Our community guidelines and moderation team ensure a respectful environment.
 ---
 
 ### Category
+
 **Social**
 
 ### Content Rating
+
 **Teen** (Social Interaction)
 
 ### Tags
+
 somali, somalia, knowledge, Q&A, community, education, social network, african
 
 ---
 
 ## SCREENSHOT COPY (Mobile — Carousel)
 
-| Screen | Headline | Subtext |
-|--------|----------|---------|
-| 1 | "Your Questions, Answered" | Ask anything. Get real answers from the community. |
-| 2 | "Somali Knowledge, Worldwide" | Connect with experts across the global diaspora. |
-| 3 | "Topics You Care About" | Education, tech, business, culture, and more. |
-| 4 | "Showcase Your Work" | Share projects and achievements that inspire. |
-| 5 | "Stay Connected" | Real-time notifications and direct messaging. |
+| Screen | Headline                      | Subtext                                            |
+| ------ | ----------------------------- | -------------------------------------------------- |
+| 1      | "Your Questions, Answered"    | Ask anything. Get real answers from the community. |
+| 2      | "Somali Knowledge, Worldwide" | Connect with experts across the global diaspora.   |
+| 3      | "Topics You Care About"       | Education, tech, business, culture, and more.      |
+| 4      | "Showcase Your Work"          | Share projects and achievements that inspire.      |
+| 5      | "Stay Connected"              | Real-time notifications and direct messaging.      |
 
 ---
 
@@ -145,6 +160,7 @@ somali, somalia, knowledge, Q&A, community, education, social network, african
 ## LAUNCH CHECKLIST
 
 ### Pre-submission
+
 - [ ] App icons in all required sizes (see docs/ICON_SIZES.md)
 - [ ] 5–10 screenshots per device type (iPhone, iPad, Android, tablet)
 - [ ] App preview video (15–30 seconds, optional but recommended)
@@ -155,6 +171,7 @@ somali, somalia, knowledge, Q&A, community, education, social network, african
 - [ ] Version 1.0.0 (build 1)
 
 ### iOS (App Store Connect)
+
 - [ ] Apple Developer Program enrolled ($99/year)
 - [ ] Bundle identifier registered
 - [ ] Distribution certificate + provisioning profile generated
@@ -165,6 +182,7 @@ somali, somalia, knowledge, Q&A, community, education, social network, african
 - [ ] App Review notes added (explain Somali language content)
 
 ### Android (Google Play Console)
+
 - [ ] Google Play Developer account ($25 one-time)
 - [ ] Release keystore generated and backed up (NEVER lose this)
 - [ ] Signed AAB (Android App Bundle) uploaded
@@ -214,59 +232,61 @@ weydii • wadaag • horumar
 
 ## BRAND VOICE GUIDELINES
 
-| Dimension | Description |
-|-----------|-------------|
-| **Tone** | Warm, intelligent, aspirational — never corporate or cold |
-| **Language** | Somali-first, English-accessible, Arabic-friendly |
-| **Personality** | Community elder meets modern tech platform |
-| **Avoid** | Buzzwords, excessive English jargon, condescension |
-| **Core message** | Every voice matters. Every question deserves an answer. |
+| Dimension        | Description                                               |
+| ---------------- | --------------------------------------------------------- |
+| **Tone**         | Warm, intelligent, aspirational — never corporate or cold |
+| **Language**     | Somali-first, English-accessible, Arabic-friendly         |
+| **Personality**  | Community elder meets modern tech platform                |
+| **Avoid**        | Buzzwords, excessive English jargon, condescension        |
+| **Core message** | Every voice matters. Every question deserves an answer.   |
 
 ---
 
 ## 30-DAY SOCIAL CONTENT PLAN
 
-| Day | Platform | Content Type | Topic |
-|-----|----------|--------------|-------|
-| 1 | All | Launch announcement | "MIDEEYE is live" |
-| 2 | IG/TikTok | Reel | "Why we built MIDEEYE" |
-| 3 | X/Twitter | Thread | Top 5 questions this week |
-| 4 | LinkedIn | Article | Somali knowledge economy |
-| 5 | IG | Carousel | How to use MIDEEYE |
-| 6 | TikTok | Video | Demo: ask your first question |
-| 7 | All | Community spotlight | First 100 users |
-| 8 | X | Poll | Most-wanted topics |
-| 9 | IG | Reel | Showcase feature highlight |
-| 10 | LinkedIn | Post | Diaspora knowledge story |
-| 11 | TikTok | Duet/Collab | With community leader |
-| 12 | All | Milestone post | First 500 questions |
-| 13 | X | Thread | Behind the build |
-| 14 | IG | Story | Q&A with founders |
-| 15 | All | 2-week review | What the community is asking |
-| 16 | LinkedIn | Article | Education + technology in Somalia |
-| 17 | TikTok | Video | Top answers this week |
-| 18 | IG | Carousel | Community guidelines explainer |
-| 19 | X | Thread | Feature roadmap |
-| 20 | All | User story | Testimonial post |
-| 21 | TikTok | Video | New feature demo |
-| 22 | LinkedIn | Post | Impact story |
-| 23 | X/IG | Infographic | Community stats |
-| 24 | All | Engagement | "Ask us anything" |
-| 25 | TikTok | Video | Showcase project highlight |
-| 26 | IG | Reel | Language & culture topic spotlight |
-| 27 | LinkedIn | Article | Community knowledge economy |
-| 28 | X | Thread | Month recap |
-| 29 | All | Gratitude post | Thank you to early users |
-| 30 | All | Growth post | "What's next for MIDEEYE" |
+| Day | Platform  | Content Type        | Topic                              |
+| --- | --------- | ------------------- | ---------------------------------- |
+| 1   | All       | Launch announcement | "MIDEEYE is live"                  |
+| 2   | IG/TikTok | Reel                | "Why we built MIDEEYE"             |
+| 3   | X/Twitter | Thread              | Top 5 questions this week          |
+| 4   | LinkedIn  | Article             | Somali knowledge economy           |
+| 5   | IG        | Carousel            | How to use MIDEEYE                 |
+| 6   | TikTok    | Video               | Demo: ask your first question      |
+| 7   | All       | Community spotlight | First 100 users                    |
+| 8   | X         | Poll                | Most-wanted topics                 |
+| 9   | IG        | Reel                | Showcase feature highlight         |
+| 10  | LinkedIn  | Post                | Diaspora knowledge story           |
+| 11  | TikTok    | Duet/Collab         | With community leader              |
+| 12  | All       | Milestone post      | First 500 questions                |
+| 13  | X         | Thread              | Behind the build                   |
+| 14  | IG        | Story               | Q&A with founders                  |
+| 15  | All       | 2-week review       | What the community is asking       |
+| 16  | LinkedIn  | Article             | Education + technology in Somalia  |
+| 17  | TikTok    | Video               | Top answers this week              |
+| 18  | IG        | Carousel            | Community guidelines explainer     |
+| 19  | X         | Thread              | Feature roadmap                    |
+| 20  | All       | User story          | Testimonial post                   |
+| 21  | TikTok    | Video               | New feature demo                   |
+| 22  | LinkedIn  | Post                | Impact story                       |
+| 23  | X/IG      | Infographic         | Community stats                    |
+| 24  | All       | Engagement          | "Ask us anything"                  |
+| 25  | TikTok    | Video               | Showcase project highlight         |
+| 26  | IG        | Reel                | Language & culture topic spotlight |
+| 27  | LinkedIn  | Article             | Community knowledge economy        |
+| 28  | X         | Thread              | Month recap                        |
+| 29  | All       | Gratitude post      | Thank you to early users           |
+| 30  | All       | Growth post         | "What's next for MIDEEYE"          |
 
 ---
 
 ## EMAIL TEMPLATES
 
 ### Welcome Email (Day 0)
+
 **Subject:** Mideeye Ku Soo Dhawow! Welcome to MIDEEYE 🧠
 
 ---
+
 Hi [Name],
 
 You've joined MIDEEYE — the Somali knowledge community.
@@ -287,9 +307,11 @@ The MIDEEYE Team
 ---
 
 ### Day 3 Re-engagement Email
+
 **Subject:** Your question is waiting to be answered 💬
 
 ---
+
 Hi [Name],
 
 Have something you've been wondering about?
@@ -301,9 +323,11 @@ The MIDEEYE community is active and ready to help. Ask your first question today
 ---
 
 ### Day 7 Notification Email
+
 **Subject:** This week on MIDEEYE 🔥
 
 ---
+
 Hi [Name],
 
 Here's what's trending in your topics this week:
@@ -319,9 +343,11 @@ To manage notifications: [Settings](https://mideeye.com/settings)
 ---
 
 ### Answer Notification (Transactional)
+
 **Subject:** Someone answered your question on MIDEEYE
 
 ---
+
 Hi [Name],
 
 [Answerer Name] answered your question:
@@ -335,11 +361,13 @@ Hi [Name],
 ## EMAIL INFRASTRUCTURE NOTES
 
 **Recommended providers:**
+
 - **Resend** (developer-friendly, generous free tier, built-in React Email)
 - **Postmark** (best transactional deliverability)
 - **Amazon SES** (lowest cost at scale)
 
 **Anti-spam compliance:**
+
 - Include physical address in all marketing emails
 - One-click unsubscribe in all marketing/notification emails (CAN-SPAM / GDPR Art. 7)
 - Double opt-in for newsletter/marketing list

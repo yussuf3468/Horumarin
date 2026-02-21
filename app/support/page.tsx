@@ -3,7 +3,8 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Support",
-  description: "Get help with MIDEEYE — FAQs, bug reports, and contact options.",
+  description:
+    "Get help with MIDEEYE — FAQs, bug reports, and contact options.",
 };
 
 const faqs = [
@@ -17,7 +18,7 @@ const faqs = [
   },
   {
     q: "How do I ask a question?",
-    a: 'Tap the + button in the navigation bar or visit /ask. Write your question clearly, choose a relevant topic, and post.',
+    a: "Tap the + button in the navigation bar or visit /ask. Write your question clearly, choose a relevant topic, and post.",
   },
   {
     q: "Why was my content removed?",
@@ -53,22 +54,42 @@ const helpCategories = [
   {
     icon: "👤",
     title: "Account & Profile",
-    items: ["Sign up & login", "Password reset", "Profile settings", "Account deletion"],
+    items: [
+      "Sign up & login",
+      "Password reset",
+      "Profile settings",
+      "Account deletion",
+    ],
   },
   {
     icon: "✍️",
     title: "Content & Questions",
-    items: ["Asking questions", "Writing answers", "Uploading images", "Editing posts"],
+    items: [
+      "Asking questions",
+      "Writing answers",
+      "Uploading images",
+      "Editing posts",
+    ],
   },
   {
     icon: "🔔",
     title: "Notifications",
-    items: ["Email notifications", "Push notifications", "Notification settings", "Unsubscribe"],
+    items: [
+      "Email notifications",
+      "Push notifications",
+      "Notification settings",
+      "Unsubscribe",
+    ],
   },
   {
     icon: "🛡️",
     title: "Safety & Reporting",
-    items: ["Reporting content", "Blocking users", "Privacy controls", "Appeals process"],
+    items: [
+      "Reporting content",
+      "Blocking users",
+      "Privacy controls",
+      "Appeals process",
+    ],
   },
 ];
 
@@ -101,7 +122,9 @@ export default function SupportPage() {
           <div className="text-2xl mb-2">⚖️</div>
           <h3 className="font-semibold text-white mb-1">Moderation Appeals</h3>
           <p className="text-sm text-gray-400">appeals@mideeye.com</p>
-          <p className="text-xs text-gray-500 mt-1">Response within 7 business days</p>
+          <p className="text-xs text-gray-500 mt-1">
+            Response within 7 business days
+          </p>
         </a>
         <a
           href="mailto:legal@mideeye.com"
@@ -110,7 +133,9 @@ export default function SupportPage() {
           <div className="text-2xl mb-2">📋</div>
           <h3 className="font-semibold text-white mb-1">Legal & Privacy</h3>
           <p className="text-sm text-gray-400">legal@mideeye.com</p>
-          <p className="text-xs text-gray-500 mt-1">GDPR requests, legal notices</p>
+          <p className="text-xs text-gray-500 mt-1">
+            GDPR requests, legal notices
+          </p>
         </a>
       </div>
 
@@ -123,7 +148,9 @@ export default function SupportPage() {
             className="p-4 rounded-xl bg-gray-900 border border-gray-800"
           >
             <div className="text-xl mb-2">{cat.icon}</div>
-            <h3 className="font-semibold text-white text-sm mb-2">{cat.title}</h3>
+            <h3 className="font-semibold text-white text-sm mb-2">
+              {cat.title}
+            </h3>
             <ul className="space-y-1">
               {cat.items.map((item) => (
                 <li key={item} className="text-xs text-gray-400">
@@ -136,7 +163,9 @@ export default function SupportPage() {
       </div>
 
       {/* FAQ */}
-      <h2 className="text-xl font-bold text-white mb-6">Frequently Asked Questions</h2>
+      <h2 className="text-xl font-bold text-white mb-6">
+        Frequently Asked Questions
+      </h2>
       <div className="space-y-4 mb-12">
         {faqs.map((faq) => (
           <details
@@ -149,17 +178,30 @@ export default function SupportPage() {
                 ▾
               </span>
             </summary>
-            <p className="px-4 pb-4 text-gray-400 text-sm leading-relaxed">{faq.a}</p>
+            <p className="px-4 pb-4 text-gray-400 text-sm leading-relaxed">
+              {faq.a}
+            </p>
           </details>
         ))}
       </div>
 
       {/* Legal links */}
       <div className="border-t border-gray-800 pt-8 text-center text-sm text-gray-500 space-x-4">
-        <Link href="/privacy" className="hover:text-teal-400 transition-colors">Privacy Policy</Link>
-        <Link href="/terms" className="hover:text-teal-400 transition-colors">Terms of Service</Link>
-        <Link href="/guidelines" className="hover:text-teal-400 transition-colors">Community Guidelines</Link>
-        <Link href="/cookies" className="hover:text-teal-400 transition-colors">Cookie Policy</Link>
+        <Link href="/privacy" className="hover:text-teal-400 transition-colors">
+          Privacy Policy
+        </Link>
+        <Link href="/terms" className="hover:text-teal-400 transition-colors">
+          Terms of Service
+        </Link>
+        <Link
+          href="/guidelines"
+          className="hover:text-teal-400 transition-colors"
+        >
+          Community Guidelines
+        </Link>
+        <Link href="/cookies" className="hover:text-teal-400 transition-colors">
+          Cookie Policy
+        </Link>
       </div>
     </div>
   );
