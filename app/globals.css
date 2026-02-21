@@ -186,13 +186,23 @@
     outline: 3px solid red !important;
   }
 
-  /* Safe area insets for mobile devices with notches */
+  /* Safe area insets for mobile devices with notches/dynamic island */
   .safe-area-inset-bottom {
     padding-bottom: env(safe-area-inset-bottom);
   }
 
   .safe-area-inset-top {
     padding-top: env(safe-area-inset-top);
+  }
+
+  /* Main content offset: header height (44px) + status bar safe area */
+  .pt-safe-header {
+    padding-top: calc(2.75rem + env(safe-area-inset-top));
+  }
+
+  /* Bottom nav offset: 64px + home-indicator safe area */
+  .pb-safe-bottom {
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom));
   }
 
   /* No scrollbar utility */

@@ -10,7 +10,7 @@ import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const APP_URL  = "https://mideeye.com";
+const APP_URL = "https://mideeye.com";
 const APP_NAME = "MIDEEYE";
 
 export const viewport: Viewport = {
@@ -87,16 +87,18 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/icons/icon-32x32.png",  sizes: "32x32",  type: "image/png" },
-      { url: "/icons/icon-96x96.png",  sizes: "96x96",  type: "image/png" },
-      { url: "/icons/icon-192x192.png",sizes: "192x192",type: "image/png" },
+      { url: "/icons/icon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/icon-96x96.png", sizes: "96x96", type: "image/png" },
+      { url: "/icons/icon-192x192.png", sizes: "192x192", type: "image/png" },
     ],
     apple: [
-      { url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      {
+        url: "/icons/apple-touch-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+      },
     ],
-    other: [
-      { rel: "mask-icon", url: "/favicon.svg", color: "#0d9488" },
-    ],
+    other: [{ rel: "mask-icon", url: "/favicon.svg", color: "#0d9488" }],
   },
 };
 
@@ -138,7 +140,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider>
           <Header />
-          <main className="min-h-screen pt-11 pb-16 md:pb-0">{children}</main>
+          <main className="min-h-screen pt-safe-header pb-safe-bottom md:pb-0">{children}</main>
           <BottomNav />
           <Footer className="hidden md:block" />
           <Toaster />
