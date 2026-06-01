@@ -173,7 +173,7 @@ export default function HomePage() {
                   }}
                 >
                   <LogoIcon size={16} />
-                  The Somali Knowledge Network
+                  Xiddig · Ask. Share. Grow.
                 </span>
               </motion.div>
 
@@ -183,9 +183,9 @@ export default function HomePage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.08 }}
                 className="font-heading font-extrabold leading-[1.06] tracking-tight mb-5"
-                style={{ fontSize: "clamp(2.6rem, 5.5vw, 4.8rem)" }}
+                style={{ fontSize: "clamp(2rem, 8vw, 4.8rem)" }}
               >
-                <span style={{ color: "#EEF2FF" }}>Where Somalis</span>
+                <span style={{ color: "#EEF2FF" }}>Ask Anything.</span>
                 <br />
                 <span
                   style={{
@@ -217,11 +217,11 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.45, delay: 0.28 }}
-                className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-3 mb-10"
+                className="flex flex-col sm:flex-row items-stretch sm:items-center lg:items-start justify-center lg:justify-start gap-3 mb-8"
               >
                 <Link href="/auth/signup">
                   <button
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-[15px] transition-all duration-200 hover:scale-105 active:scale-100"
+                    className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3.5 rounded-xl font-semibold text-[15px] transition-all duration-200 hover:scale-105 active:scale-100"
                     style={{
                       background:
                         "linear-gradient(135deg, #00D4A3 0%, #00BA8D 100%)",
@@ -249,7 +249,7 @@ export default function HomePage() {
                 </Link>
                 <Link href="/questions">
                   <button
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-[15px] transition-all duration-200 hover:bg-white/10"
+                    className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3.5 rounded-xl font-semibold text-[15px] transition-all duration-200 hover:bg-white/10"
                     style={{
                       background: "rgba(255,255,255,0.05)",
                       border: "1px solid rgba(255,255,255,0.13)",
@@ -266,7 +266,7 @@ export default function HomePage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.42 }}
-                className="flex flex-wrap items-center justify-center lg:justify-start gap-x-0 gap-y-2"
+                className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center lg:justify-start gap-x-0 gap-y-0"
               >
                 {[
                   { value: 12400, suffix: "+", label: "Questions" },
@@ -306,8 +306,8 @@ export default function HomePage() {
               </motion.div>
             </div>
 
-            {/* ── RIGHT: Live question cards ── */}
-            <div className="relative">
+            {/* ── RIGHT: Live question cards — hidden on mobile ── */}
+            <div className="relative hidden lg:block">
               {/* Live indicator */}
               <motion.div
                 initial={{ opacity: 0 }}
@@ -636,13 +636,12 @@ export default function HomePage() {
           >
             <LogoIcon size={48} className="mx-auto mb-6" />
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-heading text-foreground mb-4 leading-tight">
-              Join the Somali
+              Join a Growing
               <br />
-              <span className="text-gradient">Knowledge Movement</span>
+              <span className="text-gradient">Knowledge Community</span>
             </h2>
             <p className="text-foreground-muted text-lg mb-10 max-w-xl mx-auto leading-relaxed">
-              Be part of a growing community of thinkers, learners, and creators
-              building the digital knowledge hub of the Somali world.
+              Be part of a growing community of thinkers, learners, and creators — asking better questions and sharing real knowledge.
             </p>
 
             {subscribed ? (
