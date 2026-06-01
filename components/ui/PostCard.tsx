@@ -58,40 +58,39 @@ export default function PostCard({
   };
 
   return (
-    <Card hover className="overflow-hidden">
-      <div className="p-3 sm:p-4 md:p-6">
-        {/* Author Info */}
-        <div className="flex items-start justify-between gap-2 mb-2 sm:mb-3">
-          <div className="flex items-center gap-2 min-w-0 flex-1">
+    <Card hover className="group overflow-hidden">
+      <div className="p-4 sm:p-5">
+        {/* Header: author + category + owner actions */}
+        <div className="flex items-start justify-between gap-2 mb-3">
+          <div className="flex items-center gap-2.5 min-w-0 flex-1">
             <Avatar
               src={author.avatar_url || undefined}
               alt={author.fullName || "User"}
               size="sm"
-              className="w-7 h-7 sm:w-8 sm:h-8 shrink-0"
+              className="w-8 h-8 shrink-0 ring-2 ring-border"
             />
-            <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-0.5 sm:gap-1.5 text-xs text-foreground-muted min-w-0">
-              <span className="font-semibold text-foreground truncate">
+            <div className="flex flex-col min-w-0">
+              <span className="text-sm font-semibold text-foreground truncate leading-tight">
                 {author.fullName || "User"}
               </span>
-              <span className="hidden sm:inline">•</span>
-              <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-primary-500/10 to-accent-500/10 text-primary font-medium text-[10px] sm:text-xs w-fit">
-                {category}
-              </span>
-              <span className="hidden sm:inline">•</span>
-              <span className="text-[10px] sm:text-xs">
-                {formatDate(createdAt)}
-              </span>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span className="inline-flex px-2 py-0.5 rounded-md bg-primary/10 text-primary-400 text-[10px] font-semibold uppercase tracking-wide">
+                  {category}
+                </span>
+                <span className="text-[10px] text-foreground-subtle">
+                  {formatDate(createdAt)}
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Edit/Delete Buttons for Owner */}
           {isOwner && (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
               {onEdit && (
                 <button
                   onClick={onEdit}
-                  className="p-1.5 rounded hover:bg-surface-muted transition-colors text-foreground-muted hover:text-primary"
-                  title="Wax ka beddel"
+                  className="p-1.5 rounded-lg hover:bg-surface-muted transition-colors text-foreground-subtle hover:text-primary-400"
+                  title="Edit"
                 >
                   <svg
                     className="w-4 h-4"
@@ -111,8 +110,8 @@ export default function PostCard({
               {onDelete && (
                 <button
                   onClick={onDelete}
-                  className="p-1.5 rounded hover:bg-surface-muted transition-colors text-foreground-muted hover:text-danger"
-                  title="Tirtir"
+                  className="p-1.5 rounded-lg hover:bg-surface-muted transition-colors text-foreground-subtle hover:text-danger"
+                  title="Delete"
                 >
                   <svg
                     className="w-4 h-4"
@@ -135,21 +134,21 @@ export default function PostCard({
 
         {/* Title */}
         <Link href={`/questions/${id}`}>
-          <h2 className="text-base sm:text-lg md:text-xl font-bold text-foreground hover:text-primary mb-2 line-clamp-2 transition-colors">
+          <h2 className="text-base sm:text-lg font-bold text-foreground hover:text-primary-400 mb-2 line-clamp-2 transition-colors leading-snug">
             {title}
           </h2>
         </Link>
 
         {/* Content Preview */}
         {content && (
-          <p className="text-sm text-foreground-muted mb-3 sm:mb-4 line-clamp-2 sm:line-clamp-3">
+          <p className="text-sm text-foreground-muted mb-3 line-clamp-2 leading-relaxed">
             {content}
           </p>
         )}
 
         {/* Image */}
         {imageUrl && (
-          <div className="mb-3 sm:mb-4 -mx-3 sm:-mx-4 md:-mx-6">
+          <div className="mb-3 -mx-4 sm:-mx-5 rounded-none overflow-hidden">
             <LightboxImage
               src={imageUrl}
               alt={title}
@@ -165,10 +164,10 @@ export default function PostCard({
             href={linkUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 p-3 bg-surface-muted rounded-lg border border-border hover:border-primary/30 transition-colors mb-4"
+            className="flex items-center gap-2 p-3 bg-surface-muted rounded-xl border border-border hover:border-primary/30 transition-colors mb-3"
           >
             <svg
-              className="w-4 h-4 text-foreground-muted flex-shrink-0"
+              className="w-4 h-4 text-foreground-subtle shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -180,41 +179,42 @@ export default function PostCard({
                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
               />
             </svg>
-            <span className="text-sm text-primary truncate font-medium">
+            <span className="text-xs text-primary-400 truncate font-medium">
               {linkUrl}
             </span>
           </a>
         )}
 
-        {/* Action Buttons */}
-        <div className="flex items-center gap-2 sm:gap-4 pt-2 sm:pt-3 border-t border-border flex-wrap">
-          {/* Like Button with Animation */}
+        {/* Vote momentum bar */}
+        {voteCount > 0 && (
+          <div className="mb-3 h-0.5 rounded-full bg-surface-muted overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-primary-500 to-primary-400 rounded-full transition-all duration-500"
+              style={{ width: `${Math.min(100, voteCount * 5)}%` }}
+            />
+          </div>
+        )}
+
+        {/* Action Bar */}
+        <div className="flex items-center gap-1.5 pt-2.5 border-t border-border/60">
+          {/* Vote */}
           <motion.button
             onClick={() => handleVote(1)}
-            className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full border transition-all text-xs sm:text-sm ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               userVote === 1
-                ? "text-orange-600 border-orange-300 bg-orange-50 dark:bg-orange-900/20"
-                : "text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:text-orange-600 hover:border-orange-300"
+                ? "bg-primary/15 text-primary-400 border border-primary/30"
+                : "text-foreground-muted hover:text-primary-400 hover:bg-primary/10 border border-transparent"
             }`}
-            aria-pressed={userVote === 1}
-            whileTap={{ scale: 0.9 }}
-            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.92 }}
           >
             <motion.svg
-              className="w-4 h-4 sm:w-5 sm:h-5"
+              className="w-4 h-4"
               fill={userVote === 1 ? "currentColor" : "none"}
               stroke={userVote === 1 ? "none" : "currentColor"}
               viewBox="0 0 24 24"
               strokeWidth={2}
-              animate={
-                userVote === 1
-                  ? {
-                      scale: [1, 1.2, 1],
-                      rotate: [0, -15, 0],
-                    }
-                  : {}
-              }
-              transition={{ duration: 0.3 }}
+              animate={userVote === 1 ? { scale: [1, 1.25, 1] } : {}}
+              transition={{ duration: 0.25 }}
             >
               {userVote === 1 ? (
                 <path
@@ -230,16 +230,16 @@ export default function PostCard({
                 />
               )}
             </motion.svg>
-            <span className="font-medium">{voteCount}</span>
+            <span>{voteCount}</span>
           </motion.button>
 
           {/* Comments */}
           <Link
             href={`/questions/${id}`}
-            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full border border-border text-foreground-muted hover:text-primary hover:border-primary/30 transition-colors text-xs sm:text-sm"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-foreground-muted hover:text-primary-400 hover:bg-primary/10 transition-all border border-transparent"
           >
             <svg
-              className="w-4 h-4 sm:w-5 sm:h-5"
+              className="w-4 h-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -251,36 +251,18 @@ export default function PostCard({
                 d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
               />
             </svg>
-            <span className="font-medium">{commentCount}</span>
+            <span>{commentCount}</span>
           </Link>
 
-          {/* Share */}
-          <button className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full border border-border text-foreground-muted hover:text-foreground hover:border-border-strong transition-colors text-xs sm:text-sm">
-            <svg
-              className="w-4 h-4 sm:w-5 sm:h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
-              />
-            </svg>
-            <span className="font-medium hidden sm:inline">Share</span>
-          </button>
+          <div className="flex-1" />
 
-          {/* Save Button */}
-          <div className="ml-auto">
-            <SaveButton
-              postId={id}
-              userId={userId}
-              initialSaved={isSaved}
-              variant="inline"
-            />
-          </div>
+          {/* Save */}
+          <SaveButton
+            postId={id}
+            userId={userId}
+            initialSaved={isSaved}
+            variant="inline"
+          />
         </div>
       </div>
     </Card>

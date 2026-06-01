@@ -72,22 +72,20 @@ export default function Card({
   return (
     <motion.div
       className={cn(
-        // Base styling - clean and minimal using theme variables
-        "bg-surface rounded-xl border border-border overflow-hidden",
+        // Base — glass morphism surface
+        elevated ? "glass-card" : "bg-surface border border-border",
+        "rounded-2xl overflow-hidden",
 
-        // Elevation system
-        elevated ? "shadow-lg" : "shadow-sm",
+        // Elevation
+        elevated ? "shadow-panel" : "shadow-sm",
 
-        // Gradient background option
-        gradient && "bg-gradient-to-br from-surface to-surface-muted",
+        // Gradient option
+        gradient && "bg-gradient-to-br from-surface-elevated to-surface",
 
-        // Interactive hover effects with premium feel
+        // Interactive hover
         (hover || interactive) && [
-          "transition-all duration-250 ease-out",
-          "hover:shadow-md",
-          "hover:-translate-y-0.5",
-          "hover:border-border-strong",
-          "cursor-pointer",
+          "transition-all duration-200 ease-out cursor-pointer",
+          "hover:-translate-y-1 hover:shadow-float hover:border-primary/20",
         ],
 
         className,

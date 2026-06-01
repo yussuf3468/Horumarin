@@ -6,13 +6,40 @@ const config: Config = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: "class",
   theme: {
     extend: {
       // ========================================
-      // SEMANTIC COLOR SYSTEM (CSS Variables)
+      // XIDDIG DESIGN SYSTEM — MIDEEYE
+      // The Somali Knowledge Network
       // ========================================
+      fontFamily: {
+        heading: [
+          "var(--font-heading)",
+          "Plus Jakarta Sans",
+          "ui-sans-serif",
+          "system-ui",
+          "sans-serif",
+        ],
+        body: [
+          "var(--font-body)",
+          "Inter",
+          "ui-sans-serif",
+          "system-ui",
+          "sans-serif",
+        ],
+        sans: [
+          "var(--font-body)",
+          "Inter",
+          "ui-sans-serif",
+          "system-ui",
+          "sans-serif",
+        ],
+      },
       colors: {
-        // Semantic tokens
+        // ===================================
+        // SEMANTIC TOKENS (CSS Variables)
+        // ===================================
         background: "rgb(var(--color-background) / <alpha-value>)",
         surface: "rgb(var(--color-surface) / <alpha-value>)",
         "surface-elevated":
@@ -43,163 +70,198 @@ const config: Config = {
         "muted-foreground":
           "rgb(var(--color-muted-foreground) / <alpha-value>)",
 
-        // Primary - Deep Blue
+        // ===================================
+        // BRAND PALETTE — XIDDIG (STAR)
+        // ===================================
+
+        // Primary — Electric Teal (Badda: The Ocean)
         primary: {
-          50: "#eff6ff",
-          100: "#dbeafe",
-          200: "#bfdbfe",
-          300: "#93c5fd",
-          400: "#60a5fa",
-          500: "#3b82f6",
-          600: "#2563eb",
-          700: "#1d4ed8", // Main primary
-          800: "#1e40af",
-          900: "#1e3a8a", // Deep blue
-          950: "#172554",
+          50: "#E0FAF4",
+          100: "#B3F3E6",
+          200: "#7DEAD4",
+          300: "#40DFC0",
+          400: "#00D4A3",
+          500: "#00BA8D",
+          600: "#009B75",
+          700: "#007D5E",
+          800: "#006049",
+          900: "#004434",
+          950: "#00281E",
         },
 
-        // Accent - Teal
+        // Accent — Warm Gold (Qorraxda: The Sun)
         accent: {
-          50: "#f0fdfa",
-          100: "#ccfbf1",
-          200: "#99f6e4",
-          300: "#5eead4",
-          400: "#2dd4bf", // Main accent
-          500: "#14b8a6",
-          600: "#0d9488",
-          700: "#0f766e",
-          800: "#115e59",
-          900: "#134e4a",
+          50: "#FFF8E6",
+          100: "#FEECBB",
+          200: "#FDDE8D",
+          300: "#FCCE5E",
+          400: "#FBB62E",
+          500: "#F5A623",
+          600: "#D97706",
+          700: "#A86200",
+          800: "#884C00",
+          900: "#683800",
+          950: "#4A2800",
         },
 
-        // CTA - Warm Amber
+        // CTA — mirrors primary
         cta: {
-          50: "#fffbeb",
-          100: "#fef3c7",
-          200: "#fde68a",
-          300: "#fcd34d",
-          400: "#fbbf24",
-          500: "#f59e0b", // Main CTA
-          600: "#d97706",
-          700: "#b45309",
-          800: "#92400e",
-          900: "#78350f",
+          50: "#E0FAF4",
+          100: "#B3F3E6",
+          200: "#7DEAD4",
+          300: "#40DFC0",
+          400: "#00D4A3",
+          500: "#00BA8D",
+          600: "#009B75",
+          700: "#007D5E",
+          800: "#006049",
+          900: "#004434",
+          950: "#00281E",
         },
 
-        // Neutrals with depth
+        // Neutrals
         neutral: {
-          50: "#fafafa",
-          100: "#f5f5f5",
-          200: "#e5e5e5",
-          300: "#d4d4d4",
-          400: "#a3a3a3",
-          500: "#737373",
-          600: "#525252",
-          700: "#404040",
-          800: "#262626",
-          900: "#171717",
-          950: "#0a0a0a",
+          50: "#F8FAFC",
+          100: "#F1F5F9",
+          200: "#E2E8F0",
+          300: "#CBD5E1",
+          400: "#94A3B8",
+          500: "#64748B",
+          600: "#475569",
+          700: "#334155",
+          800: "#1E293B",
+          900: "#0F172A",
+          950: "#020617",
         },
       },
 
-      // ========================================
-      // SPACING (tighter, more controlled)
-      // ========================================
       spacing: {
         "18": "4.5rem",
         "88": "22rem",
         "128": "32rem",
       },
 
-      // ========================================
-      // TYPOGRAPHY
-      // ========================================
       fontSize: {
         hero: [
-          "clamp(2.5rem, 5vw, 4rem)",
-          { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "800" },
+          "clamp(2.8rem, 6vw, 5.5rem)",
+          { lineHeight: "1.0", letterSpacing: "-0.04em", fontWeight: "800" },
+        ],
+        "hero-sm": [
+          "clamp(2rem, 4vw, 3.5rem)",
+          { lineHeight: "1.05", letterSpacing: "-0.03em", fontWeight: "700" },
         ],
         display: [
-          "clamp(2rem, 4vw, 3rem)",
-          { lineHeight: "1.2", letterSpacing: "-0.01em", fontWeight: "700" },
+          "clamp(1.6rem, 3vw, 2.5rem)",
+          { lineHeight: "1.15", letterSpacing: "-0.02em", fontWeight: "700" },
+        ],
+        "display-sm": [
+          "clamp(1.2rem, 2vw, 1.7rem)",
+          { lineHeight: "1.2", letterSpacing: "-0.015em", fontWeight: "600" },
         ],
       },
 
       lineHeight: {
-        tight: "1.1",
-        snug: "1.3",
+        tight: "1.05",
+        snug: "1.25",
       },
 
       letterSpacing: {
-        tighter: "-0.02em",
+        tighter: "-0.03em",
+        tight: "-0.02em",
+        wider: "0.12em",
+        widest: "0.2em",
       },
 
-      // ========================================
-      // MAX WIDTHS
-      // ========================================
+      borderRadius: {
+        "4xl": "2rem",
+        "5xl": "2.5rem",
+      },
+
       maxWidth: {
         reading: "720px",
         container: "1280px",
       },
 
-      // ========================================
-      // SHADOWS (depth & elevation)
-      // ========================================
       boxShadow: {
-        card: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)",
+        card: "0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)",
         "card-hover":
-          "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)",
-        elevated:
-          "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
-        "inner-glow": "inset 0 2px 4px 0 rgba(255, 255, 255, 0.06)",
+          "0 4px 24px rgba(0,0,0,0.10), 0 8px 40px rgba(0,0,0,0.06)",
+        panel: "0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06)",
+        float: "0 20px 60px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.08)",
+        elevated: "0 20px 40px rgba(0,0,0,0.12), 0 8px 16px rgba(0,0,0,0.08)",
+        "glow-teal":
+          "0 0 24px rgba(0,212,163,0.28), 0 0 48px rgba(0,212,163,0.10)",
+        "glow-gold":
+          "0 0 24px rgba(245,166,35,0.30), 0 0 48px rgba(245,166,35,0.10)",
+        "glow-teal-sm": "0 0 12px rgba(0,212,163,0.45)",
+        "inner-glow": "inset 0 1px 0 rgba(255,255,255,0.10)",
       },
 
-      // ========================================
-      // GRADIENTS (as background images)
-      // ========================================
       backgroundImage: {
+        "mesh-dark":
+          "radial-gradient(at 40% 20%, rgba(0,212,163,0.12) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(245,166,35,0.08) 0px, transparent 50%), radial-gradient(at 0% 60%, rgba(26,76,224,0.06) 0px, transparent 50%)",
+        "mesh-light":
+          "radial-gradient(at 40% 20%, rgba(0,186,141,0.07) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(245,166,35,0.05) 0px, transparent 50%)",
+        "gradient-teal": "linear-gradient(135deg, #00D4A3 0%, #00BA8D 100%)",
+        "gradient-gold": "linear-gradient(135deg, #FBB62E 0%, #F5A623 100%)",
+        "gradient-brand": "linear-gradient(135deg, #00D4A3 0%, #FBB62E 100%)",
         "gradient-hero":
-          "linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #0d9488 100%)",
-        "gradient-primary": "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
-        "gradient-cta": "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+          "linear-gradient(135deg, #080C1A 0%, #0C1224 60%, #121B32 100%)",
         "gradient-card": "linear-gradient(to bottom, #ffffff 0%, #fafafa 100%)",
-        "gradient-card-hover":
-          "linear-gradient(to bottom, #fafafa 0%, #f0f9ff 100%)",
-        "gradient-page":
-          "linear-gradient(180deg, #fafafa 0%, #f0f9ff 50%, #fafafa 100%)",
-        "gradient-badge": "linear-gradient(135deg, #3b82f6 0%, #2dd4bf 100%)",
-        "gradient-orb":
-          "radial-gradient(circle at 30% 50%, rgba(59, 130, 246, 0.3) 0%, rgba(45, 212, 191, 0.2) 50%, transparent 100%)",
+        "gradient-badge": "linear-gradient(135deg, #00D4A3 0%, #00BA8D 100%)",
       },
 
-      // ========================================
-      // ANIMATIONS
-      // ========================================
       animation: {
         float: "float 6s ease-in-out infinite",
-        "fade-in": "fadeIn 0.5s ease-in",
+        "float-slow": "float 9s ease-in-out infinite",
+        "float-fast": "float 4s ease-in-out infinite",
+        "pulse-glow": "pulseGlow 2.5s ease-in-out infinite",
+        shimmer: "shimmer 2s linear infinite",
+        "fade-in": "fadeIn 0.5s ease-out forwards",
+        "fade-up": "fadeUp 0.5s ease-out forwards",
+        "scale-in": "scaleIn 0.35s ease-out forwards",
         "slide-up": "slideUp 0.5s ease-out",
-        "slide-in-right": "slideInRight 0.4s ease-out",
-        "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        ticker: "ticker 25s linear infinite",
+        "spin-slow": "spin 8s linear infinite",
       },
 
       keyframes: {
         float: {
           "0%, 100%": { transform: "translateY(0px)" },
-          "50%": { transform: "translateY(-20px)" },
+          "50%": { transform: "translateY(-14px)" },
+        },
+        pulseGlow: {
+          "0%, 100%": { opacity: "0.5" },
+          "50%": { opacity: "1" },
+        },
+        shimmer: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
         },
         fadeIn: {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
         },
+        fadeUp: {
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        scaleIn: {
+          "0%": { opacity: "0", transform: "scale(0.94)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
         slideUp: {
           "0%": { transform: "translateY(20px)", opacity: "0" },
           "100%": { transform: "translateY(0)", opacity: "1" },
         },
-        slideInRight: {
-          "0%": { transform: "translateX(20px)", opacity: "0" },
-          "100%": { transform: "translateX(0)", opacity: "1" },
+        ticker: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
         },
+      },
+
+      backdropBlur: {
+        xs: "2px",
       },
     },
   },

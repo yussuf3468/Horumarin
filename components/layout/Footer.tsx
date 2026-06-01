@@ -21,12 +21,11 @@ export default function Footer({ className = "" }: { className?: string }) {
 
   return (
     <footer
-      className={`relative bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 overflow-hidden text-foreground dark ${className}`}
+      className={`relative bg-gradient-to-b from-surface via-background to-background overflow-hidden text-foreground ${className}`}
     >
-      {/* Force dark mode tokens for this always-dark section */}
-      {/* Radial glows for depth */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent-500/10 rounded-full blur-3xl" />
+      {/* Radial glows */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/8 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-accent/8 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-20">
         {/* Main footer */}

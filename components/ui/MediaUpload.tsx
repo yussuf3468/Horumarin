@@ -12,7 +12,11 @@ interface MediaUploadProps {
   value: File | null;
   previewUrl: string | null;
   mediaType: MediaType | null;
-  onChange: (file: File | null, previewUrl: string | null, mediaType: MediaType | null) => void;
+  onChange: (
+    file: File | null,
+    previewUrl: string | null,
+    mediaType: MediaType | null,
+  ) => void;
   maxImageMB?: number;
   maxVideoMB?: number;
   isUploading?: boolean;
@@ -146,7 +150,8 @@ export default function MediaUpload({
               Choose Photo / Video
             </Button>
             <div className="text-xs text-foreground-subtle">
-              Photos: max {maxImageMB} MB (JPG, PNG, WebP) &nbsp;·&nbsp; Videos: max {maxVideoMB} MB (MP4, MOV, WebM)
+              Photos: max {maxImageMB} MB (JPG, PNG, WebP) &nbsp;·&nbsp; Videos:
+              max {maxVideoMB} MB (MP4, MOV, WebM)
             </div>
           </div>
         ) : mediaType === "video" ? (

@@ -3,11 +3,326 @@
 @tailwind utilities;
 
 @layer base {
-  /* ========================================
-     HORUMARIN SEMANTIC COLOR SYSTEM
-     ======================================== */
+  /* =====================================================
+     XIDDIG DESIGN SYSTEM — MIDEEYE
+     The Somali Knowledge Network
+     
+     Color Philosophy:
+     Light: Warm ivory surfaces, deep ink text, teal brand
+     Dark:  Deep midnight sky, electric teal, warm gold
+     ===================================================== */
 
   :root {
+    /* ── Surfaces ── */
+    --color-background:       248 250 252;   /* #F8FAFC  cool off-white  */
+    --color-surface:          255 255 255;   /* #FFFFFF               */
+    --color-surface-elevated: 243 246 251;   /* #F3F6FB  cool elevated  */
+    --color-surface-muted:    234 239 248;   /* #EAF0F8  blue-tinted   */
+
+    /* ── Text ── */
+    --color-foreground:        10  16  38;   /* #0A1026  deep ink navy */
+    --color-foreground-muted:  68  85 110;   /* #44556E  slate         */
+    --color-foreground-subtle: 104 120 148;  /* #687890  light slate   */
+
+    /* ── Brand Primary — Electric Teal (Badda) ── */
+    --color-primary:            0 186 141;   /* #00BA8D               */
+    --color-primary-foreground: 255 255 255; /* #FFFFFF               */
+    --color-primary-hover:      0 162 122;   /* #00A27A               */
+    --color-primary-subtle:   230 252 246;   /* #E6FCF6               */
+
+    /* ── Brand Accent — Warm Gold (Qorraxda) ── */
+    --color-accent:           245 166  35;   /* #F5A623               */
+    --color-accent-foreground: 10  16  38;   /* #0A1026  dark on gold */
+    --color-accent-hover:     224 144  16;   /* #E09010               */
+    --color-accent-subtle:    255 249 230;   /* #FFF9E6               */
+
+    /* ── CTA (matches primary in light mode) ── */
+    --color-cta:               0 186 141;
+    --color-cta-foreground:  255 255 255;
+    --color-cta-hover:         0 162 122;
+
+    /* ── Danger ── */
+    --color-danger:           220  38  38;
+    --color-danger-foreground:254 226 226;
+    --color-danger-muted:     127  29  29;
+    --color-danger-border:    239  68  68;
+
+    /* ── Borders ── */
+    --color-border:           218 228 242;   /* #DAE4F2               */
+    --color-border-subtle:    235 241 250;   /* #EBF1FA               */
+    --color-border-strong:    196 212 232;   /* #C4D4E8               */
+
+    /* ── State ── */
+    --color-muted:            243 246 251;
+    --color-muted-foreground: 104 120 148;
+
+    /* ── Glass ── */
+    --color-glass-bg:         255 255 255;
+    --color-glass-border:     218 228 242;
+  }
+
+  .dark {
+    /* ── Surfaces — Deep Midnight ── */
+    --color-background:         8  12  26;   /* #080C1A  deep midnight  */
+    --color-surface:           12  18  36;   /* #0C1224               */
+    --color-surface-elevated:  18  27  50;   /* #121B32               */
+    --color-surface-muted:     26  39  70;   /* #1A2746               */
+
+    /* ── Text — Platinum Whites ── */
+    --color-foreground:       226 236 252;   /* #E2ECFC               */
+    --color-foreground-muted: 152 170 202;   /* #98AACA               */
+    --color-foreground-subtle: 98 116 152;   /* #627298               */
+
+    /* ── Brand Primary — Electric Teal ── */
+    --color-primary:            0 212 163;   /* #00D4A3               */
+    --color-primary-foreground:  8  12  26;  /* #080C1A  dark on teal  */
+    --color-primary-hover:      0 234 180;   /* #00EAB4  brighter      */
+    --color-primary-subtle:     0  40  32;   /* for very subtle uses   */
+
+    /* ── Brand Accent — Bright Gold ── */
+    --color-accent:           251 182  46;   /* #FBB62E               */
+    --color-accent-foreground:  8  12  26;   /* #080C1A  dark on gold  */
+    --color-accent-hover:     255 200  60;   /* brighter gold          */
+    --color-accent-subtle:     50  38   0;   /* for very subtle uses   */
+
+    /* ── CTA (electric teal in dark) ── */
+    --color-cta:                0 212 163;
+    --color-cta-foreground:     8  12  26;
+    --color-cta-hover:          0 234 180;
+
+    /* ── Danger ── */
+    --color-danger:           248 113 113;
+    --color-danger-foreground:254 242 242;
+    --color-danger-muted:     127  29  29;
+    --color-danger-border:    185  28  28;
+
+    /* ── Borders ── */
+    --color-border:            28  42  78;   /* #1C2A4E               */
+    --color-border-subtle:     18  27  50;   /* #121B32               */
+    --color-border-strong:     40  60 104;   /* #283C68               */
+
+    /* ── State ── */
+    --color-muted:             18  27  50;
+    --color-muted-foreground:  98 116 152;
+
+    /* ── Glass ── */
+    --color-glass-bg:         255 255 255;
+    --color-glass-border:      40  60 104;
+  }
+
+  html {
+    @apply scroll-smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: rgb(var(--color-background));
+    color: rgb(var(--color-foreground));
+    font-family: var(--font-body), 'Inter', ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.6;
+    transition: background-color 300ms ease, color 300ms ease;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading), 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  /* ── Custom Scrollbar ── */
+  ::-webkit-scrollbar          { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track    { background: transparent; }
+  ::-webkit-scrollbar-thumb    { background: rgba(0,212,163,0.25); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(0,212,163,0.5); }
+
+  * {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+  }
+
+  *[class*="transition-transform"],
+  *[class*="transition-opacity"],
+  *[class*="transition-all"] {
+    transition-property: background-color, border-color, color, fill, stroke, transform, opacity;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, html, body {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* ── Text Gradients ── */
+  .text-gradient {
+    background: linear-gradient(135deg, #00D4A3 0%, #00BA8D 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-brand {
+    background: linear-gradient(135deg, #00D4A3 0%, #FBB62E 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #FBB62E 0%, #F5A623 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Glass Morphism ── */
+  .glass {
+    background: rgba(var(--color-glass-bg) / 0.06);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(var(--color-glass-border) / 0.12);
+  }
+
+  .glass-card {
+    background: rgba(var(--color-surface) / 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(var(--color-border) / 0.6);
+  }
+
+  .glass-nav {
+    background: rgba(var(--color-background) / 0.80);
+    backdrop-filter: blur(20px) saturate(200%);
+    -webkit-backdrop-filter: blur(20px) saturate(200%);
+  }
+
+  /* ── Glow Effects ── */
+  .glow-teal {
+    box-shadow: 0 0 24px rgba(0,212,163,0.28), 0 0 48px rgba(0,212,163,0.10);
+  }
+
+  .glow-gold {
+    box-shadow: 0 0 24px rgba(245,166,35,0.30), 0 0 48px rgba(245,166,35,0.10);
+  }
+
+  .glow-teal-sm {
+    box-shadow: 0 0 12px rgba(0,212,163,0.45);
+  }
+
+  /* ── Shadow Utilities ── */
+  .shadow-glow {
+    box-shadow: 0 0 0 1px rgba(0,212,163,0.2), 0 4px 20px rgba(0,212,163,0.15);
+  }
+
+  .shadow-glow-accent {
+    box-shadow: 0 0 0 1px rgba(245,166,35,0.2), 0 4px 20px rgba(245,166,35,0.15);
+  }
+
+  /* ── Geometric Pattern (Somali textile motif) ── */
+  .pattern-geo {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cpath d='M30 2L58 30L30 58L2 30Z' fill='%2300D4A3' fill-opacity='0.03'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .pattern-geo-dense {
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cpath d='M20 1L39 20L20 39L1 20Z' fill='%2300D4A3' fill-opacity='0.04'/%3E%3Cpath d='M20 11L29 20L20 29L11 20Z' fill='%2300D4A3' fill-opacity='0.03'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* ── Gradient Border ── */
+  .border-gradient-teal {
+    position: relative;
+  }
+  .border-gradient-teal::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(0,212,163,0.6), transparent 50%, rgba(251,182,46,0.4));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* ── Animations ── */
+  @keyframes shimmer {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(100%);  }
+  }
+  @keyframes fade-in {
+    0%   { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0);    }
+  }
+  @keyframes fade-up {
+    0%   { opacity: 0; transform: translateY(24px); }
+    100% { opacity: 1; transform: translateY(0);    }
+  }
+  @keyframes scale-in {
+    0%   { opacity: 0; transform: scale(0.92); }
+    100% { opacity: 1; transform: scale(1);    }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px);   }
+    50%       { transform: translateY(-12px); }
+  }
+  @keyframes ticker {
+    0%   { transform: translateX(0);    }
+    100% { transform: translateX(-50%); }
+  }
+  @keyframes pulse-ring {
+    0%   { transform: scale(0.8); opacity: 1; }
+    100% { transform: scale(2.2); opacity: 0; }
+  }
+  @keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  .animate-fade-in      { animation: fade-in 0.4s ease-out forwards;  }
+  .animate-fade-up      { animation: fade-up 0.5s ease-out forwards;  }
+  .animate-scale-in     { animation: scale-in 0.35s ease-out forwards; }
+  .animate-float        { animation: float 6s ease-in-out infinite;    }
+  .animate-float-slow   { animation: float 9s ease-in-out infinite;    }
+  .animate-ticker       { animation: ticker 25s linear infinite;       }
+  .animate-spin-slow    { animation: spin-slow 8s linear infinite;     }
+
+  /* ── Safe Area (Mobile) ── */
+  .safe-area-inset-top    { padding-top: env(safe-area-inset-top);       }
+  .safe-area-inset-bottom { padding-bottom: env(safe-area-inset-bottom); }
+  .pt-safe-header         { padding-top: calc(2.75rem + env(safe-area-inset-top)); }
+  .pb-safe-bottom         { padding-bottom: calc(4rem + env(safe-area-inset-bottom)); }
+
+  /* ── Scrollbar Hide ── */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* ── Line Clamp (fallback) ── */
+  .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+  .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .line-clamp-4 { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+
+  /* ── Shimmer for Skeletons ── */
+  .shimmer-base {
+    position: relative;
+    overflow: hidden;
+    background: rgb(var(--color-surface-muted));
+  }
+  .shimmer-base::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
+    animation: shimmer 1.8s ease-in-out infinite;
+  }
+}
+
     /* Background colors - High contrast light mode */
     --color-background: 248 250 252; /* slate-50 - main page background */
     --color-surface: 255 255 255; /* white - card/panel backgrounds */

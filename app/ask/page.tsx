@@ -288,7 +288,8 @@ export default function AskQuestionPage() {
                     disabled={submitting || uploadingImage}
                   />
                   <p className="mt-1 text-sm text-foreground-subtle">
-                    Sawir ama video ma aha qasab. Waad diri kartaa adigoon ku darin.
+                    Sawir ama video ma aha qasab. Waad diri kartaa adigoon ku
+                    darin.
                   </p>
                 </div>
 

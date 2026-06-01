@@ -1,852 +1,361 @@
 /**
- * MIDEEYE HOMEPAGE - CINEMATIC TRANSFORMATION
- *
- * A national Somali innovation movement.
- * A serious knowledge ecosystem.
- * A living community.
- *
- * NO template feel. NO flat sections. NO dead space.
- *
- * Design:
- * - Dark-to-teal gradient hero with floating shapes
- * - Glass-morphism elevated cards
- * - Layered backgrounds with depth
- * - Live community energy
- * - Wave dividers and gradient transitions
- * - Radial glows and soft blur overlays
- *
- * Migration-safe: Uses email.service abstraction
+ * MIDEEYE HOMEPAGE � XIDDIG DESIGN SYSTEM
+ * The Somali Knowledge Network
  */
-
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
 import Card from "@/components/ui/Card";
-import Badge from "@/components/ui/Badge";
 import Avatar from "@/components/ui/Avatar";
-import Tooltip from "@/components/ui/Tooltip";
-import Skeleton from "@/components/ui/Skeleton";
-import Alert from "@/components/ui/Alert";
-import { MideeyeLogo, LogoIcon } from "@/components/brand/MideeyeLogo";
-import AnimatedCounter from "@/components/ui/AnimatedCounter";
-import LiveActivityFeed from "@/components/ui/LiveActivityFeed";
+import { LogoIcon } from "@/components/brand/MideeyeLogo";
 import { subscribeEmail } from "@/services/email.service";
-import {
-  getQuestions,
-  type QuestionWithAuthor,
-} from "@/services/question.service";
+import { getQuestions, type QuestionWithAuthor } from "@/services/question.service";
 import { categories } from "@/utils/constants";
-import { formatDate, isVideoUrl, truncateText } from "@/utils/helpers";
+import { formatDate } from "@/utils/helpers";
+
+// --- Animated Number Counter --------------------------------------------------
+function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true });
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!inView) return;
+    let start = 0;
+    const duration = 1800;
+    const step = Math.ceil(to / (duration / 16));
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= to) { setCount(to); clearInterval(timer); }
+      else setCount(start);
+    }, 16);
+    return () => clearInterval(timer);
+  }, [inView, to]);
+
+  return <span ref={ref}>{count.toLocaleString()}{suffix}</span>;
+}
+
+// --- Category icon map --------------------------------------------------------
+const CATEGORY_ICONS: Record<string, string> = {
+  "Technology": "??", "Business": "??", "Education": "??", "Health": "??",
+  "Culture": "??", "Politics": "???", "Sports": "?", "Religion": "??",
+  "Science": "??", "Arts": "??", "Travel": "??", "Food": "???",
+};
 
 export default function HomePage() {
+  const [featuredPosts, setFeaturedPosts] = useState<QuestionWithAuthor[]>([]);
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [liveUsers, setLiveUsers] = useState(847);
-  const [showAlert, setShowAlert] = useState(true);
-  const [loadingContent, setLoadingContent] = useState(false);
-  const [latestPosts, setLatestPosts] = useState<QuestionWithAuthor[]>([]);
-  const [loadingPosts, setLoadingPosts] = useState(true);
-
-  // Simulate live user count changes
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setLiveUsers((prev) => prev + Math.floor(Math.random() * 3) - 1);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+  const [subLoading, setSubLoading] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const loadLatestPosts = async () => {
-      const data = await getQuestions();
-      setLatestPosts(data.slice(0, 6));
-      setLoadingPosts(false);
-    };
-
-    loadLatestPosts();
+    getQuestions({ sortBy: "hot", limit: 6 } as Parameters<typeof getQuestions>[0]).then(data => {
+      setFeaturedPosts(Array.isArray(data) ? data.slice(0, 6) : []);
+    }).catch(() => {});
   }, []);
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-
+    setSubLoading(true);
     const { success } = await subscribeEmail(email);
-
-    if (success) {
-      setSubscribed(true);
-      setEmail("");
-    }
-
-    setLoading(false);
+    if (success) { setSubscribed(true); setEmail(""); }
+    setSubLoading(false);
   };
 
   return (
-    <div className="relative min-h-screen">
-      {/* ================================================ */}
-      {/* HERO - FEATURED POSTS LAYOUT */}
-      {/* ================================================ */}
-      <section className="dark relative bg-surface border-b border-border">
-        <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
-            <div>
-              <p className="inline-flex items-center px-3 py-1 rounded-full text-xs bg-surface-muted border border-border text-foreground-muted mb-3">
-                Qoraalada ugu kulul maanta
-              </p>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground leading-tight">
-                Akhri, falanqee, oo ka qayb qaado doodaha ugu muhiimsan
-              </h1>
-            </div>
-            <Link href="/questions" className="sm:self-start">
-              <Button variant="outline" size="sm" className="rounded-full">
-                Eeg feed-ka oo dhan
-              </Button>
-            </Link>
-          </div>
+    <div className="min-h-screen bg-background">
 
-          {loadingPosts ? (
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4">
-              <Skeleton className="h-56 sm:h-72 md:h-[420px] md:col-span-7 rounded-xl" />
-              <div className="md:col-span-5 grid grid-cols-1 gap-3 sm:gap-4">
-                <Skeleton className="h-40 sm:h-48 rounded-xl" />
-                <Skeleton className="h-40 sm:h-48 rounded-xl" />
-              </div>
-            </div>
-          ) : latestPosts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4">
-              {latestPosts[0] && (
-                <Link
-                  href={`/questions/${latestPosts[0].id}`}
-                  className="md:col-span-7"
-                >
-                  <Card hover className="h-full overflow-hidden group">
-                    <div className="relative h-56 sm:h-72 md:h-[420px]">
-                      {latestPosts[0].image_video_url ? (
-                        isVideoUrl(latestPosts[0].image_video_url) ? (
-                          <video
-                            src={latestPosts[0].image_video_url}
-                            muted
-                            autoPlay
-                            loop
-                            playsInline
-                            preload="metadata"
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          />
-                        ) : (
-                          <img
-                            src={latestPosts[0].image_video_url}
-                            alt={latestPosts[0].title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          />
-                        )
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-primary-700/30 to-accent-700/30" />
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
-                      <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
-                        <span className="inline-flex px-2.5 py-1 rounded-full text-[11px] font-medium bg-primary-600/90 text-primary-fg mb-2">
-                          {categories.find(
-                            (c) => c.id === latestPosts[0].category,
-                          )?.name || latestPosts[0].category}
-                        </span>
-                        <h2 className="text-lg sm:text-2xl font-bold text-white line-clamp-2 mb-2">
-                          {latestPosts[0].title}
-                        </h2>
-                        <p className="text-xs sm:text-sm text-white/85 line-clamp-2 sm:line-clamp-3">
-                          {truncateText(latestPosts[0].content, 180)}
-                        </p>
-                      </div>
-                    </div>
-                  </Card>
-                </Link>
-              )}
+      {/* ---------------------------------------------------
+          HERO � Cinematic dark viewport
+      --------------------------------------------------- */}
+      <section
+        ref={heroRef}
+        className="relative min-h-[90vh] flex flex-col justify-center overflow-hidden bg-gradient-hero"
+      >
+        {/* Background mesh */}
+        <div className="absolute inset-0 bg-mesh-dark opacity-60 pointer-events-none" />
 
-              <div className="md:col-span-5 grid grid-cols-1 gap-3 sm:gap-4">
-                {latestPosts.slice(1, 4).map((post) => (
-                  <Link key={post.id} href={`/questions/${post.id}`}>
-                    <Card hover className="overflow-hidden h-full">
-                      {post.image_video_url ? (
-                        <div className="relative h-40 sm:h-48">
-                          {isVideoUrl(post.image_video_url) ? (
-                            <video
-                              src={post.image_video_url}
-                              muted
-                              autoPlay
-                              loop
-                              playsInline
-                              preload="metadata"
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <img
-                              src={post.image_video_url}
-                              alt={post.title}
-                              className="w-full h-full object-cover"
-                            />
-                          )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                          <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
-                            <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary-600/90 text-white mb-1.5">
-                              {categories.find((c) => c.id === post.category)
-                                ?.name || post.category}
-                            </span>
-                            <h3 className="font-bold text-sm sm:text-base text-white line-clamp-2">
-                              {post.title}
-                            </h3>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="p-3.5 sm:p-4">
-                          <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary-100 dark:bg-primary-900/30 text-primary mb-2">
-                            {categories.find((c) => c.id === post.category)
-                              ?.name || post.category}
-                          </span>
-                          <h3 className="font-bold text-sm sm:text-base text-foreground line-clamp-2 mb-2">
-                            {post.title}
-                          </h3>
-                          <p className="text-xs sm:text-sm text-foreground-muted line-clamp-3">
-                            {post.content}
-                          </p>
-                          <div className="text-[11px] text-foreground-subtle mt-2">
-                            {formatDate(post.created_at)}
-                          </div>
-                        </div>
-                      )}
-                    </Card>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <Card className="p-10 text-center">
-              <p className="text-foreground-muted mb-4">
-                Weli qoraalo lama helin.
-              </p>
-              <Link href="/ask">
-                <Button>Weydii su'aashii ugu horreysay</Button>
-              </Link>
-            </Card>
-          )}
-        </div>
-      </section>
+        {/* Geometric teal glow */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full
+          bg-primary/5 blur-[120px] pointer-events-none" />
+        <div className="absolute top-10 right-20 w-64 h-64 rounded-full bg-accent/5 blur-[80px] pointer-events-none" />
 
-      {/* ================================================ */}
-      {/* GLASS-MORPHISM CATEGORY CARDS */}
-      {/* ================================================ */}
-      <section className="py-12 sm:py-16 md:py-20 px-4 bg-surface relative">
-        {/* Subtle background pattern */}
-        <div
-          className="absolute inset-0 opacity-5"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle, #1e3a8a 1px, transparent 1px)",
-            backgroundSize: "24px 24px",
-          }}
-        />
+        {/* Floating geometric shapes */}
+        <motion.div className="absolute top-24 left-[8%] w-2 h-2 rounded-full bg-primary/40"
+          animate={{ y: [0, -20, 0], opacity: [0.4, 0.8, 0.4] }}
+          transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }} />
+        <motion.div className="absolute top-1/3 right-[12%] w-1.5 h-1.5 rounded-full bg-accent/50"
+          animate={{ y: [0, 15, 0], opacity: [0.5, 1, 0.5] }}
+          transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut", delay: 1 }} />
+        <motion.div className="absolute bottom-1/3 left-[20%] w-1 h-1 rounded-full bg-primary/30"
+          animate={{ y: [0, -12, 0] }}
+          transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 2 }} />
 
-        <div className="relative max-w-7xl mx-auto">
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 text-center pt-24 pb-20">
+          {/* Badge */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-10 sm:mb-16"
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
           >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-foreground">
-              Qaybaha Aqooneed
-            </h2>
-            <p className="text-sm sm:text-base md:text-lg text-foreground-muted max-w-2xl mx-auto">
-              Dooro qaybta aad rabto oo la xiriir dadka khibradda leh
-            </p>
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30
+              bg-primary/10 text-primary-400 text-sm font-medium mb-8">
+              <LogoIcon size={16} />
+              The Somali Knowledge Network
+            </span>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categories.map((category, index) => (
-              <motion.div
-                key={category.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.05, duration: 0.5 }}
-              >
-                <Link href={`/topics/${category.id}`}>
-                  <div className="group relative overflow-hidden p-5 sm:p-8 h-full cursor-pointer bg-surface border border-border hover:border-primary-400 transition-all duration-300 rounded-xl shadow-sm hover:shadow-md">
-                    {/* Subtle gradient background on hover */}
-                    <div
-                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"
-                      style={{
-                        background: `linear-gradient(135deg, rgba(59, 130, 246, 0.02) 0%, rgba(59, 130, 246, 0.05) 100%)`,
-                      }}
-                    />
+          {/* Headline */}
+          <motion.h1
+            className="font-heading font-extrabold leading-[1.1] mb-6"
+            style={{ fontSize: "clamp(2.4rem, 6vw, 5rem)" }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+          >
+            <span className="text-foreground">Aqoonta</span>
+            <br />
+            <span className="text-gradient">Umadda Soomaaliyeed</span>
+          </motion.h1>
 
-                    <div className="relative z-10">
-                      {/* Icon */}
-                      <div className="text-4xl sm:text-5xl mb-4 sm:mb-6 transform group-hover:scale-105 transition-transform duration-300">
-                        {category.icon}
-                      </div>
+          {/* Subtitle */}
+          <motion.p
+            className="text-lg sm:text-xl text-foreground-muted max-w-2xl mx-auto mb-10 leading-relaxed"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.25 }}
+          >
+            Ask, share, and discover knowledge with the global Somali community.
+            Every question answered, every insight shared.
+          </motion.p>
 
-                      {/* Title */}
-                      <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 text-foreground group-hover:text-primary-700 transition-colors">
-                        {category.name}
-                      </h3>
+          {/* CTAs */}
+          <motion.div
+            className="flex flex-col sm:flex-row items-center justify-center gap-3"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.35 }}
+          >
+            <Link href="/auth/signup">
+              <Button variant="primary" size="lg" className="min-w-44">
+                Start Learning
+              </Button>
+            </Link>
+            <Link href="/questions">
+              <Button variant="outline" size="lg" className="min-w-44">
+                Browse Questions
+              </Button>
+            </Link>
+          </motion.div>
 
-                      {/* English subtitle */}
-                      <p className="text-sm text-foreground-muted uppercase tracking-wide mb-4 font-medium">
-                        {category.nameEn}
-                      </p>
-
-                      {/* Hover arrow */}
-                      <div className="flex items-center text-primary-600 font-semibold opacity-0 group-hover:opacity-100 transform translate-x-0 group-hover:translate-x-2 transition-all duration-300">
-                        <span>Eeg su'aalaha</span>
-                        <svg
-                          className="w-5 h-5 ml-2"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M17 8l4 4m0 0l-4 4m4-4H3"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
+          {/* Live Stats */}
+          <motion.div
+            className="flex flex-wrap items-center justify-center gap-8 mt-16 pt-12 border-t border-border/30"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+          >
+            {[
+              { label: "Questions answered", value: 12400, suffix: "+" },
+              { label: "Active members",     value: 8200,  suffix: "+" },
+              { label: "Topics covered",     value: 24,    suffix: ""  },
+              { label: "Countries reached",  value: 31,    suffix: ""  },
+            ].map(({ label, value, suffix }) => (
+              <div key={label} className="text-center">
+                <div className="text-2xl sm:text-3xl font-extrabold text-gradient font-heading">
+                  <Counter to={value} suffix={suffix} />
+                </div>
+                <div className="text-xs text-foreground-subtle mt-1 uppercase tracking-wide">{label}</div>
+              </div>
             ))}
-          </div>
+          </motion.div>
         </div>
+
+        {/* Bottom fade */}
+        <div className="absolute bottom-0 left-0 right-0 h-24
+          bg-gradient-to-t from-background to-transparent pointer-events-none" />
       </section>
 
-      {/* Gradient transition section */}
-      <div className="h-32 bg-gradient-to-b from-surface via-surface-muted to-slate-900" />
-      {/* ================================================ */}
-      <section className="py-12 sm:py-16 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-foreground">
-              Sida Ay U Shaqeyso
+      {/* ---------------------------------------------------
+          TOPICS � dark card grid
+      --------------------------------------------------- */}
+      <section className="py-20 px-4 sm:px-6 max-w-6xl mx-auto">
+        <div className="flex items-end justify-between mb-10">
+          <div>
+            <h2 className="text-xs font-semibold uppercase tracking-[0.15em] text-primary-400 mb-2">
+              Explore Topics
             </h2>
-            <p className="text-sm sm:text-base md:text-lg text-foreground-muted max-w-2xl mx-auto">
-              Saddex tallaabo oo fudud oo ku gaadsiinaya jawaabaha aad u baahan
-              tahay
+            <p className="text-2xl sm:text-3xl font-bold text-foreground font-heading">
+              Every field of knowledge
             </p>
           </div>
+          <Link href="/topics">
+            <span className="text-sm text-primary-400 hover:text-primary transition-colors font-medium hidden sm:inline">
+              All topics ?
+            </span>
+          </Link>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                icon: "🔍",
-                title: "Weydii Su'aalahaaga",
-                description:
-                  "Qor su'aashaada si cad oo faahfaahsan. Xulo qaybta ku habboon si dadka saxda ah u arkaan.",
-              },
-              {
-                icon: "💬",
-                title: "Hel Jawaabaha",
-                description:
-                  "Xubnaha khibradda leh ayaa ka jawaabi doona. Eeg jawaabaha kala duwan oo dooro tan ugu wanaagsan.",
-              },
-              {
-                icon: "⭐",
-                title: "Ku Codeey Jawaabaha",
-                description:
-                  "Door jawaabaha wanaagsan oo u codeey dadka ka caawiya. Dhis sumcad wanaagsan bulshada dhexdeeda.",
-              },
-            ].map((feature, index) => (
-              <motion.div
-                key={index}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+          {(Array.isArray(categories) ? categories : []).slice(0, 8).map((cat, i) => {
+            const name = typeof cat === "string" ? cat : (cat as { name: string }).name;
+            return (
+              <motion.div key={name}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Card hover className="p-5 sm:p-6 h-full">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-100 dark:bg-primary-900/20 rounded-lg text-2xl mb-4">
-                    {feature.icon}
+                transition={{ duration: 0.4, delay: i * 0.05 }}>
+                <Link href={`/topics?category=${encodeURIComponent(name)}`}>
+                  <div className="group glass-card rounded-2xl p-4 hover:border-primary/30 hover:-translate-y-1
+                    transition-all duration-200 cursor-pointer text-center">
+                    <span className="text-2xl mb-2 block">
+                      {CATEGORY_ICONS[name] || "??"}
+                    </span>
+                    <p className="text-sm font-semibold text-foreground group-hover:text-primary-400 transition-colors">
+                      {name}
+                    </p>
                   </div>
-                  <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-foreground">
-                    {feature.title}
-                  </h3>
-                  <p className="text-foreground-muted leading-relaxed">
-                    {feature.description}
-                  </p>
-                </Card>
+                </Link>
               </motion.div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </section>
 
-      {/* ================================================ */}
-      {/* TRENDING QUESTIONS - COMMUNITY ENERGY */}
-      {/* ================================================ */}
-      <section className="py-12 sm:py-16 px-4 bg-surface-muted">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6 sm:mb-8">
+      {/* ---------------------------------------------------
+          FEATURED QUESTIONS � magazine layout
+      --------------------------------------------------- */}
+      {featuredPosts.length > 0 && (
+        <section className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-border/30">
+          <div className="flex items-end justify-between mb-10">
             <div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 text-foreground">
-                Su'aalaha Ugu Firfircoon
+              <h2 className="text-xs font-semibold uppercase tracking-[0.15em] text-primary-400 mb-2">
+                Trending Now
               </h2>
-              <p className="text-sm sm:text-base text-foreground-muted">
-                Waxa maanta dadka badan ka hadlayaan
+              <p className="text-2xl sm:text-3xl font-bold text-foreground font-heading">
+                Hottest questions today
               </p>
             </div>
             <Link href="/questions">
-              <Button variant="ghost">Wax Badan →</Button>
+              <span className="text-sm text-primary-400 hover:text-primary transition-colors font-medium hidden sm:inline">
+                View all ?
+              </span>
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              {
-                title: "Sidee ayaan u baran karaa Python si degdeg ah?",
-                author: "Ahmed M.",
-                answers: 12,
-                votes: 45,
-                views: 234,
-                category: "💻 Tignoolajiyada",
-                status: "active",
-              },
-              {
-                title: "Maxay yihiin fursadaha ganacsi ee Soomaaliya?",
-                author: "Fatima A.",
-                answers: 8,
-                votes: 32,
-                category: "💼 Ganacsi",
-              },
-              {
-                title: "Miyuu Python yahay JavaScript-ka ka wanaagsan?",
-                author: "Mohamed K.",
-                answers: 24,
-                votes: 78,
-                category: "💻 Tignoolajiyada",
-              },
-              {
-                title: "Sideen u aasi karaa shirkad Soomaaliya?",
-                author: "Khadija H.",
-                answers: 15,
-                votes: 54,
-                category: "💼 Ganacsi",
-              },
-            ].map((question, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {featuredPosts.map((post, i) => (
+              <motion.div key={post.id}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.05 }}
-              >
-                <Card hover className="p-4">
-                  <div className="flex items-start gap-3">
-                    {/* Vote count with tooltip */}
-                    <Tooltip content="Total votes" position="top">
-                      <div className="flex flex-col items-center gap-1 px-2">
-                        <div className="text-lg font-bold text-primary-600 dark:text-primary-400">
-                          {question.votes}
-                        </div>
-                        <div className="text-xs text-foreground-subtle">
-                          doorashooyin
-                        </div>
-                      </div>
-                    </Tooltip>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-foreground mb-2 line-clamp-2 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-                        {question.title}
-                      </h3>
-                      <div className="flex items-center flex-wrap gap-2 text-sm text-foreground-muted">
-                        <Badge variant="primary" size="sm">
-                          {question.category}
-                        </Badge>
-                        <Tooltip content={`${question.answers} total answers`}>
-                          <span className="flex items-center gap-1">
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-                              />
-                            </svg>
-                            {question.answers}
-                          </span>
-                        </Tooltip>
-                        <span>•</span>
-                        <span className="flex items-center gap-1.5">
-                          <Avatar
-                            fallback={question.author.charAt(0)}
-                            size="xs"
-                          />
-                          {question.author}
+                transition={{ duration: 0.4, delay: i * 0.07 }}>
+                <Link href={`/questions/${post.id}`}>
+                  <div className="group glass-card rounded-2xl p-5 hover:border-primary/25 hover:-translate-y-1
+                    transition-all duration-200 cursor-pointer h-full flex flex-col">
+                    <span className="inline-flex px-2.5 py-0.5 rounded-md bg-primary/10 text-primary-400
+                      text-[10px] font-bold uppercase tracking-wide mb-3 w-fit">
+                      {post.category}
+                    </span>
+                    <h3 className="text-base font-bold text-foreground group-hover:text-primary-400
+                      transition-colors line-clamp-2 leading-snug mb-3 flex-1">
+                      {post.title}
+                    </h3>
+                    {post.content && (
+                      <p className="text-sm text-foreground-muted line-clamp-2 mb-4 leading-relaxed">
+                        {post.content}
+                      </p>
+                    )}
+                    <div className="flex items-center gap-2 mt-auto pt-3 border-t border-border/40">
+                      <Avatar
+                        src={post.author?.avatar_url || undefined}
+                        alt={post.author?.full_name || "User"}
+                        size="xs"
+                        className="w-6 h-6"
+                      />
+                      <span className="text-xs text-foreground-subtle flex-1 truncate">
+                        {post.author?.full_name || "User"}
+                      </span>
+                      <div className="flex items-center gap-2.5 text-xs text-foreground-subtle">
+                        <span className="flex items-center gap-1">
+                          <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+                          </svg>
+                          {post.vote_count ?? 0}
                         </span>
+                        <span>{formatDate(post.created_at)}</span>
                       </div>
                     </div>
                   </div>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ================================================ */}
-      {/* LIVE COMMUNITY ACTIVITY FEED */}
-      {/* ================================================ */}
-      <section className="py-12 sm:py-16 px-4 bg-surface">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-            {/* Left side - Live Activity */}
-            <div>
-              <div className="mb-8">
-                <h2 className="text-2xl sm:text-3xl font-bold mb-2 text-foreground">
-                  Firfircoonida Bulshada
-                </h2>
-                <p className="text-foreground-muted">
-                  Dadka ayaa had iyo jeer wax cusub wadaaga
-                </p>
-              </div>
-              <LiveActivityFeed />
-            </div>
-
-            {/* Right side - Active Users Preview */}
-            <div>
-              <div className="mb-8">
-                <h3 className="text-xl sm:text-2xl font-bold mb-2 text-foreground">
-                  Xubnaha Firfircoon Maanta
-                </h3>
-                <p className="text-foreground-muted text-sm">
-                  Dadka ka caawiya MIDEEYEta bulshada
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                {[
-                  {
-                    name: "Ahmed M.",
-                    reputation: 1250,
-                    initials: "AM",
-                    status: "online",
-                    contribution: "234 jawaabood",
-                  },
-                  {
-                    name: "Fatima A.",
-                    reputation: 980,
-                    initials: "FA",
-                    status: "online",
-                    contribution: "189 jawaabood",
-                  },
-                  {
-                    name: "Mohamed K.",
-                    reputation: 756,
-                    initials: "MK",
-                    status: "active",
-                    contribution: "142 jawaabood",
-                  },
-                ].map((user, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, x: 20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.1 }}
-                    className="flex items-center gap-4 p-4 bg-surface-muted rounded-lg border border-border hover:border-primary-400 transition-all cursor-pointer group"
-                  >
-                    <div className="relative">
-                      <Avatar fallback={user.initials} size="md" />
-                      {user.status === "online" && (
-                        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-surface rounded-full" />
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-foreground group-hover:text-primary-600 transition-colors">
-                        {user.name}
-                      </h4>
-                      <p className="text-xs text-foreground-muted">
-                        {user.contribution}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm font-semibold text-primary-600 dark:text-primary-400">
-                        {user.reputation}
-                      </div>
-                      <div className="text-xs text-foreground-subtle">
-                        sumcad
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  className="text-center pt-4"
-                >
-                  <Link href="/community">
-                    <Button variant="outline" size="sm">
-                      Arki Dhammaan Xubnaha →
-                    </Button>
-                  </Link>
-                </motion.div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ================================================ */}
-      {/* KNOWLEDGE AREAS - CATEGORIES GRID */}
-      {/* ================================================ */}
-      <section className="py-12 sm:py-16 px-4 bg-surface-muted">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-8 sm:mb-10">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 text-foreground">
-              Qaybaha Aqoon
-            </h2>
-            <p className="text-sm sm:text-base md:text-lg text-foreground-muted">
-              Dooro qaybta ku habboon oo hel dadka khibradda leh
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-            {categories.map((category, index) => (
-              <motion.div
-                key={category.id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.03 }}
-              >
-                <Link href={`/topics/${category.id}`}>
-                  <Card
-                    hover
-                    className={`p-4 sm:p-5 bg-gradient-to-br ${category.gradient} text-primary-fg cursor-pointer group`}
-                  >
-                    <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">
-                      {category.icon}
-                    </div>
-                    <h3 className="font-bold text-base mb-1 group-hover:scale-105 transition-transform">
-                      {category.name}
-                    </h3>
-                    <p className="text-xs opacity-90">{category.nameEn}</p>
-                  </Card>
                 </Link>
               </motion.div>
             ))}
           </div>
+        </section>
+      )}
+
+      {/* ---------------------------------------------------
+          JOIN CTA � dramatic dark section
+      --------------------------------------------------- */}
+      <section className="relative py-24 px-4 sm:px-6 overflow-hidden border-t border-border/30">
+        {/* Glow */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute left-1/2 top-0 -translate-x-1/2 w-[600px] h-[300px]
+            rounded-full bg-primary/8 blur-[100px]" />
         </div>
-      </section>
 
-      {/* ================================================ */}
-      {/* ACTIVE COMMUNITY MEMBERS */}
-      {/* ================================================ */}
-      <section className="py-12 sm:py-16 px-4 bg-surface">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-8 sm:mb-10">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 text-foreground">
-              Xubnaha Firfircoon
-            </h2>
-            <p className="text-sm sm:text-base md:text-lg text-foreground-muted">
-              Dadka ka caawiya MIDEEYEta bulshada
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-            {[
-              {
-                name: "Ahmed M.",
-                answers: 234,
-                reputation: 1250,
-                avatar: "🧑‍💻",
-              },
-              {
-                name: "Fatima A.",
-                answers: 189,
-                reputation: 980,
-                avatar: "👩‍🏫",
-              },
-              {
-                name: "Mohamed K.",
-                answers: 167,
-                reputation: 875,
-                avatar: "👨‍💼",
-              },
-              {
-                name: "Khadija H.",
-                answers: 145,
-                reputation: 720,
-                avatar: "👩‍🔬",
-              },
-            ].map((member, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.08 }}
-              >
-                <Card hover className="p-5 text-center">
-                  <div className="text-5xl mb-3">{member.avatar}</div>
-                  <h3 className="font-semibold text-foreground mb-2">
-                    {member.name}
-                  </h3>
-                  <div className="flex items-center justify-center gap-2 text-xs text-foreground-muted mb-3">
-                    <span className="flex items-center gap-1">
-                      <span className="text-accent-600">⭐</span>
-                      {member.reputation}
-                    </span>
-                    <span>•</span>
-                    <span>{member.answers} jawaab</span>
-                  </div>
-                  <Link href="/profile">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full text-xs"
-                    >
-                      Eeg Profile
-                    </Button>
-                  </Link>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ================================================ */}
-      {/* EMAIL NEWSLETTER - GRADIENT BANNER */}
-      {/* ================================================ */}
-      <section className="py-12 sm:py-20 px-4">
-        <div className="max-w-4xl mx-auto">
+        <div className="relative max-w-3xl mx-auto text-center">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="relative overflow-hidden rounded-2xl bg-gradient-hero p-6 sm:p-10 md:p-12 text-primary-foreground shadow-elevated"
+            transition={{ duration: 0.6 }}
           >
-            {/* Decorative orb */}
-            <div className="absolute -right-20 -top-20 w-64 h-64 bg-surface/10 rounded-full blur-3xl" />
+            <LogoIcon size={48} className="mx-auto mb-6" />
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-heading text-foreground mb-4 leading-tight">
+              Join the Somali<br />
+              <span className="text-gradient">Knowledge Movement</span>
+            </h2>
+            <p className="text-foreground-muted text-lg mb-10 max-w-xl mx-auto leading-relaxed">
+              Be part of a growing community of thinkers, learners, and creators
+              building the digital knowledge hub of the Somali world.
+            </p>
 
-            <div className="relative z-10 text-center">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
-                Hel Ogeysiisyada Cusub
-              </h2>
-              <p className="text-sm sm:text-base md:text-lg mb-6 sm:mb-8 opacity-95 max-w-2xl mx-auto">
-                Su'aalaha cusub, jawaabaha muhiimka ah, iyo wararka bulshada.
-                Wixii cusub oo dhan emailkaaga ayey ku imaadaan.
-              </p>
-
-              {subscribed ? (
-                <motion.div
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-surface/20 backdrop-blur rounded-lg"
-                >
-                  <span className="text-2xl">✅</span>
-                  <span className="text-lg font-medium">
-                    Mahadsanid! Waad iska qortay.
-                  </span>
-                </motion.div>
-              ) : (
-                <form
-                  onSubmit={handleSubscribe}
-                  className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
-                >
-                  <Input
+            {subscribed ? (
+              <div className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-primary/15 border border-primary/30 text-primary-400 font-semibold">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                You're on the list � welcome!
+              </div>
+            ) : (
+              <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
+                <Link href="/auth/signup">
+                  <Button variant="primary" size="lg">
+                    Create Free Account
+                  </Button>
+                </Link>
+                <form onSubmit={handleSubscribe} className="flex gap-2">
+                  <input
                     type="email"
-                    placeholder="emailkaaga@example.com"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={e => setEmail(e.target.value)}
+                    placeholder="or enter your email..."
                     required
-                    className="flex-1 bg-surface-elevated/90"
+                    className="px-4 py-2.5 text-sm rounded-xl bg-surface-elevated border border-border
+                      focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50
+                      placeholder-foreground-subtle w-56"
                   />
-                  <Button
-                    type="submit"
-                    variant="secondary"
-                    size="lg"
-                    isLoading={loading}
-                    className="whitespace-nowrap shadow-button w-full sm:w-auto"
-                  >
-                    Ku Biir Hadda
+                  <Button type="submit" variant="secondary" size="md" isLoading={subLoading}>
+                    Notify me
                   </Button>
                 </form>
-              )}
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ================================================ */}
-      {/* FINAL CTA - STRONG CLOSE */}
-      {/* ================================================ */}
-      <section className="py-12 sm:py-20 px-4 bg-surface">
-        <div className="max-w-3xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-5">
-              Diyaar Ma U Tahay Inaad{" "}
-              <span className="bg-gradient-hero bg-clip-text text-transparent">
-                Bilaabto?
-              </span>
-            </h2>
-            <p className="text-base sm:text-xl text-foreground-muted mb-6 sm:mb-8 leading-relaxed">
-              Ku biir kumanaanka xubnood ee MIDEEYEaya aqoonta bulshada
-              Soomaaliyeed. Bilow maanta - waa bilaash!
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center max-w-md sm:max-w-none mx-auto">
-              <Link href="/auth/signup" className="w-full sm:w-auto">
-                <Button
-                  size="lg"
-                  className="w-full sm:min-w-[200px] shadow-button"
-                >
-                  Samee Akoon Bilaash
-                </Button>
-              </Link>
-              <Link href="/questions" className="w-full sm:w-auto">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="w-full sm:min-w-[200px]"
-                >
-                  Daawasho Kaliya
-                </Button>
-              </Link>
-            </div>
-
-            {/* Trust indicators */}
-            <div className="mt-10 sm:mt-12 pt-6 sm:pt-8 border-t border-border">
-              <p className="text-sm text-foreground-muted mb-4">
-                La kalsoonaan tahay kumanaanka xubnood
-              </p>
-              <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 opacity-50">
-                <div className="flex -space-x-2">
-                  {["🧑‍💻", "👩‍🏫", "👨‍💼", "👩‍🔬", "🧑‍🎓"].map((avatar, i) => (
-                    <div
-                      key={i}
-                      className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-surface-elevated border-2 border-border flex items-center justify-center text-lg sm:text-xl"
-                    >
-                      {avatar}
-                    </div>
-                  ))}
-                </div>
-                <div className="text-2xl">⭐⭐⭐⭐⭐</div>
               </div>
-            </div>
+            )}
           </motion.div>
         </div>
       </section>

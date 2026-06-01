@@ -221,75 +221,82 @@ export default function BottomNav() {
   return (
     <>
       <nav
-        className={`md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface/80 backdrop-blur-xl border-t border-border/50 shadow-2xl safe-area-inset-bottom ${pathname === "/chat" ? "hidden" : ""}`}
+        className={`md:hidden fixed bottom-0 left-0 right-0 z-40 safe-area-inset-bottom ${pathname === "/chat" ? "hidden" : ""}`}
       >
-        <div className="flex items-center justify-around px-2 h-16">
-          {navItems.map((item) => {
-            const active = isActive(item.href);
+        {/* Floating pill container */}
+        <div className="mx-3 mb-3 rounded-2xl bg-surface/85 backdrop-blur-xl border border-border/50 shadow-float">
+          <div className="flex items-center justify-around px-2 h-16">
+            {navItems.map((item) => {
+              const active = isActive(item.href);
 
-            const content = (
-              <>
-                {item.isCreate ? (
-                  <div className="flex flex-col items-center justify-center gap-1">
-                    <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-primary via-primary to-accent shadow-lg shadow-primary/50 -mt-6 transition-all duration-300 active:scale-95">
-                      {item.icon}
+              const content = (
+                <>
+                  {item.isCreate ? (
+                    <div className="flex flex-col items-center justify-center gap-1">
+                      <div
+                        className="flex items-center justify-center w-12 h-12 rounded-2xl
+                        bg-primary shadow-glow-teal -mt-8 transition-all duration-200 active:scale-95"
+                      >
+                        {item.icon}
+                      </div>
+                      <span className="text-[10px] font-semibold text-primary-400">
+                        {item.label}
+                      </span>
                     </div>
-                    <span className="text-[10px] font-semibold text-primary">
-                      {item.label}
-                    </span>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center gap-1 relative px-4 py-2 rounded-xl transition-all duration-200 active:scale-95">
-                    {/* Icon container with background */}
-                    <div
-                      className={`relative transition-all duration-300 ${
-                        active
-                          ? "text-primary scale-110"
-                          : "text-foreground-muted"
-                      }`}
-                    >
-                      {item.icon}
+                  ) : (
+                    <div className="flex flex-col items-center gap-1 relative px-3 py-2 rounded-xl transition-all duration-200 active:scale-95">
+                      <div
+                        className={`relative transition-all duration-200 ${
+                          active
+                            ? "text-primary-400 scale-110"
+                            : "text-foreground-muted"
+                        }`}
+                      >
+                        {item.icon}
 
-                      {/* Notification Badge */}
-                      {item.label === "Inbox" && notificationCount > 0 && (
-                        <div className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-danger rounded-full flex items-center justify-center shadow-lg shadow-danger/50 animate-pulse">
-                          <span className="text-[10px] font-bold text-white leading-none">
-                            {notificationCount > 9 ? "9+" : notificationCount}
-                          </span>
-                        </div>
+                        {/* Notification Badge */}
+                        {item.label === "Inbox" && notificationCount > 0 && (
+                          <div
+                            className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1
+                            bg-danger rounded-full flex items-center justify-center shadow-sm"
+                          >
+                            <span className="text-[9px] font-bold text-white leading-none">
+                              {notificationCount > 9 ? "9+" : notificationCount}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      <span
+                        className={`text-[10px] font-medium transition-all duration-200 ${
+                          active
+                            ? "text-primary-400 font-semibold"
+                            : "text-foreground-subtle"
+                        }`}
+                      >
+                        {item.label}
+                      </span>
+
+                      {/* Active indicator */}
+                      {active && (
+                        <div className="absolute bottom-1 w-1 h-1 bg-primary-400 rounded-full" />
                       )}
                     </div>
+                  )}
+                </>
+              );
 
-                    {/* Label */}
-                    <span
-                      className={`text-[10px] font-medium transition-all duration-200 ${
-                        active
-                          ? "text-primary font-semibold"
-                          : "text-foreground-muted"
-                      }`}
-                    >
-                      {item.label}
-                    </span>
-
-                    {/* Active indicator dot */}
-                    {active && (
-                      <div className="absolute -bottom-1 w-1 h-1 bg-primary rounded-full" />
-                    )}
-                  </div>
-                )}
-              </>
-            );
-
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="flex items-center justify-center"
-              >
-                {content}
-              </Link>
-            );
-          })}
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="flex items-center justify-center"
+                >
+                  {content}
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </nav>
     </>

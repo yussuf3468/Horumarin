@@ -9,7 +9,12 @@ import Card from "@/components/ui/Card";
 import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
 import LightboxImage from "@/components/ui/LightboxImage";
 import { categories } from "@/utils/constants";
-import { formatDate, getHotScore, isVideoUrl, truncateText } from "@/utils/helpers";
+import {
+  formatDate,
+  getHotScore,
+  isVideoUrl,
+  truncateText,
+} from "@/utils/helpers";
 import {
   castVote,
   getUserVotesForItems,

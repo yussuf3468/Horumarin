@@ -189,109 +189,99 @@ export default function QuestionsPage() {
   };
 
   return (
-    <div className="min-h-screen py-4 sm:py-8 px-3 sm:px-6 lg:px-8 bg-background">
+    <div className="min-h-screen py-6 sm:py-10 px-3 sm:px-6 lg:px-8 bg-background">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-4 sm:mb-8"
+          className="mb-6 sm:mb-8"
         >
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-5">
             <div>
-              <h1 className="text-2xl sm:text-4xl font-bold mb-1 sm:mb-2">
-                Su'aalaha
-              </h1>
-              <p className="text-sm sm:text-base text-foreground-muted">
-                Helka jawaabo su'aalahaada
+              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-primary-400 mb-1.5">
+                Knowledge Feed
               </p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground font-heading leading-tight">
+                Questions
+              </h1>
             </div>
             {user && (
               <Link href="/ask" className="hidden sm:block">
-                <Button size="lg">Weydii Su'aal</Button>
+                <Button size="md" variant="primary">
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2.5}
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                  Ask a Question
+                </Button>
               </Link>
             )}
           </div>
 
-          <div className="sticky top-14 z-30 -mx-3 px-3 sm:mx-0 sm:px-0 py-2 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-y border-border/60 sm:border-y-0">
+          <div className="sticky top-14 z-30 -mx-3 px-3 sm:mx-0 sm:px-0 py-2.5 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-y border-border/40 sm:border-y-0">
             {/* Category Filter */}
-            <div className="flex gap-2 overflow-x-auto pb-1 snap-x snap-mandatory no-scrollbar">
-              <Button
-                variant={selectedCategory === "all" ? "primary" : "outline"}
-                size="sm"
-                onClick={() => setSelectedCategory("all")}
-                className="whitespace-nowrap rounded-full snap-start"
-              >
-                Dhammaan
-              </Button>
-              {categories.map((category) => (
-                <Button
-                  key={category.id}
-                  variant={
-                    selectedCategory === category.id ? "primary" : "outline"
-                  }
-                  size="sm"
-                  onClick={() => setSelectedCategory(category.id)}
-                  className="whitespace-nowrap rounded-full snap-start"
-                >
-                  {category.icon} {category.name}
-                </Button>
-              ))}
+            <div className="flex gap-1.5 overflow-x-auto pb-1 snap-x snap-mandatory no-scrollbar">
+              {[{ id: "all", name: "All", icon: "" }, ...categories].map(
+                (cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setSelectedCategory(cat.id)}
+                    className={`shrink-0 snap-start inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+                      selectedCategory === cat.id
+                        ? "bg-primary/15 text-primary-400 border border-primary/30"
+                        : "text-foreground-muted hover:text-foreground hover:bg-surface-muted border border-transparent"
+                    }`}
+                  >
+                    {cat.icon && <span>{cat.icon}</span>}
+                    {cat.name}
+                  </button>
+                ),
+              )}
             </div>
 
             {/* Sorting */}
-            <div className="flex flex-wrap items-center gap-2 mt-3">
-              <Button
-                size="sm"
-                variant={sortBy === "hot" ? "primary" : "outline"}
-                onClick={() => setSortBy("hot")}
-                className="rounded-full"
-              >
-                Hot
-              </Button>
-              <Button
-                size="sm"
-                variant={sortBy === "new" ? "primary" : "outline"}
-                onClick={() => setSortBy("new")}
-                className="rounded-full"
-              >
-                New
-              </Button>
-              <Button
-                size="sm"
-                variant={sortBy === "top" ? "primary" : "outline"}
-                onClick={() => setSortBy("top")}
-                className="rounded-full"
-              >
-                Top
-              </Button>
+            <div className="flex items-center gap-1 mt-3">
+              <div className="flex items-center gap-1 p-1 bg-surface-elevated rounded-xl border border-border/60">
+                {(["hot", "new", "top"] as const).map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => setSortBy(s)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all capitalize ${
+                      sortBy === s
+                        ? "bg-primary/15 text-primary-400"
+                        : "text-foreground-subtle hover:text-foreground"
+                    }`}
+                  >
+                    {s === "hot" ? "🔥 Hot" : s === "new" ? "✨ New" : "🏆 Top"}
+                  </button>
+                ))}
+              </div>
 
               {sortBy === "top" && (
-                <div className="flex items-center gap-2">
-                  <Button
-                    size="sm"
-                    variant={topRange === "24h" ? "primary" : "outline"}
-                    onClick={() => setTopRange("24h")}
-                    className="rounded-full"
-                  >
-                    24h
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={topRange === "7d" ? "primary" : "outline"}
-                    onClick={() => setTopRange("7d")}
-                    className="rounded-full"
-                  >
-                    7d
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={topRange === "all" ? "primary" : "outline"}
-                    onClick={() => setTopRange("all")}
-                    className="rounded-full"
-                  >
-                    All
-                  </Button>
+                <div className="flex items-center gap-1 p-1 bg-surface-elevated rounded-xl border border-border/60 ml-2">
+                  {(["24h", "7d", "all"] as const).map((r) => (
+                    <button
+                      key={r}
+                      onClick={() => setTopRange(r)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                        topRange === r
+                          ? "bg-primary/15 text-primary-400"
+                          : "text-foreground-subtle hover:text-foreground"
+                      }`}
+                    >
+                      {r}
+                    </button>
+                  ))}
                 </div>
               )}
             </div>
@@ -389,22 +379,24 @@ export default function QuestionsPage() {
                       </motion.div>
                     ))
                   ) : (
-                    <Card className="p-8 sm:p-12 text-center">
-                      <div className="text-6xl mb-4">🤔</div>
-                      <h3 className="text-xl font-bold mb-2">
-                        Suaalo lama helin
+                    <div className="glass-card rounded-2xl p-10 text-center">
+                      <div className="text-5xl mb-4">🤔</div>
+                      <h3 className="text-lg font-bold text-foreground mb-2">
+                        No questions found
                       </h3>
-                      <p className="text-foreground-muted mb-6">
+                      <p className="text-sm text-foreground-muted mb-6">
                         {selectedCategory === "all"
-                          ? "Suaalo cusub ma jiraan hadda."
-                          : "Suaalo qaybtan kuma jiraan hadda."}
+                          ? "Be the first to ask a question."
+                          : "No questions in this category yet."}
                       </p>
                       {user && (
                         <Link href="/ask">
-                          <Button>Noqo kii ugu horreya ee suaal weydiya</Button>
+                          <Button variant="primary">
+                            Ask the first question
+                          </Button>
                         </Link>
                       )}
-                    </Card>
+                    </div>
                   )}
                 </div>
               </AnimatePresence>
@@ -412,81 +404,95 @@ export default function QuestionsPage() {
           </div>
 
           {/* Sidebar */}
-          <div className="hidden lg:block space-y-6">
-            <Card className="p-5">
-              <h3 className="text-sm font-semibold uppercase tracking-widest text-foreground-muted mb-4">
-                Mawduucyada Kulul
+          <div className="hidden lg:block space-y-5">
+            <div className="glass-card rounded-2xl p-5">
+              <h3 className="text-[11px] font-bold uppercase tracking-[0.15em] text-foreground-subtle mb-4">
+                Trending Topics
               </h3>
-              <div className="space-y-3">
-                {trendingTopics.map((topic) => (
+              <div className="space-y-2.5">
+                {trendingTopics.map((topic, i) => (
                   <Link
                     key={topic.id}
                     href={`/topics/${topic.id}`}
-                    className="flex items-center justify-between text-sm hover:text-foreground transition-colors"
+                    className="flex items-center justify-between text-sm hover:text-foreground transition-colors group"
                   >
-                    <div className="flex items-center gap-2">
-                      <span>{topic.icon}</span>
-                      <span className="text-foreground">{topic.name}</span>
+                    <div className="flex items-center gap-2.5">
+                      <span className="text-base">{topic.icon}</span>
+                      <span className="text-foreground-muted group-hover:text-foreground transition-colors">
+                        {topic.name}
+                      </span>
                     </div>
-                    <span className="text-foreground-subtle">
+                    <span className="text-xs px-2 py-0.5 rounded-md bg-surface-muted text-foreground-subtle">
                       {topic.count ?? 0}
                     </span>
                   </Link>
                 ))}
               </div>
-            </Card>
+            </div>
 
-            <Card className="p-5">
-              <h3 className="text-sm font-semibold uppercase tracking-widest text-foreground-muted mb-4">
-                Xubno Firfircoon
+            <div className="glass-card rounded-2xl p-5">
+              <h3 className="text-[11px] font-bold uppercase tracking-[0.15em] text-foreground-subtle mb-4">
+                Active Members
               </h3>
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {activeUsers.length > 0 ? (
                   activeUsers.map((member) => (
                     <div
                       key={member.id}
                       className="flex items-center justify-between text-sm"
                     >
-                      <span className="text-foreground">{member.name}</span>
-                      <span className="text-foreground-subtle">Online</span>
+                      <span className="text-foreground-muted">
+                        {member.name}
+                      </span>
+                      <span className="flex items-center gap-1 text-xs text-primary-400">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary-400 animate-pulse" />
+                        Online
+                      </span>
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-foreground-subtle">
-                    Xogta firfircoonida ayaa soo muuqan doonta.
+                  <p className="text-xs text-foreground-subtle">
+                    Activity will appear here.
                   </p>
                 )}
               </div>
-            </Card>
+            </div>
 
-            <Card className="p-5">
-              <h3 className="text-sm font-semibold uppercase tracking-widest text-foreground-muted mb-4">
-                Xeerarka Bulshada
+            <div className="glass-card rounded-2xl p-5">
+              <h3 className="text-[11px] font-bold uppercase tracking-[0.15em] text-foreground-subtle mb-4">
+                Community Rules
               </h3>
-              <ul className="space-y-2 text-sm text-foreground-subtle">
-                <li>• Ixtiraam dadka kale</li>
-                <li>• Ka fogow faafin aan xaqiiqo ahayn</li>
-                <li>• La wadaag xog wax tar leh</li>
-                <li>• Ha ku xadgudbin xeerarka</li>
-              </ul>
-            </Card>
-
-            <Card className="p-5">
-              <h3 className="text-sm font-semibold uppercase tracking-widest text-foreground-muted mb-4">
-                Qaybaha La Taliyay
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {categories.slice(0, 6).map((category) => (
-                  <Link
-                    key={category.id}
-                    href={`/topics/${category.id}`}
-                    className="px-3 py-1 rounded-full text-xs border border-border bg-surface-muted text-foreground-muted hover:text-foreground hover:border-border-strong transition-colors"
-                  >
-                    {category.name}
-                  </Link>
+              <ul className="space-y-2 text-sm text-foreground-muted">
+                {[
+                  "Respect all members",
+                  "Share accurate information",
+                  "Contribute constructively",
+                  "Follow community guidelines",
+                ].map((rule) => (
+                  <li key={rule} className="flex items-start gap-2">
+                    <span className="text-primary-400 mt-0.5 text-xs">✦</span>
+                    {rule}
+                  </li>
                 ))}
+              </ul>
+            </div>
+
+            {!user && (
+              <div className="glass-card rounded-2xl p-5 border-primary/20">
+                <h3 className="text-sm font-bold text-foreground mb-2">
+                  Join MIDEEYE
+                </h3>
+                <p className="text-xs text-foreground-muted mb-4 leading-relaxed">
+                  Ask questions, share knowledge, and connect with the Somali
+                  community.
+                </p>
+                <Link href="/auth/signup" className="block">
+                  <Button variant="primary" size="sm" className="w-full">
+                    Create free account
+                  </Button>
+                </Link>
               </div>
-            </Card>
+            )}
           </div>
         </div>
 
