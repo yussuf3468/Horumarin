@@ -100,27 +100,77 @@ export default function HomePage() {
       <section
         ref={heroRef}
         className="relative overflow-hidden"
-        style={{ background: "linear-gradient(155deg, #060A14 0%, #09101E 50%, #0C1528 100%)" }}
+        style={{
+          background:
+            "linear-gradient(155deg, #060A14 0%, #09101E 50%, #0C1528 100%)",
+        }}
       >
         {/* Ambient glows */}
-        <div className="absolute pointer-events-none" style={{ top: "20%", left: "35%", width: 700, height: 600, background: "radial-gradient(ellipse, rgba(0,212,163,0.13) 0%, transparent 65%)", filter: "blur(2px)" }} />
-        <div className="absolute pointer-events-none" style={{ top: -80, right: -60, width: 520, height: 520, background: "radial-gradient(circle, rgba(251,182,46,0.09) 0%, transparent 65%)" }} />
-        <div className="absolute pointer-events-none" style={{ bottom: 0, left: 0, width: 400, height: 400, background: "radial-gradient(circle, rgba(26,76,224,0.07) 0%, transparent 65%)" }} />
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            top: "20%",
+            left: "35%",
+            width: 700,
+            height: 600,
+            background:
+              "radial-gradient(ellipse, rgba(0,212,163,0.13) 0%, transparent 65%)",
+            filter: "blur(2px)",
+          }}
+        />
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            top: -80,
+            right: -60,
+            width: 520,
+            height: 520,
+            background:
+              "radial-gradient(circle, rgba(251,182,46,0.09) 0%, transparent 65%)",
+          }}
+        />
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            bottom: 0,
+            left: 0,
+            width: 400,
+            height: 400,
+            background:
+              "radial-gradient(circle, rgba(26,76,224,0.07) 0%, transparent 65%)",
+          }}
+        />
 
         {/* Dot grid */}
-        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle, rgba(0,212,163,0.10) 1px, transparent 1px)", backgroundSize: "44px 44px", opacity: 0.4 }} />
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, rgba(0,212,163,0.10) 1px, transparent 1px)",
+            backgroundSize: "44px 44px",
+            opacity: 0.4,
+          }}
+        />
 
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-20 pb-16 lg:pt-28 lg:pb-24">
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-14 lg:pt-12 lg:pb-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-
             {/* ── LEFT: Copy ── */}
             <div className="text-center lg:text-left">
-
               {/* Badge */}
-              <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }} className="mb-7">
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45 }}
+                className="mb-7"
+              >
                 <span
                   className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold"
-                  style={{ background: "rgba(0,212,163,0.08)", border: "1px solid rgba(0,212,163,0.20)", color: "#00D4A3", letterSpacing: "0.03em" }}
+                  style={{
+                    background: "rgba(0,212,163,0.08)",
+                    border: "1px solid rgba(0,212,163,0.20)",
+                    color: "#00D4A3",
+                    letterSpacing: "0.03em",
+                  }}
                 >
                   <LogoIcon size={16} />
                   The Somali Knowledge Network
@@ -137,7 +187,15 @@ export default function HomePage() {
               >
                 <span style={{ color: "#EEF2FF" }}>Where Somalis</span>
                 <br />
-                <span style={{ background: "linear-gradient(120deg, #00D4A3 0%, #00BA8D 45%, #FBB62E 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+                <span
+                  style={{
+                    background:
+                      "linear-gradient(120deg, #00D4A3 0%, #00BA8D 45%, #FBB62E 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                  }}
+                >
                   Share Knowledge
                 </span>
               </motion.h1>
@@ -150,7 +208,8 @@ export default function HomePage() {
                 className="text-base sm:text-lg leading-relaxed mb-8 max-w-md mx-auto lg:mx-0"
                 style={{ color: "rgba(155,175,215,0.88)" }}
               >
-                Ask questions, share expertise, and discover answers from experts across the global Somali community.
+                Ask questions, share expertise, and discover answers from
+                experts across the global Somali community.
               </motion.p>
 
               {/* CTAs */}
@@ -163,16 +222,39 @@ export default function HomePage() {
                 <Link href="/auth/signup">
                   <button
                     className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-[15px] transition-all duration-200 hover:scale-105 active:scale-100"
-                    style={{ background: "linear-gradient(135deg, #00D4A3 0%, #00BA8D 100%)", color: "#040C18", boxShadow: "0 0 32px rgba(0,212,163,0.35), 0 4px 16px rgba(0,0,0,0.4)" }}
+                    style={{
+                      background:
+                        "linear-gradient(135deg, #00D4A3 0%, #00BA8D 100%)",
+                      color: "#040C18",
+                      boxShadow:
+                        "0 0 32px rgba(0,212,163,0.35), 0 4px 16px rgba(0,0,0,0.4)",
+                    }}
                   >
                     Get Started — It&apos;s Free
-                    <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+                    <svg
+                      width="15"
+                      height="15"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                      />
+                    </svg>
                   </button>
                 </Link>
                 <Link href="/questions">
                   <button
                     className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-[15px] transition-all duration-200 hover:bg-white/10"
-                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.13)", color: "rgba(210,225,255,0.88)" }}
+                    style={{
+                      background: "rgba(255,255,255,0.05)",
+                      border: "1px solid rgba(255,255,255,0.13)",
+                      color: "rgba(210,225,255,0.88)",
+                    }}
                   >
                     Browse Questions
                   </button>
@@ -188,21 +270,37 @@ export default function HomePage() {
               >
                 {[
                   { value: 12400, suffix: "+", label: "Questions" },
-                  { value: 8200,  suffix: "+", label: "Members"   },
-                  { value: 31,    suffix: "",  label: "Countries"  },
-                  { value: 24,    suffix: "",  label: "Topics"     },
+                  { value: 8200, suffix: "+", label: "Members" },
+                  { value: 31, suffix: "", label: "Countries" },
+                  { value: 24, suffix: "", label: "Topics" },
                 ].map(({ value, suffix, label }, i) => (
                   <div key={label} className="flex items-center">
                     <div className="px-4 py-1 text-center">
                       <div
                         className="text-xl sm:text-2xl font-extrabold font-heading tabular-nums"
-                        style={{ background: "linear-gradient(120deg, #00D4A3 0%, #FBB62E 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}
+                        style={{
+                          background:
+                            "linear-gradient(120deg, #00D4A3 0%, #FBB62E 100%)",
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
+                          backgroundClip: "text",
+                        }}
                       >
                         <Counter to={value} suffix={suffix} />
                       </div>
-                      <div className="text-[10px] uppercase tracking-[0.12em] mt-0.5 font-medium" style={{ color: "rgba(130,155,195,0.8)" }}>{label}</div>
+                      <div
+                        className="text-[10px] uppercase tracking-[0.12em] mt-0.5 font-medium"
+                        style={{ color: "rgba(130,155,195,0.8)" }}
+                      >
+                        {label}
+                      </div>
                     </div>
-                    {i < 3 && <div className="hidden sm:block h-7 w-px mx-1" style={{ background: "rgba(255,255,255,0.10)" }} />}
+                    {i < 3 && (
+                      <div
+                        className="hidden sm:block h-7 w-px mx-1"
+                        style={{ background: "rgba(255,255,255,0.10)" }}
+                      />
+                    )}
                   </div>
                 ))}
               </motion.div>
@@ -218,15 +316,29 @@ export default function HomePage() {
                 className="flex items-center gap-2 mb-4 justify-center lg:justify-start"
               >
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: "#00D4A3" }} />
-                  <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: "#00D4A3" }} />
+                  <span
+                    className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+                    style={{ background: "#00D4A3" }}
+                  />
+                  <span
+                    className="relative inline-flex rounded-full h-2 w-2"
+                    style={{ background: "#00D4A3" }}
+                  />
                 </span>
-                <span className="text-xs font-semibold uppercase tracking-[0.12em]" style={{ color: "rgba(130,155,195,0.75)" }}>Live — trending now</span>
+                <span
+                  className="text-xs font-semibold uppercase tracking-[0.12em]"
+                  style={{ color: "rgba(130,155,195,0.75)" }}
+                >
+                  Live — trending now
+                </span>
               </motion.div>
 
               {/* Question preview cards */}
               <div className="space-y-3">
-                {(featuredPosts.length > 0 ? featuredPosts.slice(0, 4) : Array(4).fill(null)).map((post, i) => (
+                {(featuredPosts.length > 0
+                  ? featuredPosts.slice(0, 4)
+                  : Array(4).fill(null)
+                ).map((post, i) => (
                   <motion.div
                     key={post?.id ?? i}
                     initial={{ opacity: 0, x: 30 }}
@@ -237,26 +349,61 @@ export default function HomePage() {
                       <Link href={`/questions/${post.id}`}>
                         <div
                           className="group rounded-xl p-4 transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
-                          style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.09)", backdropFilter: "blur(12px)" }}
-                          onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(0,212,163,0.30)")}
-                          onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.09)")}
+                          style={{
+                            background: "rgba(255,255,255,0.04)",
+                            border: "1px solid rgba(255,255,255,0.09)",
+                            backdropFilter: "blur(12px)",
+                          }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.borderColor =
+                              "rgba(0,212,163,0.30)")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.borderColor =
+                              "rgba(255,255,255,0.09)")
+                          }
                         >
                           <div className="flex items-start gap-3">
                             <div className="flex-1 min-w-0">
                               <span
                                 className="inline-block text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded mb-2"
-                                style={{ background: "rgba(0,212,163,0.12)", color: "#00D4A3" }}
+                                style={{
+                                  background: "rgba(0,212,163,0.12)",
+                                  color: "#00D4A3",
+                                }}
                               >
                                 {post.category}
                               </span>
-                              <p className="text-sm font-semibold leading-snug line-clamp-2 group-hover:text-[#00D4A3] transition-colors" style={{ color: "#E8EEF8" }}>
+                              <p
+                                className="text-sm font-semibold leading-snug line-clamp-2 group-hover:text-[#00D4A3] transition-colors"
+                                style={{ color: "#E8EEF8" }}
+                              >
                                 {post.title}
                               </p>
                               <div className="flex items-center gap-2 mt-2.5">
-                                <Avatar src={post.author?.avatar_url || undefined} alt={post.author?.fullName || "User"} size="xs" className="w-5 h-5 flex-shrink-0" />
-                                <span className="text-xs truncate" style={{ color: "rgba(140,165,200,0.70)" }}>{post.author?.fullName || "Community member"}</span>
-                                <span className="ml-auto flex items-center gap-1 text-xs flex-shrink-0" style={{ color: "rgba(0,212,163,0.7)" }}>
-                                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" /></svg>
+                                <Avatar
+                                  src={post.author?.avatar_url || undefined}
+                                  alt={post.author?.fullName || "User"}
+                                  size="xs"
+                                  className="w-5 h-5 flex-shrink-0"
+                                />
+                                <span
+                                  className="text-xs truncate"
+                                  style={{ color: "rgba(140,165,200,0.70)" }}
+                                >
+                                  {post.author?.fullName || "Community member"}
+                                </span>
+                                <span
+                                  className="ml-auto flex items-center gap-1 text-xs flex-shrink-0"
+                                  style={{ color: "rgba(0,212,163,0.7)" }}
+                                >
+                                  <svg
+                                    className="w-3 h-3"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                  >
+                                    <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+                                  </svg>
                                   {post.vote_count ?? 0}
                                 </span>
                               </div>
@@ -266,34 +413,69 @@ export default function HomePage() {
                       </Link>
                     ) : (
                       /* Skeleton */
-                      <div className="rounded-xl p-4 animate-pulse" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                        <div className="h-2 w-14 rounded mb-3" style={{ background: "rgba(0,212,163,0.15)" }} />
-                        <div className="h-3 rounded mb-1.5" style={{ background: "rgba(255,255,255,0.07)" }} />
-                        <div className="h-3 w-3/4 rounded mb-3" style={{ background: "rgba(255,255,255,0.05)" }} />
-                        <div className="h-2 w-24 rounded" style={{ background: "rgba(255,255,255,0.04)" }} />
+                      <div
+                        className="rounded-xl p-4 animate-pulse"
+                        style={{
+                          background: "rgba(255,255,255,0.03)",
+                          border: "1px solid rgba(255,255,255,0.07)",
+                        }}
+                      >
+                        <div
+                          className="h-2 w-14 rounded mb-3"
+                          style={{ background: "rgba(0,212,163,0.15)" }}
+                        />
+                        <div
+                          className="h-3 rounded mb-1.5"
+                          style={{ background: "rgba(255,255,255,0.07)" }}
+                        />
+                        <div
+                          className="h-3 w-3/4 rounded mb-3"
+                          style={{ background: "rgba(255,255,255,0.05)" }}
+                        />
+                        <div
+                          className="h-2 w-24 rounded"
+                          style={{ background: "rgba(255,255,255,0.04)" }}
+                        />
                       </div>
                     )}
                   </motion.div>
                 ))}
               </div>
 
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }} className="mt-4 text-center lg:text-right">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.9 }}
+                className="mt-4 text-center lg:text-right"
+              >
                 <Link href="/questions">
-                  <span className="text-xs font-medium transition-colors" style={{ color: "rgba(0,212,163,0.75)" }}
-                    onMouseEnter={e => ((e.target as HTMLElement).style.color = "#00D4A3")}
-                    onMouseLeave={e => ((e.target as HTMLElement).style.color = "rgba(0,212,163,0.75)")}
+                  <span
+                    className="text-xs font-medium transition-colors"
+                    style={{ color: "rgba(0,212,163,0.75)" }}
+                    onMouseEnter={(e) =>
+                      ((e.target as HTMLElement).style.color = "#00D4A3")
+                    }
+                    onMouseLeave={(e) =>
+                      ((e.target as HTMLElement).style.color =
+                        "rgba(0,212,163,0.75)")
+                    }
                   >
                     See all trending questions →
                   </span>
                 </Link>
               </motion.div>
             </div>
-
           </div>
         </div>
 
         {/* Bottom fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none" style={{ background: "linear-gradient(to top, rgb(var(--color-background)), transparent)" }} />
+        <div
+          className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(to top, rgb(var(--color-background)), transparent)",
+          }}
+        />
       </section>
 
       {/* ---------------------------------------------------
