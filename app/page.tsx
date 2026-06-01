@@ -1,5 +1,5 @@
 /**
- * MIDEEYE HOMEPAGE — XIDDIG DESIGN SYSTEM
+ * MIDEEYE HOMEPAGE â€” XIDDIG DESIGN SYSTEM
  * The Somali Knowledge Network
  */
 "use client";
@@ -70,7 +70,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-background">
 
       {/* ---------------------------------------------------
-          HERO — Cinematic dark viewport
+          HERO â€” Cinematic dark viewport
       --------------------------------------------------- */}
       <section
         ref={heroRef}
@@ -181,7 +181,7 @@ export default function HomePage() {
       </section>
 
       {/* ---------------------------------------------------
-          TOPICS — dark card grid
+          TOPICS â€” dark card grid
       --------------------------------------------------- */}
       <section className="py-20 px-4 sm:px-6 max-w-6xl mx-auto">
         <div className="flex items-end justify-between mb-10">
@@ -227,7 +227,7 @@ export default function HomePage() {
       </section>
 
       {/* ---------------------------------------------------
-          FEATURED QUESTIONS — magazine layout
+          FEATURED QUESTIONS â€” magazine layout
       --------------------------------------------------- */}
       {featuredPosts.length > 0 && (
         <section className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-border/30">
@@ -273,12 +273,12 @@ export default function HomePage() {
                     <div className="flex items-center gap-2 mt-auto pt-3 border-t border-border/40">
                       <Avatar
                         src={post.author?.avatar_url || undefined}
-                        alt={post.author?.full_name || "User"}
+                        alt={post.author?.fullName || "User"}
                         size="xs"
                         className="w-6 h-6"
                       />
                       <span className="text-xs text-foreground-subtle flex-1 truncate">
-                        {post.author?.full_name || "User"}
+                        {post.author?.fullName || "User"}
                       </span>
                       <div className="flex items-center gap-2.5 text-xs text-foreground-subtle">
                         <span className="flex items-center gap-1">
@@ -299,7 +299,7 @@ export default function HomePage() {
       )}
 
       {/* ---------------------------------------------------
-          JOIN CTA — dramatic dark section
+          JOIN CTA â€” dramatic dark section
       --------------------------------------------------- */}
       <section className="relative py-24 px-4 sm:px-6 overflow-hidden border-t border-border/30">
         {/* Glow */}
@@ -330,7 +330,7 @@ export default function HomePage() {
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                You're on the list — welcome!
+                You're on the list â€” welcome!
               </div>
             ) : (
               <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">

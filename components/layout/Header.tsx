@@ -1,5 +1,5 @@
 /**
- * MIDEEYE HEADER — XIDDIG DESIGN SYSTEM
+ * MIDEEYE HEADER â€” XIDDIG DESIGN SYSTEM
  * Premium frosted glass navigation.
  */
 "use client";
