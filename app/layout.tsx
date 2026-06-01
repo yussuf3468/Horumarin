@@ -160,6 +160,14 @@ export default function RootLayout({
           <Footer className="hidden md:block" />
           <Toaster />
         </ThemeProvider>
+        {/* Google AdSense */}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2296137529678629"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+
         {/* Register service worker */}
         <Script id="sw-register" strategy="afterInteractive">
           {`
